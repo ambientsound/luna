@@ -192,22 +192,22 @@ class Luna_View_Smarty extends Zend_View_Abstract
 	}
 	
 	/**
-		* Allows testing with empty() and isset() to work
-		*
-		* @param string $key
-		* @return boolean
-		*/
+	* Allows testing with empty() and isset() to work
+	*
+	* @param string $key
+	* @return boolean
+	*/
 	public function __isset($key)
 	{
 		return (null !== $this->_smarty->getTemplateVars($key));
 	}
 	
 	/**
-		* Allows unset() on object properties to work
-		*
-		* @param string $key
-		* @return void
-		*/
+	* Allows unset() on object properties to work
+	*
+	* @param string $key
+	* @return void
+	*/
 	public function __unset($key)
 	{
 		$this->_smarty->clear_assign($key);
@@ -286,9 +286,6 @@ class Luna_View_Smarty extends Zend_View_Abstract
 
 		if (empty($this->_masterTemplate))
 		{
-			/* This is only used for "view partials" */
-			$this->assign('this', $this);
-
 			return $this->_smarty->fetch($name);
 		}
 		else
