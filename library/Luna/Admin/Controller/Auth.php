@@ -32,33 +32,11 @@
 
 class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 {
+	protected $_modelName = 'Model_Users';
+
 	public function indexAction()
 	{
 		$this->_redirect('login');
-	}
-
-	public function preDispatch()
-	{
-		if (Zend_Auth::getInstance()->hasIdentity())
-		{
-			// If the user is logged in, we don't want to show the login form;
-			// however, the logout action should still be available
-			if ('logout' != $this->getRequest()->getActionName())
-			{
-				$this->_helper->redirector('index', 'index');
-			}
-		}
-		else
-		{
-			// If they aren't, they can't logout, so that action should
-			// redirect to the login form
-			if ('logout' == $this->getRequest()->getActionName())
-			{
-				$this->_helper->redirector('index');
-			}
-		}
-
-		$this->view->setTemplate($this->_getParam('controller') . '/' . $this->_getParam('action'));
 	}
 
 	public function loginAction()
@@ -71,31 +49,34 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		$form->populate($request->getParams());
 		if (!$request->isPost() || !$form->isValid($request->getPost()))
 		{
+			$usercount = $this->model->count();
+			if ($usercount == 0)
+			{
+				return $this->_redirect('/auth/setup');
+			}
 			$this->view->form = $form;
 			return;
 		}
 
-		$auth = $this->getAuthAdapter();
-		$auth->setIdentity($form->getValue('email'));
-		$auth->setCredential($form->getValue('password'));
+		$user = $this->model->checkAuth($form->getValue('username'), $form->getValue('password'));
 
-		$result = $auth->authenticate($auth);
+		if (!empty($user))
+			$this->acl->setUserId($user['id']);
 
-		if (!$result->isValid())
+		if (empty($user) || !$this->acl->can('cms', 'login'))
 		{
-			$form->setDescription('form_login_invalidlogin');
+			$this->addError('login_failed');
 			$this->view->form = $form;
 			return;
 		}
 
 		$updates = array(
 			'lastlogin'	=> new Zend_Db_Expr('NOW()'),
-			'logincount'	=> new Zend_Db_Expr(Zend_Registry::get('db')->quoteIdentifier('logincount') . ' + 1')
+			'logincount'	=> new Zend_Db_Expr($this->model->db->quoteIdentifier('logincount') . ' + 1')
 		);
 
-		$user = $auth->getResultRowObject(null, array('password', 'salt'));
 		$model = new Zend_Db_Table('users');
-		$model->update($updates, Zend_Registry::get('db')->quoteInto('id = ?', $user->id));
+		$model->update($updates, $this->model->db->quoteInto('id = ?', $user['id']));
 
 		Zend_Auth::getInstance()->getStorage()->write($user);
 
@@ -109,15 +90,55 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		$this->_helper->redirector('index');
 	}
 
-	public function getAuthAdapter()
+	public function setupAction()
 	{
-		return new Luna_Auth_Adapter_DbTable(
-			Zend_Registry::get('db'),
-			'users',
-			'email',
-			'password',
-			'SHA1(CONCAT("' . Zend_Registry::get('db_salt') . '", ?, salt))'
-		);
+		if ($this->model->count() != 0)
+		{
+			return $this->_redirect('/auth/login');
+		}
+
+		$form = $this->getInitForm();
+
+		if ($this->getRequest()->isPost() && $form->isValid($_POST))
+		{
+			$hash = new Luna_Phpass(null, true);
+			$values = $form->getValues();
+			$values['username'] = 'admin';
+			$values['enabled'] = true;
+
+			try
+			{
+				$this->model->db->beginTransaction();
+
+				if ($userid = $this->model->inject($values))
+				{
+					if ($this->model->addUserRole($userid, 'superuser'))
+					{
+						if ($this->model->db->commit())
+						{
+							$this->addMessage('luna_initial_setup_succeeded');
+							return $this->_redirect('/auth/login');
+						}
+					}
+				}
+			}
+			catch (Zend_Exception $e)
+			{
+			}
+
+			$this->model->db->rollBack();
+			$this->addError('luna_initial_setup_failed');
+		}
+
+		$this->view->form = $form;
+	}
+
+	public function getInitForm()
+	{
+		return new Form_Login_Init(array(
+			'method'	=> 'post',
+			'action'	=> '/admin/auth/setup'
+		));
 	}
 
 	public function getForm()

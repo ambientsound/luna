@@ -30,42 +30,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-class Luna_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+class Luna_Admin_Model_Roles extends Luna_Db_Table
 {
-	public function run()
+	protected $_primary = 'role';
+
+	public function getAllRoles()
 	{
-		$translator = new Luna_Translate(array(
-			'adapter'	=> 'ini',
-			'content'	=> APPLICATION_PATH . '/i18n/en.ini',
-			'locale'	=> 'en',
-		));
-
-		Zend_Registry::set('Zend_Translate', $translator);
-
-		$dbConfig = Luna_Config::get('database');
-		$db = Zend_Db::factory($dbConfig->main);
-
-		Zend_Db_Table::setDefaultAdapter($db);
-		Zend_Registry::set('db', $db);
-		Zend_Registry::set('db_salt', $dbConfig->main->salt);
-
-		parent::run();
+		return $this->select()->query()->fetchAll();
 	}
 
-	protected function _initView()
+	public function getUserRoles($userId)
 	{
-		$view = Luna_View_Smarty::factory();
-		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-		$viewRenderer->setView($view)
-			->setViewBasePathSpec(current($view->getScriptPaths()))
-			->setViewScriptPathSpec(':controller/:action.:suffix')
-			->setViewScriptPathNoControllerSpec(':action.:suffix')
-			->setViewSuffix('tpl');
+		if (empty($userId))
+			return null;
 
-		$viewRenderer->view->addHelperPath(realpath(LUNA_PATH. '/library/Luna/View/Helper'), 'Luna_View_Helper');
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('users_roles', 'role')
+			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
 
-		Zend_Paginator::setDefaultScrollingStyle('Elastic');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.tpl');
+		return $this->db->fetchCol($select);
 	}
 }

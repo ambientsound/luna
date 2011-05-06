@@ -77,16 +77,21 @@ class Luna_Db_Table extends Zend_Db_Table
 		return $this->update($data, $this->db->quoteIdentifier($this->_primary) . ' = ' . $this->db->quote($id));
 	}
 
+	public function count()
+	{
+		return $this->db->fetchOne($this->select()->from($this->_name, 'COUNT(*)'));
+	}
+
 	/*
 	 * Inserts or updates an object
 	 */
 	public function inject($data)
 	{
-		if (!empty($data[$this->_primary]))
+		if (!empty($data[current($this->_primary)]))
 		{
-			if ($this->updateId($data, $data[$this->_primary]) !== FALSE)
+			if ($this->updateId($data, $data[current($this->_primary)]) !== FALSE)
 			{
-				return $data[$this->_primary];
+				return $data[current($this->_primary)];
 			}
 			else
 			{

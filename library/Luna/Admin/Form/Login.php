@@ -36,16 +36,12 @@ class Luna_Admin_Form_Login extends Luna_Form
 	{
 		parent::init();
 
-		$this->addElement('Text', 'email', array(
+		$this->addElement('Text', 'username', array(
 			'filters'	=> array('StringTrim', 'StringToLower'),
-			'validators'	=> array(
-				'EmailAddress',
-			),
 			'required'   => true
 		));
 
 		$this->addElement('Password', 'password', array(
-			'filters'	=> array('StringTrim'),
 			'required'	=> true
 		));
 

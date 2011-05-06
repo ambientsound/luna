@@ -92,11 +92,11 @@ class Luna_User
 		{
 			$this->_data = $model->get($handle);
 		}
-		elseif (is_object($handle))
+		elseif (is_array($handle))
 		{
-			if (is_numeric($handle->id))
+			if (is_numeric($handle['id']))
 			{
-				$this->_data = $model->get($handle->id);
+				$this->_data = $model->get($handle['id']);
 			}
 			else
 			{
@@ -105,21 +105,10 @@ class Luna_User
 		}
 		else
 		{
-			$this->_data = $model->getByEmail($handle);
+			$this->_data = $model->getByUsername($handle);
 		}
 
 		unset($this->_data->password);
-		unset($this->_data->salt);
-	}
-
-	public static function genSalt($length = 4)
-	{
-		$salt = '';
-		for ($i = 0; $i < $length; $i++)
-		{
-			$salt .= chr(rand(33, 126));
-		}
-		return $salt;
 	}
 
 	public function registerActivity()
@@ -134,14 +123,6 @@ class Luna_User
 			'activity' => new Zend_Db_Expr('NOW()')
 		);
 		return $model->update($updates, Zend_Registry::get('db')->quoteInto('id = ?', $this->_data['id']));
-	}
-
-	public function setSystem()
-	{
-		$this->_data = array(
-			'id'	=> 0,
-			'role'	=> 'su'
-		);
 	}
 
 	public function isValid()

@@ -30,42 +30,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-class Luna_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+class Luna_Admin_Form_Login_Init extends Luna_Form
 {
-	public function run()
+	public function init()
 	{
-		$translator = new Luna_Translate(array(
-			'adapter'	=> 'ini',
-			'content'	=> APPLICATION_PATH . '/i18n/en.ini',
-			'locale'	=> 'en',
+		parent::init();
+
+		$this->addElement('Text', 'email', array(
+			'filters'	=> array('StringTrim', 'StringToLower'),
+			'validators'	=> array(
+				'EmailAddress',
+			),
+			'required'   => true
 		));
 
-		Zend_Registry::set('Zend_Translate', $translator);
+		$this->addElement('Password', 'password', array(
+			'required'	=> true
+		));
 
-		$dbConfig = Luna_Config::get('database');
-		$db = Zend_Db::factory($dbConfig->main);
+		$this->addElement('Submit', 'submit', array(
+			'required' => false,
+			'ignore'   => true,
+		));
 
-		Zend_Db_Table::setDefaultAdapter($db);
-		Zend_Registry::set('db', $db);
-		Zend_Registry::set('db_salt', $dbConfig->main->salt);
-
-		parent::run();
-	}
-
-	protected function _initView()
-	{
-		$view = Luna_View_Smarty::factory();
-		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-		$viewRenderer->setView($view)
-			->setViewBasePathSpec(current($view->getScriptPaths()))
-			->setViewScriptPathSpec(':controller/:action.:suffix')
-			->setViewScriptPathNoControllerSpec(':action.:suffix')
-			->setViewSuffix('tpl');
-
-		$viewRenderer->view->addHelperPath(realpath(LUNA_PATH. '/library/Luna/View/Helper'), 'Luna_View_Helper');
-
-		Zend_Paginator::setDefaultScrollingStyle('Elastic');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.tpl');
+		$this->resetDecorators();
 	}
 }

@@ -32,6 +32,16 @@
 
 class Luna_Admin_Model_Users extends Luna_Db_Table
 {
+	public function getByUsername($username)
+	{
+		$select = $this->select()
+			->from($this->_name)
+			->where($this->db->quoteInto('username = ?', $username))
+			->limit(1);
+
+		return $this->db->fetchRow($select);
+	}
+
 	public function getByEmail($mail)
 	{
 		$select = $this->select()
@@ -42,17 +52,53 @@ class Luna_Admin_Model_Users extends Luna_Db_Table
 		return $this->db->fetchRow($select);
 	}
 
+	/*
+	 * Checks if a username/password combination is valid and the user can log in.
+	 * Returns the user row on success, false on failure.
+	 */
+	public function checkAuth($username, $password)
+	{
+		$select = $this->select()
+			->from($this->_name)
+			->where($this->db->quoteInto('username = ?', $username))
+			->where('enabled = true')
+			->limit(1);
+
+		$user = $this->db->fetchRow($select);
+		if (empty($user))
+			return false;
+
+		$hash = new Luna_Phpass(null, true);
+		if (!$hash->CheckPassword($password, $user['password']))
+			return false;
+
+		unset($user['password']);
+
+		return $user;
+	}
+
+	/*
+	 * Adds a role to a user.
+	 */
+	public function addUserRole($userid, $role)
+	{
+		$table = new Luna_Db_Table('users_roles');
+		return $table->insert(array(
+			'user'	=> $userid,
+			'role'	=> $role
+		));
+	}
+
 	public function inject($data)
 	{
 		if (empty($data['password']))
 		{
 			unset($data['password']);
-			unset($data['salt']);
 		}
 		else
 		{
-			$data['salt'] = Luna_User::genSalt();
-			$data['password'] = new Zend_Db_Expr($this->_db->quoteInto('SHA1(?)', Zend_Registry::get('db_salt') . $data['password'] . $data['salt']));
+			$hash = new Luna_Phpass(null, true);
+			$data['password'] = $hash->HashPassword($data['password']);
 		}
 
 		return parent::inject($data);

@@ -67,14 +67,15 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		$this->view->user = $this->user;
 
 		/* Access control lists */
-		$this->acl = new Luna_Acl($this->user->role);
+		$this->acl = new Luna_Acl();
+		$this->acl->setUserId($this->user->id);
 		Zend_Registry::set('acl', $this->acl);
 		$this->view->acl = $this->acl;
 
 		/* Model setup */
 		if (!empty($this->_modelName))
 		{
-			$this->_model = new $this->_modelName;
+			$this->model = new $this->_modelName;
 		}
 
 		/* Menu */
@@ -97,13 +98,6 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		{
 			$path = trim($_SERVER['REQUEST_URI'], '/');
 			$this->_redirect('/auth/login' . (empty($path) ? null : '?path=' . urlencode($path)));
-			return false;
-		}
-
-		if (!$this->acl->can($this->_getParam('controller') . '.' . $this->_getParam('action')))
-		{
-			$this->addError('privilege_shortage');
-			$this->_redirect($_SERVER['HTTP_REFERER']);
 			return false;
 		}
 	}
@@ -130,11 +124,6 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 	{
 		if ($this->getRequest()->isXmlHttpRequest())
 			$this->_ajaxMessage = true;
-	}
-
-	public function hasPrivilege($priv)
-	{
-		return $this->acl->can($this->_getParam('controller') . '.priv' . $priv);
 	}
 
 	protected function addMenu($action, $params = null, $title = null, $uri = null)
