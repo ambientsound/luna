@@ -88,6 +88,11 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 
 		$this->view->setTemplate($this->_getParam('controller') . '/' . $this->_getParam('action'));
 
+		/* User check. Skip if we are going to the error or auth controller. */
+		$ct = $this->_getParam('controller');
+		if ($ct == 'error' || $ct == 'auth')
+			return true;
+
 		if (!$this->user->isValid())
 		{
 			$path = trim($_SERVER['REQUEST_URI'], '/');
