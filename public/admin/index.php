@@ -81,8 +81,8 @@ $autoloader->registerNamespace('Smarty_');
 $autoloader->unshiftAutoloader('smartyAutoload', 'Smarty_');
 
 /* Bring up resource autoloading */
-$resourceLoader = new Zend_Loader_Autoloader_Resource(array(
-	'basePath'  => ADMIN_PATH,
+$resourceLoader = new Luna_Loader_Autoloader_Resource(array(
+	'basePath'  => array(LOCAL_PATH, APPLICATION_PATH),
 	'namespace' => '',
 ));
 $resourceLoader->addResourceType('form', 'forms', 'Form');
