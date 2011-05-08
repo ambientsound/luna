@@ -88,9 +88,10 @@ $resourceLoader = new Luna_Loader_Autoloader_Resource(array(
 $resourceLoader->addResourceType('form', 'forms', 'Form');
 $resourceLoader->addResourceType('model', 'models', 'Model');
 
-/* We need to set the base URL to /admin. */
+/* We need to set the base URL to /admin, and register our multi-plugin. */
 $controller = Zend_Controller_Front::getInstance();
 $controller->setBaseUrl('/admin');
+$controller->registerPlugin(new Luna_Controller_Plugin_Localload);
 
 /* Here we go! */
 $application = new Zend_Application(APPLICATION_ENV, ADMIN_PATH . '/configs/application.ini');

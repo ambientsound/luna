@@ -50,7 +50,7 @@ class Luna_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		Zend_Registry::set('db', $db);
 		Zend_Registry::set('db_salt', $dbConfig->main->salt);
 
-		parent::run();
+		return parent::run();
 	}
 
 	protected function _initView()

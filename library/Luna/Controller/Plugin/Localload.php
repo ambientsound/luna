@@ -30,9 +30,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class IndexController extends Luna_Admin_Controller_Index
+/*
+ * This class provides multiple controller directory support.
+ * Default is to look for the module in local controller directory,
+ * and then fall back to global directory if the controller is not found.
+ *
+ * The class operates separately from resource autoloading.
+ */
+class Luna_Controller_Plugin_Localload extends Zend_Controller_Plugin_Abstract
 {
-	public function indexAction()
+	public function preDispatch(Zend_Controller_Request_Abstract $request)
 	{
+		$c = $request->getControllerName();
+		$front = Zend_Controller_Front::getInstance();
+		$dispatcher = $front->getDispatcher();
+
+		foreach (array(LOCAL_PATH, APPLICATION_PATH) as $dir)
+		{
+			$front->setControllerDirectory($dir . '/controllers');
+			if ($dispatcher->isDispatchable($request))
+				return;
+		}
 	}
 }
