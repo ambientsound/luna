@@ -35,8 +35,6 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 	public function errorAction()
 	{
 		$errors = $this->_getParam('error_handler');
-		$params = $this->getRequest()->getParams();
-		unset($params['error_handler']);
 
 		switch ($errors->type)
 		{
@@ -49,14 +47,23 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 			default:
 		}
 
-		$this->view->setTemplate('error/error');
-		$this->addTitle('error');
+		$this->path->add(null, 'error');
+	}
+
+	public function postDispatch()
+	{
+		parent::postDispatch();
+
+		$params = $this->getRequest()->getParams();
 
 		if ($this->getInvokeArg('displayExceptions') == true)
 		{
-			$this->view->exception = $errors->exception;
+			$this->view->exception = $params['error_handler']->exception;
+			$this->view->stacktrace = explode("\n", $params['error_handler']->exception->getTraceAsString());
 		}
-		
-		$this->view->request = $errors->request;
+
+		unset($params['error_handler']);
+		$this->view->setTemplate('error/error');
+		$this->view->params = $params;
 	}
 }

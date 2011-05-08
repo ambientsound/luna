@@ -42,6 +42,8 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 
 	protected $_menu = null;
 
+	protected $path = null;
+
 	protected $_ajaxMessage = false;
 
 	public function init()
@@ -81,6 +83,9 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		/* Menu */
 		$this->_menu = new Luna_Menu;
 		$this->setupMenu();
+
+		/* Breadpath/title setup */
+		$this->path = new Luna_View_Helper_Title;
 	}
 
 	public function preDispatch()
@@ -88,7 +93,7 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		parent::preDispatch();
 
 		$this->view->setTemplate($this->_getParam('controller') . '/' . $this->_getParam('action'));
-
+		$this->path->init($this->getRequest());
 		/* User check. Skip if we are going to the error or auth controller. */
 		$ct = $this->_getParam('controller');
 		if ($ct == 'error' || $ct == 'auth')
@@ -107,14 +112,18 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		parent::postDispatch();
 
 		$this->view->menu = $this->_menu->getMenu();
+		$this->view->request = $this->getRequest();
+		$this->view->params = $this->getRequest()->getParams();
+		$this->view->path = $this->path;
+
+		$session = new Zend_Session_Namespace('template');
+		$this->view->errors = $session->errors;
+		$this->view->messages = $session->messages;
+		unset($session->errors);
+		unset($session->messages);
 
 		if ($this->_ajaxMessage)
 		{
-			$session = new Zend_Session_Namespace('template');
-			$this->view->errors = $session->errors;
-			$this->view->messages = $session->messages;
-			unset($session->errors);
-			unset($session->messages);
 			echo $this->view->render('message.tpl');
 			$this->_helper->viewRenderer->setNoRender(true);
 		}
@@ -140,27 +149,6 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		return $this->_t->_($key, $params);
 	}
 
-	public function clearTitle()
-	{
-		$session = new Zend_Session_Namespace('template');
-		unset($session->title);
-	}
-
-	public function addTitle($title, $params = null)
-	{
-		$session = new Zend_Session_Namespace('template');
-		$session->title[] = $this->_t->_($title, $params);
-	}
-
-	public function delTitle()
-	{
-		$session = new Zend_Session_Namespace('template');
-		unset($session->title[count($session->title) - 1]);
-		if (!empty($session->title))
-		{
-			$session->title = array_values($session->title);
-		}
-	}
 
 	public function addMessage($message, $params = null)
 	{
