@@ -30,58 +30,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu extends Luna_Stdclass
+class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 {
-	public function __construct($params = null)
+	protected $_modelName = 'Model_Users';
+
+	public function indexAction()
 	{
-		$this->_data = (array)$params;
-		$this->init();
-	}
-
-	public function init() {}
-
-	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
-	{
-		if (empty($title))
-			$title = Zend_Registry::get('Zend_Translate')->translate("menu_{$controller}" . (empty($action) ? null : "_{$action}"));
-
-		$m = array(
-			'controller'	=> $controller,
-			'action'	=> $action,
-			'params'	=> $params,
-			'title'		=> $title,
-		);
-
-		$front = Zend_Controller_Front::getInstance();
-		$request = $front->getRequest();
-
-		$defaultcontroller = $front->getDefaultControllerName();
-		$defaultaction = $front->getDefaultAction();
-
-		if ($uri == null)
-		{
-			if ($m['controller'] != $defaultcontroller || !empty($m['action']) || !empty($m['params']))
-				$uri .= '/' . $m['controller'];
-
-			if ($m['action'] != $defaultaction || !empty($m['params']))
-				$uri .= '/' . $m['action'];
-
-			if (!empty($params))
-			{
-				foreach ($params as $key => $param)
-					$uri .= "/{$key}/{$param}";
-			}
-		}
-
-		if ($request->getControllerName() == $m['controller'])
-		{
-			if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
-			{
-				$m['active'] = true;
-			}
-		}
-
-		$m['url'] = rtrim($front->getBaseUrl() . $uri, '/');
-		return ($this->_data['children'][] = new Luna_Menu($m));
+		$table = new Luna_Table('users', $this->model);
+		$this->view->table = $table;
 	}
 }
