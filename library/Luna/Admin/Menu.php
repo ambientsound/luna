@@ -30,73 +30,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu
+class Luna_Admin_Menu extends Luna_Menu
 {
-	protected $_menu;
-
-	public function __construct()
-	{
-		$this->init();
-	}
-
 	public function init()
 	{
-	}
+		$config = Luna_Config::get('site')->menu->toArray();
 
-	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
-	{
-		if (empty($title))
-		{
-			$title = Zend_Registry::get('Zend_Translate')->translate("menu_{$controller}" . (empty($action) ? null : "_{$action}"));
-		}
-
-		$this->_menu[] = array(
-			'controller'	=> $controller,
-			'action'	=> $action,
-			'params'	=> $params,
-			'title'		=> $title,
+		$paths = array(
+			'global'	=> APPLICATION_PATH . '/controllers/',
+			'local'		=> LOCAL_PATH . '/controllers/'
 		);
-	}
 
-	public function getMenu()
-	{
-		if (empty($this->_menu))
-			return $this->_menu;
+		$modules = array();
 
-		$menu = $this->_menu;
-		$front = Zend_Controller_Front::getInstance();
-		$request = $front->getRequest();
-
-		foreach ($menu as &$m)
+		foreach ($paths as $dir)
 		{
-			$defaultcontroller = $front->getDefaultControllerName();
-			$defaultaction = $front->getDefaultAction();
+			if (!is_dir($dir))
+				continue;
 
-			$uri = null;
-
-			if ($m['controller'] != $defaultcontroller || !empty($m['action']) || !empty($m['params']))
-				$uri .= '/' . $m['controller'];
-
-			if ($m['action'] != $defaultaction || !empty($m['params']))
-				$uri .= '/' . $m['action'];
-
-			if (!empty($params))
+			$handle = opendir($dir);
+			while (($file = readdir($handle)) !== false)
 			{
-				foreach ($params as $key => $param)
-					$uri .= "/{$key}/{$param}";
-			}
-
-			if ($request->getControllerName() == $m['controller'])
-			{
-				if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
+				$matches = array();
+				if (is_readable($dir . $file) && preg_match('/^([\w]+)Controller.php$/', $file, $matches))
 				{
-					$m['active'] = true;
+					$controller = strtolower($matches[1]);
+					if (!isset($config[$controller]) || !empty($config[$controller]))
+						$modules[] = $controller;
 				}
 			}
-
-			$m['uri'] = rtrim($front->getBaseUrl() . $uri, '/');
+			closedir($handle);
 		}
 
-		return $menu;
+		if (empty($modules))
+			return;
+
+		foreach ($modules as $module)
+		{
+			$this->add($module);
+		}
 	}
 }

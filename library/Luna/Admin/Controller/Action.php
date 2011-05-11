@@ -78,7 +78,7 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 		Zend_Registry::set('acl', $this->acl);
 
 		/* Menu */
-		$this->_menu = new Luna_Menu;
+		$this->_menu = new Luna_Admin_Menu;
 		$this->setupMenu();
 
 		/* Breadpath/title setup */

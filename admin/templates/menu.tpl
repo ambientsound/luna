@@ -1,8 +1,8 @@
 <ul>
 {foreach from=$menu item=i}
 	<li>
-		<a {if $request.controller == $i} class="active" {/if} href="/admin/{$i}"><img src="/admin/g/{$i}.png" alt="" /><span>{t}cms_menu_{$i}{/t}</span></a></li>
-		{if $menu.children}
+		<a {if $i.active} class="active" {/if} href="{$i.url}"><img src="/admin/images/menu/{$i.controller}.png" alt="" /><span>{$i.title}</span></a></li>
+		{if $i.children}
 			{include file='menu.tpl' menu=$i.children}
 		{/if}
 	</li>
