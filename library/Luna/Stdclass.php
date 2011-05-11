@@ -30,57 +30,63 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu extends Luna_Stdclass
+class Luna_Stdclass implements Iterator
 {
-	public function __construct($params = null)
+	protected $_data = null;
+
+	private $_iter = 0;
+
+	public function __set($name, $value)
 	{
-		$this->_data = (array)$params;
-		$this->init();
+		$this->_data[$name] = $value;
 	}
 
-	public function init() {}
-
-	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
+	public function __get($name)
 	{
-		if (empty($title))
-			$title = Zend_Registry::get('Zend_Translate')->translate("menu_{$controller}" . (empty($action) ? null : "_{$action}"));
+		if (empty($this->_data))
+			return null;
 
-		$m = array(
-			'controller'	=> $controller,
-			'action'	=> $action,
-			'params'	=> $params,
-			'title'		=> $title,
-		);
+		if (array_key_exists($name, $this->_data))
+			return $this->_data[$name];
 
-		$front = Zend_Controller_Front::getInstance();
-		$request = $front->getRequest();
+		return null;
+	}
 
-		$defaultcontroller = $front->getDefaultControllerName();
-		$defaultaction = $front->getDefaultAction();
+	public function __isset($name)
+	{
+		return isset($this->_data[$name]);
+	}
 
-		$uri = null;
+	public function __unset($name)
+	{
+		unset($this->_data[$name]);
+	}
 
-		if ($m['controller'] != $defaultcontroller || !empty($m['action']) || !empty($m['params']))
-			$uri .= '/' . $m['controller'];
+	/*
+	 * Iterator functions
+	 */
+	public function rewind()
+	{
+		$this->_iter = 0;
+	}
 
-		if ($m['action'] != $defaultaction || !empty($m['params']))
-			$uri .= '/' . $m['action'];
+	public function current()
+	{
+		return $this->_data[$this->_iter];
+	}
 
-		if (!empty($params))
-		{
-			foreach ($params as $key => $param)
-				$uri .= "/{$key}/{$param}";
-		}
+	public function key()
+	{
+		return $this->_iter;
+	}
 
-		if ($request->getControllerName() == $m['controller'])
-		{
-			if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
-			{
-				$m['active'] = true;
-			}
-		}
+	public function next()
+	{
+		++$this->_iter;
+	}
 
-		$m['uri'] = rtrim($front->getBaseUrl() . $uri, '/');
-		return ($this->_data['children'][] = new Luna_Menu($m));
+	public function valid()
+	{
+		return ($this->_iter >= 0 && $this->_iter < count($this->_data));
 	}
 }

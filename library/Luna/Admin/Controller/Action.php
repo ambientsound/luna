@@ -131,7 +131,7 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 	{
 		parent::postDispatch();
 
-		$this->view->menu = $this->_menu->getMenu();
+		$this->view->menu = $this->_menu->children;
 		$this->view->request = $this->getRequest();
 		$this->view->params = $this->getRequest()->getParams();
 		$this->view->path = $this->path;

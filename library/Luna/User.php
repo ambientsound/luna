@@ -30,56 +30,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_User implements Zend_Acl_Role_Interface
+class Luna_User extends Luna_Stdclass implements Zend_Acl_Role_Interface
 {
 	protected $_role;
 
 	protected $_data = null;
 
 	protected $_model = null;
-
-	public function __set($name, $value)
-	{
-		$trace = debug_backtrace();
-		trigger_error(
-			'Property ' . $name . ' is read only' .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
-			E_USER_ERROR);
-	}
-
-	public function __get($name)
-	{
-		if (empty($this->_data))
-			return null;
-
-		if (array_key_exists($name, $this->_data))
-			return $this->_data[$name];
-
-		$trace = debug_backtrace();
-		trigger_error(
-			'Undefined property via __get(): ' . $name .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
-			E_USER_NOTICE);
-
-		return null;
-	}
-
-	public function __isset($name)
-	{
-		return isset($this->_data[$name]);
-	}
-
-	public function __unset($name)
-	{
-		$trace = debug_backtrace();
-		trigger_error(
-			'Property ' . $name . ' is read only' .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
-			E_USER_ERROR);
-	}
 
 	public function __construct($handle)
 	{

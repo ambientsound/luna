@@ -32,9 +32,12 @@
 
 class Luna_Admin_Menu extends Luna_Menu
 {
+	private $_curmenu = null;
+
 	public function init()
 	{
 		$config = Luna_Config::get('site')->menu->toArray();
+		$request = Zend_Controller_Front::getInstance()->getRequest();
 
 		$paths = array(
 			'global'	=> APPLICATION_PATH . '/controllers/',
@@ -67,7 +70,10 @@ class Luna_Admin_Menu extends Luna_Menu
 
 		foreach ($modules as $module)
 		{
-			$this->add($module);
+			if ($module == $request->getControllerName())
+				$this->_curmenu =& $this->add($module);
+			else
+				$this->add($module);
 		}
 	}
 }
