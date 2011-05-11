@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Action extends Zend_Controller_Action
+class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zend_Acl_Resource_Interface
 {
 	protected $_layout = 'index';
 
@@ -68,17 +68,14 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		Zend_Registry::set('user', $this->user);
 		$this->view->user = $this->user;
 
-		/* Access control lists */
-		$this->acl = new Luna_Acl();
-		$this->acl->setUserId($this->user->id);
-		Zend_Registry::set('acl', $this->acl);
-		$this->view->acl = $this->acl;
-
 		/* Model setup */
 		if (!empty($this->_modelName))
-		{
 			$this->model = new $this->_modelName;
-		}
+
+		/* ACL setup */
+		$this->acl = new Luna_Acl_Module('acl');
+		$this->acl->setUser($this->user);
+		Zend_Registry::set('acl', $this->acl);
 
 		/* Menu */
 		$this->_menu = new Luna_Menu;
@@ -95,7 +92,7 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 		$this->view->setTemplate($this->_getParam('controller') . '/' . $this->_getParam('action'));
 		$this->path->init($this->getRequest());
 		/* User check. Skip if we are going to the error or auth controller. */
-		$ct = $this->_getParam('controller');
+		$ct = $this->getRequest()->getControllerName();
 		if ($ct == 'error' || $ct == 'auth')
 			return true;
 
@@ -104,6 +101,29 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 			$path = trim($_SERVER['REQUEST_URI'], '/');
 			$this->_redirect('/auth/login' . (empty($path) ? null : '?path=' . urlencode($path)));
 			return false;
+		}
+
+		try
+		{
+			if (!$this->acl->can($this, $this->getRequest()->getActionName()))
+			{
+				$front = Zend_Controller_Front::getInstance();
+				if ($this->getRequest()->getControllerName() == $front->getDefaultControllerName() &&
+					$this->getRequest()->getActionName() == $front->getDefaultAction())
+				{
+					$front->setBaseUrl('/');
+					return $this->_redirect('/');
+				}
+
+				$this->addError('insufficient_privileges');
+				$this->_forward('index', 'index');
+
+				return false;
+			}
+		}
+		catch (Luna_Acl_Exception $e)
+		{
+			trigger_error($this->getResourceId() . '->' . $this->getRequest()->getActionName() . ' is not governed by ACL, allowing access by default.', E_USER_WARNING);
 		}
 	}
 
@@ -168,5 +188,10 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action
 			return false;
 
 		return parent::_redirect($url, $options);
+	}
+
+	public function getResourceId()
+	{
+		return 'controller-' . $this->getRequest()->getControllerName();
 	}
 }

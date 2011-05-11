@@ -30,11 +30,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_User
+class Luna_User implements Zend_Acl_Role_Interface
 {
 	protected $_role;
 
 	protected $_data = null;
+
+	protected $_model = null;
 
 	public function __set($name, $value)
 	{
@@ -81,34 +83,19 @@ class Luna_User
 
 	public function __construct($handle)
 	{
-		if (empty($handle))
-		{
-			return;
-		}
+		$this->_model = new Model_Users();
 
-		$model = new Model_Users();
+		if (empty($handle))
+			return;
 
 		if (is_numeric($handle))
-		{
-			$this->_data = $model->get($handle);
-		}
+			$this->_data = $this->_model->get($handle);
 		elseif (is_array($handle))
-		{
-			if (is_numeric($handle['id']))
-			{
-				$this->_data = $model->get($handle['id']);
-			}
-			else
-			{
-				return;
-			}
-		}
+			$this->_data = $handle;
 		else
-		{
-			$this->_data = $model->getByUsername($handle);
-		}
+			$this->_data = $this->_model->getByUsername($handle);
 
-		unset($this->_data->password);
+		unset($this->_data['password']);
 	}
 
 	public function registerActivity()
@@ -128,6 +115,31 @@ class Luna_User
 	public function isValid()
 	{
 		return (!empty($this->_data));
+	}
+
+	public function getRoleId()
+	{
+		return 'user-' . $this->_data['id'];
+	}
+
+	public function getRoles()
+	{
+		if (empty($this->_data))
+			return array('group-guest');
+
+		$roles = array($this->getRoleId());
+
+		if (!isset($this->_data['roles']))
+		{
+			$this->_data['roles'] = $this->_model->getRoles($this->_data['id']);
+			if (!empty($this->_data['roles']))
+			{
+				foreach ($this->_data['roles'] as &$role)
+					$roles[] = 'group-' . $role;
+			}
+		}
+
+		return $roles;
 	}
 
 	public function toArray()

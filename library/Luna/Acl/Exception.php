@@ -30,25 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Roles extends Luna_Db_Table
+class Luna_Acl_Exception extends Luna_Exception
 {
-	protected $_primary = 'role';
-
-	public function getAllRoles()
-	{
-		return $this->select()->order('inherit DESC')->query()->fetchAll();
-	}
-
-	public function getUserRoles($userId)
-	{
-		if (empty($userId))
-			return null;
-
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('users_roles', 'role')
-			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
-
-		return $this->db->fetchCol($select);
-	}
 }

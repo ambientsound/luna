@@ -30,25 +30,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Roles extends Luna_Db_Table
+class Luna_Acl_Module extends Luna_Acl
 {
-	protected $_primary = 'role';
-
-	public function getAllRoles()
+	public function __construct($config)
 	{
-		return $this->select()->order('inherit DESC')->query()->fetchAll();
-	}
+		parent::__construct();
 
-	public function getUserRoles($userId)
-	{
-		if (empty($userId))
-			return null;
+		$map = Luna_Config::get($config)->toArray();
 
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('users_roles', 'role')
-			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
+		foreach ($map as $resource => $privileges)
+		{
+			$resource = new Zend_Acl_Resource($resource);
+			$this->addResource($resource);
 
-		return $this->db->fetchCol($select);
+			foreach ($privileges as $privilege => $role)
+			{
+				if (!$this->hasRole($role))
+					$this->addRole(new Zend_Acl_Role($role));
+
+				$this->allow($role, $resource, $privilege);
+			}
+		}
 	}
 }

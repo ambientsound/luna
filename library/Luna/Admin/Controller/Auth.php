@@ -44,7 +44,6 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		$cfg = Luna_Config::get('site');
 		$form = $this->getForm();
 		$request = $this->getRequest();
-		$this->delTitle();
 
 		$form->populate($request->getParams());
 		if (!$request->isPost() || !$form->isValid($request->getPost()))
@@ -61,9 +60,12 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		$user = $this->model->checkAuth($form->getValue('username'), $form->getValue('password'));
 
 		if (!empty($user))
-			$this->acl->setUserId($user['id']);
+		{
+			$this->user = new Luna_User($user);
+			$this->acl->setUser($this->user);
+		}
 
-		if (empty($user) || !$this->acl->can('cms', 'login'))
+		if (!$this->user->isValid() || !$this->acl->can('global', 'login'))
 		{
 			$this->addError('login_failed');
 			$this->view->form = $form;

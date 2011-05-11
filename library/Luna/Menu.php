@@ -43,18 +43,6 @@ class Luna_Menu
 
 	public function getMenu()
 	{
-		$acl = Zend_Registry::get('acl');
-		$menu = array();
-
-		if (!empty($this->_menu))
-		foreach ($this->_menu as $item)
-		{
-			if ($acl->can($item['controller'] . '.' . $item['action']))
-			{
-				$menu[] = $item;
-			}
-		}
-
-		return $menu;
+		return $this->_menu;
 	}
 }

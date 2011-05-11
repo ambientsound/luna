@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Db_Table extends Zend_Db_Table
+class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 {
 	public $db;
 
@@ -136,5 +136,10 @@ class Luna_Db_Table extends Zend_Db_Table
 			unset($data[current($this->_primary)]);
 
 		return parent::insert($data);
+	}
+
+	public function getResourceId()
+	{
+		return 'model-' . $this->_name;
 	}
 }

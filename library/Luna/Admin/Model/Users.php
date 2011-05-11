@@ -52,6 +52,19 @@ class Luna_Admin_Model_Users extends Luna_Db_Table
 		return $this->db->fetchRow($select);
 	}
 
+	public function getRoles($userId)
+	{
+		if (empty($userId))
+			return null;
+
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('users_roles', 'role')
+			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
+
+		return $this->db->fetchCol($select);
+	}
+
 	/*
 	 * Checks if a username/password combination is valid and the user can log in.
 	 * Returns the user row on success, false on failure.
