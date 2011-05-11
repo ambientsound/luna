@@ -1,7 +1,7 @@
-<table>
+<table cellspacing="0" cellpadding="0" border="0">
 	<tr>
-		{foreach $config.params.fields as $field}
-			<th>{$field}</th>
+		{foreach $config.fields as $field}
+			<th>{t}{$config.prefix}{$field}{/t}</th>
 		{/foreach}
 	</tr>
 	{foreach $table as $row}

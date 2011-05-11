@@ -11,7 +11,7 @@ class Luna_Table_Row extends Luna_Stdclass
 		$this->_config = $config;
 		$this->_row = $row;
 
-		foreach ($this->_config['params']['fields'] as $field)
+		foreach ($this->_config['fields'] as $field)
 		{
 			$this->_data[] = new Luna_Table_Cell($this->_config, $row[$field]);
 		}
@@ -19,7 +19,7 @@ class Luna_Table_Row extends Luna_Stdclass
 
 	public function __get($key)
 	{
-		if (($pos = array_search($key, $this->_config['params']['fields'])) !== false)
+		if (($pos = array_search($key, $this->_config['fields'])) !== false)
 			return $this->_data[$pos];
 
 		return null;
@@ -30,6 +30,6 @@ class Luna_Table_Row extends Luna_Stdclass
 		if (!$this->valid())
 			return null;
 
-		return $this->_config['params']['fields'][$this->_iter];
+		return $this->_config['fields'][$this->_iter];
 	}
 }

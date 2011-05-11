@@ -36,7 +36,7 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 
 	public function indexAction()
 	{
-		$table = new Luna_Table('users', $this->model);
+		$table = new Luna_Table('users', $this->model, $this->getRequest());
 		$this->view->table = $table;
 	}
 }
