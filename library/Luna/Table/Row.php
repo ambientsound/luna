@@ -13,7 +13,19 @@ class Luna_Table_Row extends Luna_Stdclass
 
 		foreach ($this->_config['fields'] as $field)
 		{
-			$this->_data[] = new Luna_Table_Cell($this->_config, $row, $field);
+			$celltype = null;
+			if (!empty($this->_config['f'][$field]['type']))
+			{
+				switch($this->_config['f'][$field]['type'])
+				{
+					case 'timestamp':
+						$celltype = 'Timestamp';
+						break;
+					default:
+				}
+			}
+			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
+			$this->_data[] = new $celltype($this->_config, $row, $field);
 		}
 	}
 
