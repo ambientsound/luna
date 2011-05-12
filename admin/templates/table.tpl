@@ -5,7 +5,7 @@
 		{/foreach}
 	</tr>
 	{foreach $table as $row}
-		<tr>
+		<tr class="{cycle values='white,gray'}">
 			{foreach $row as $cell}
 				<td>{$cell}</td>
 			{/foreach}

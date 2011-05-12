@@ -119,6 +119,7 @@ a
 	text-decoration: none;
 	width: 130px;
 	padding: 0 10px;
+	background: -moz-linear-gradient(top, #f9f5ff, #efecf9);
 	display: block;
 }
 
@@ -131,11 +132,12 @@ a
 #leftmenu ul li a:hover
 {
 	text-decoration: underline;
+	background: -moz-linear-gradient(top, #f0e8ff, #e5e0f9);
 }
 
 #leftmenu ul li.active a
 {
-	background: url('/admin/images/menu-gradient.png') no-repeat top left;
+	background: -moz-linear-gradient(top, #4663a2, #0b2971);
 	color: #F2F2CC;
 	font-weight: bold;
 }
@@ -155,12 +157,13 @@ a
 {
 	color: black;
 	width: 120px;
-	text-decoration: underline;
+	background: transparent;
 }
 
 #leftmenu ul ul li a:hover
 {
 	text-decoration: underline;
+	background: transparent;
 }
 
 #leftmenu ul ul li.active a
@@ -358,6 +361,7 @@ table
 {
 	width: 100%;
 	margin: 0;
+	border: 1px solid #4663a2;
 }
 
 tbody tbody
@@ -367,13 +371,18 @@ tbody tbody
 
 table td
 {
-	padding: 0.25em 0;
+	padding: 0.65em 0 0.65em 0.5em;
 	vertical-align: middle;
 }
 
-table th.buttons
+table th
 {
-	width: 80px;
+	background: -moz-linear-gradient(top, #4663a2, #0b2971);
+	padding: 0.65em 0 0.65em 0.5em;
+	color: white;
+	text-align: left;
+	font-weight: normal;
+	text-shadow: 1px 1px 3px black;
 }
 
 table td.buttons img
@@ -434,15 +443,6 @@ table tr.editactive td
 	border: 1px solid #C4BD00;
 	border-left: 0;
 	border-right: 0;
-}
-
-table th
-{
-	background: #ECF0F9;
-	border-bottom: 1px solid #D6DDEE;
-	padding: 0.5em 0;
-	text-align: left;
-	font-weight: normal;
 }
 
 table td.space
