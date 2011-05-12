@@ -13,7 +13,7 @@ class Luna_Table_Row extends Luna_Stdclass
 
 		foreach ($this->_config['fields'] as $field)
 		{
-			$this->_data[] = new Luna_Table_Cell($this->_config, $row[$field]);
+			$this->_data[] = new Luna_Table_Cell($this->_config, $row, $field);
 		}
 	}
 

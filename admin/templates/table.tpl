@@ -7,7 +7,13 @@
 	{foreach $table as $row}
 		<tr class="{cycle values='white,gray'}">
 			{foreach $row as $cell}
-				<td>{$cell}</td>
+				{strip}
+					<td>
+					{if $cell->link}<a href="/admin/{$params.controller}/{$cell->link}/{$table->primary}/{$row->{$table->primary}}">{/if}
+					{$cell}
+					{if $cell->link}</a>{/if}
+					</td>
+				{/strip}
 			{/foreach}
 		</tr>
 	{/foreach}

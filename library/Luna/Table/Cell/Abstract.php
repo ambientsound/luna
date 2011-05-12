@@ -32,18 +32,39 @@
 
 class Luna_Table_Cell_Abstract
 {
-	protected $_data;
+	protected $_field = null;
 
-	protected $_config;
+	protected $_conf = null;
 
-	public function __construct($config, $data)
+	protected $_config = null;
+
+	protected $_row = null;
+
+	public function __get($name)
+	{
+		if (empty($this->_conf))
+			return null;
+
+		if (isset($this->_conf[$name]))
+			return $this->_conf[$name];
+
+		return null;
+	}
+
+	public function __construct($config, $row, $field)
 	{
 		$this->_config = $config;
-		$this->_data = $data;
+		$this->_field = $field;
+		$this->_row = $row;
+
+		if (!empty($this->_config['f'][$field]))
+		{
+			$this->_conf = $this->_config['f'][$field];
+		}
 	}
 
 	public function __toString()
 	{
-		return (string) $this->_data;
+		return (string) $this->_row[$this->_field];
 	}
 }

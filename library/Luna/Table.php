@@ -13,11 +13,13 @@ class Luna_Table implements Iterator
 
 	protected $_info = null;
 
-	protected $_headers = array();
+	protected $_request = null;
 
 	protected $_rowCache = null;
 
 	private $_iter = 0;
+
+	public $primary = null;
 
 	public function __construct($config, Zend_Db_Table $source, Zend_Controller_Request_Abstract $request)
 	{
@@ -34,6 +36,7 @@ class Luna_Table implements Iterator
 		$this->_config = array_merge(Luna_Config::get('table')->_defaultparams->toArray(), $this->_config);
 		$this->_model = $source;
 		$this->_info = $this->_model->info();
+		$this->primary = current($this->_info['primary']);
 
 		/* Determine source */
 		$fn = strtoupper($this->_info['name'][0]) . strtolower(substr($this->_info['name'], 1));
@@ -52,9 +55,9 @@ class Luna_Table implements Iterator
 			$this->_config['prefix'] = $this->_info['name'] . '_t_';
 
 		/* Sanitize user input into reasonable pagination defaults */
-		$sort = strtolower($request->getParam('sort', current($this->_info['primary'])));
+		$sort = strtolower($request->getParam('sort', $this->primary));
 		if (array_search($sort, $this->_info['cols']) === false)
-			$sort = current($this->_info['primary']);
+			$sort = $this->primary;
 		$order = strtoupper($request->getParam('order', 'ASC'));
 		if ($order != 'ASC' && $order != 'DESC')
 			$order = 'ASC';
@@ -66,6 +69,8 @@ class Luna_Table implements Iterator
 		$page = intval($request->getParam('page', $this->_config['page']));
 		if ($page < 1)
 			$page = 1;
+
+		$this->_request = $request;
 
 		/* Ordering */
 		$this->_select->order("{$sort} {$order}");
@@ -83,6 +88,8 @@ class Luna_Table implements Iterator
 		$view = Luna_View_Smarty::factory();
 		$view->assign('table', $this);
 		$view->assign('config', $this->_config);
+		$view->assign('request', $this->_request);
+		$view->assign('params', $this->_request->getParams());
 		return $view->render('table.tpl');
 	}
 
