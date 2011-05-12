@@ -30,62 +30,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu extends Luna_Stdclass
+function smarty_modifier_filter($string, $filter)
 {
-	public function __construct($params = null)
+	$classes = array(
+		'Luna_Filter_',
+		'Zend_Filter_'
+	);
+
+	foreach ($classes as $cls)
 	{
-		$this->_data = (array)$params;
-		$this->init();
-	}
-
-	public function init() {}
-
-	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
-	{
-		$slugfilter = new Luna_Filter_Slug();
-
-		if (empty($title))
-			$title = Zend_Registry::get('Zend_Translate')->translate("menu_{$controller}" . (empty($action) ? null : "_{$action}"));
-
-		$m = array(
-			'controller'	=> $controller,
-			'action'	=> $action,
-			'params'	=> $params,
-			'title'		=> $title
-		);
-
-		$front = Zend_Controller_Front::getInstance();
-		$request = $front->getRequest();
-
-		$defaultcontroller = $front->getDefaultControllerName();
-		$defaultaction = $front->getDefaultAction();
-
-		if ($uri == null)
+		$cls = $cls . $filter;
+		if (class_exists($cls))
 		{
-			if ($m['controller'] != $defaultcontroller || !empty($m['action']) || !empty($m['params']))
-				$uri .= '/' . $m['controller'];
-
-			if ($m['action'] != $defaultaction || !empty($m['params']))
-				$uri .= '/' . $m['action'];
-
-			if (!empty($params))
-			{
-				foreach ($params as $key => $param)
-					$uri .= "/{$key}/{$param}";
-			}
+			$c = new $cls;
+			return $c->filter($string);
 		}
-
-		if ($request->getControllerName() == $m['controller'])
-		{
-			if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
-			{
-				$m['active'] = true;
-			}
-		}
-
-		$m['url'] = rtrim($front->getBaseUrl() . $uri, '/');
-		$m['class'] = 'menu-' . $slugfilter->filter(str_replace('/', ' ', $m['url']));
-
-		return ($this->_data['children'][] = new Luna_Menu($m));
 	}
+	throw new Zend_Exception('Filter ' . $filter . ' does not exist');
 }

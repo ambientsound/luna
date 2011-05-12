@@ -75,5 +75,7 @@ class Luna_Admin_Menu extends Luna_Menu
 			else
 				$this->add($module);
 		}
+
+		$this->add('auth', 'logout');
 	}
 }

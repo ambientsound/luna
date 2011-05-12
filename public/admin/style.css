@@ -133,10 +133,16 @@ a
 	text-decoration: underline;
 }
 
-#leftmenu li a.active
+#leftmenu li.active a
 {
 	background: url('/admin/images/menu-gradient.png') no-repeat top left;
 	color: #F2F2CC;
+	font-weight: bold;
+}
+
+#leftmenu .menu-admin-auth-logout a
+{
+	color: #A90600;
 	font-weight: bold;
 }
 

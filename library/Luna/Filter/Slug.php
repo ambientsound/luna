@@ -30,62 +30,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu extends Luna_Stdclass
+class Luna_Filter_Slug implements Zend_Filter_Interface
 {
-	public function __construct($params = null)
+	public function filter($value)
 	{
-		$this->_data = (array)$params;
-		$this->init();
-	}
+		/* No spaces */
+		$value = trim($value);
 
-	public function init() {}
+		/* Replace ÆØÅ */
+		$value = str_replace('Æ', 'ae', $value);
+		$value = str_replace('æ', 'ae', $value);
+                $value = str_replace('Ø', 'oe', $value);
+                $value = str_replace('ø', 'oe', $value);
+		$value = str_replace('Å', 'aa', $value);
+		$value = str_replace('å', 'aa', $value);
 
-	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
-	{
-		$slugfilter = new Luna_Filter_Slug();
+		/* Transform & into 'og' */
+		$value = preg_replace('/&+/', ' og ', $value);
 
-		if (empty($title))
-			$title = Zend_Registry::get('Zend_Translate')->translate("menu_{$controller}" . (empty($action) ? null : "_{$action}"));
+		/* Trim multiple whitespace */
+		$value = preg_replace('/[\s\+-\.]+/', '-', $value);
 
-		$m = array(
-			'controller'	=> $controller,
-			'action'	=> $action,
-			'params'	=> $params,
-			'title'		=> $title
-		);
+		/* Strip illegal characters */
+		$value = preg_replace('/[^\w\d-]/', '', $value);
 
-		$front = Zend_Controller_Front::getInstance();
-		$request = $front->getRequest();
+		/* Lowercase */
+		$value = strtolower($value);
 
-		$defaultcontroller = $front->getDefaultControllerName();
-		$defaultaction = $front->getDefaultAction();
-
-		if ($uri == null)
-		{
-			if ($m['controller'] != $defaultcontroller || !empty($m['action']) || !empty($m['params']))
-				$uri .= '/' . $m['controller'];
-
-			if ($m['action'] != $defaultaction || !empty($m['params']))
-				$uri .= '/' . $m['action'];
-
-			if (!empty($params))
-			{
-				foreach ($params as $key => $param)
-					$uri .= "/{$key}/{$param}";
-			}
-		}
-
-		if ($request->getControllerName() == $m['controller'])
-		{
-			if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
-			{
-				$m['active'] = true;
-			}
-		}
-
-		$m['url'] = rtrim($front->getBaseUrl() . $uri, '/');
-		$m['class'] = 'menu-' . $slugfilter->filter(str_replace('/', ' ', $m['url']));
-
-		return ($this->_data['children'][] = new Luna_Menu($m));
+                return $value;
 	}
 }
