@@ -36,7 +36,7 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 
 	public function indexAction()
 	{
-		$this->_redirect('login');
+		$this->_redirect('/auth/login');
 	}
 
 	public function loginAction()
@@ -83,13 +83,21 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		Zend_Auth::getInstance()->getStorage()->write($user);
 
 		$path = '/' . $this->_getParam('path');
+		$base = Zend_Controller_Front::getBaseUrl();
+		if (strpos($path, $base) === 0)
+		{
+			if (strlen($path) == strlen($base))
+				$path = '/';
+			else
+				$path = substr($path, strlen($base));
+		}
 		$this->_redirect($path);
 	}
 
 	public function logoutAction()
 	{
 		Zend_Auth::getInstance()->clearIdentity();
-		$this->_helper->redirector('index');
+		$this->_redirect('/');
 	}
 
 	public function setupAction()
