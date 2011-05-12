@@ -12,16 +12,17 @@
 			<span class="domain">{$domainname}</span>
 		</div>
 
+		<h1>{$path->getTitle('top')}</h1>
+
+		<div id="leftmenu">
+			{include file='menu.tpl'}
+		</div>
+
 		<div id="content">
-			<h1>{$path->getTitle('top')}</h1>
 			{include file='message.tpl'}
 			{if $template}
 				{include file=$template}
 			{/if}
-		</div>
-
-		<div id="leftmenu">
-			{include file='menu.tpl'}
 		</div>
 
 	</body>
