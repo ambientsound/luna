@@ -40,6 +40,28 @@ class Luna_Menu extends Luna_Stdclass
 
 	public function init() {}
 
+	public function __get($name)
+	{
+		if ($name == 'active')
+		{
+			if ($this->_data['active'])
+				return true;
+
+			if (!empty($this->_data['children']))
+			{
+				foreach ($this->_data['children'] as $child)
+				{
+					if ($child->active)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		return parent::__get($name);
+	}
+
 	public function add($controller, $action = null, $params = null, $title = null, $uri = null)
 	{
 		$slugfilter = new Luna_Filter_Slug();
@@ -77,7 +99,7 @@ class Luna_Menu extends Luna_Stdclass
 
 		if ($request->getControllerName() == $m['controller'])
 		{
-			if ($request->getActionName() == $m['action'] || (empty($m['action']) && $request->getActionName() == $defaultaction))
+			if ($request->getActionName() == $m['action'] || (empty($m['action'])))
 			{
 				$m['active'] = true;
 			}

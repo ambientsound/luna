@@ -35,4 +35,10 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 	protected $_modelName = 'Model_Users';
 
 	protected $_formName = 'Form_Users';
+
+	public function setupMenu()
+	{
+		$this->_menu->addsub('index');
+		$this->_menu->addsub('create');
+	}
 }

@@ -78,4 +78,12 @@ class Luna_Admin_Menu extends Luna_Menu
 
 		$this->add('auth', 'logout');
 	}
+
+	public function addsub($action = null, $params = null, $title = null, $uri = null)
+	{
+		if (empty($this->_curmenu))
+			return false;
+
+		return $this->_curmenu->add($this->_curmenu->controller, $action, $params, $title, $uri);
+	}
 }

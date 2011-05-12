@@ -122,21 +122,51 @@ a
 	display: block;
 }
 
-#leftmenu li a img
+#leftmenu ul li a img
 {
 	margin-right: 16px;
 	float: left;
 }
 
-#leftmenu li a:hover
+#leftmenu ul li a:hover
 {
 	text-decoration: underline;
 }
 
-#leftmenu li.active a
+#leftmenu ul li.active a
 {
 	background: url('/admin/images/menu-gradient.png') no-repeat top left;
 	color: #F2F2CC;
+	font-weight: bold;
+}
+
+#leftmenu ul ul
+{
+	margin: 0.5em 0 0.5em 2em;
+	list-style-type: square;
+}
+
+#leftmenu ul ul li
+{
+	line-height: 1.5em;
+}
+
+#leftmenu ul ul li a
+{
+	color: black;
+	width: 120px;
+	text-decoration: underline;
+}
+
+#leftmenu ul ul li a:hover
+{
+	text-decoration: underline;
+}
+
+#leftmenu ul ul li.active a
+{
+	background: transparent;
+	color: black;
 	font-weight: bold;
 }
 
