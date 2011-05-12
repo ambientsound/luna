@@ -42,22 +42,22 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 	public function loginAction()
 	{
 		$cfg = Luna_Config::get('site');
-		$form = $this->getForm();
+		$this->_form = $this->getForm();
 		$request = $this->getRequest();
 
-		$form->populate($request->getParams());
-		if (!$request->isPost() || !$form->isValid($request->getPost()))
+		$this->_form->populate($request->getParams());
+		if (!$request->isPost() || !$this->_form->isValid($request->getPost()))
 		{
 			$usercount = $this->model->count();
 			if ($usercount == 0)
 			{
 				return $this->_redirect('/auth/setup');
 			}
-			$this->view->form = $form;
+			$this->view->form = $this->_form;
 			return;
 		}
 
-		$user = $this->model->checkAuth($form->getValue('username'), $form->getValue('password'));
+		$user = $this->model->checkAuth($this->_form->getValue('username'), $this->_form->getValue('password'));
 
 		if (!empty($user))
 		{
@@ -68,7 +68,7 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 		if (!$this->user->isValid() || !$this->acl->can('global', 'login'))
 		{
 			$this->addError('login_failed');
-			$this->view->form = $form;
+			$this->view->form = $this->_form;
 			return;
 		}
 
@@ -99,12 +99,12 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 			return $this->_redirect('/auth/login');
 		}
 
-		$form = $this->getInitForm();
+		$this->_form = $this->getInitForm();
 
-		if ($this->getRequest()->isPost() && $form->isValid($_POST))
+		if ($this->getRequest()->isPost() && $this->_form->isValid($_POST))
 		{
 			$hash = new Luna_Phpass(null, true);
-			$values = $form->getValues();
+			$values = $this->_form->getValues();
 			$values['username'] = 'admin';
 			$values['enabled'] = true;
 
@@ -131,8 +131,6 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 			$this->model->db->rollBack();
 			$this->addError('luna_initial_setup_failed');
 		}
-
-		$this->view->form = $form;
 	}
 
 	public function getInitForm()
@@ -145,9 +143,8 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 
 	public function getForm()
 	{
-		return new Form_Login(array(
-			'method'	=> 'post',
-			'action'	=> '/admin/auth/login'
-		));
+		$this->_form = new Form_Login;
+		$this->_form->setRequest($this->getRequest());
+		return $this->_form;
 	}
 }

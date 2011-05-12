@@ -90,8 +90,62 @@ class Luna_Acl extends Zend_Acl
 
 	public function assert($resource, $action)
 	{
+		if (!($resource instanceof Zend_Acl_Resource_Interface))
+			$resource = new Zend_Acl_Resource($resource);
+
+		if (!$this->has($resource))
+		{
+			/* Lazy loading of resource ACL */
+			if ($resource instanceof Luna_Object)
+				$this->loadObject($resource);
+			else
+				$this->addResource($resource);
+		}
+
 		if (!$this->can($resource, $action))
+		{
+			if ($resource instanceof Zend_Acl_Resource_Interface)
+				$resource = $resource->getResourceId();
 			throw new Luna_Acl_Exception('Insufficient privileges for ' . $resource . '->' . $action);
+		}
+
+		return true;
+	}
+
+	public function loadObject(Luna_Object $object)
+	{
+		$acl = $object->getAcl();
+		if (empty($acl))
+			return false;
+
+		if (!$this->has($object))
+			$this->addResource($object, $object->getModel());
+
+		if (!empty($acl[0]['createdby']) && !$this->hasRole('user-' . $acl[0]['createdby']))
+		{
+			$role = new Zend_Acl_Role('user-' . $acl[0]['createdby']);
+			$this->addRole($role);
+			$this->allow($role, $object);
+		}
+
+		foreach ($acl as $a)
+		{
+			if (!empty($a['user_id']))
+			{
+				$role = new Zend_Acl_Role('user-' . $a['user_id']);
+				if (!$this->hasRole($role))
+					$this->addRole($role);
+				$this->allow($role, $object, $a['privilege']);
+			}
+
+			if (!empty($a['role']))
+			{
+				$role = new Zend_Acl_Role('group-' . $a['role']);
+				if (!$this->hasRole($role))
+					$this->addRole($role);
+				$this->allow($role, $object, $a['privilege']);
+			}
+		}
 	}
 
 	public function setUser(Luna_User $user)

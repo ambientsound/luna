@@ -21,6 +21,12 @@ class Luna_Form extends Zend_Form
 		return parent::init();
 	}
 
+	public function setRequest(Zend_Controller_Request_Abstract $request)
+	{
+		$base = Zend_Controller_Front::getInstance()->getBaseUrl();
+		$this->setAction($base . '/' . $request->getControllerName() . '/' . $request->getActionName());
+	}
+
 	public function removeElements($elements)
 	{
 		if (empty($elements) || !is_array($elements))

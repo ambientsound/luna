@@ -53,8 +53,13 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 	 */
 	public final function get($id)
 	{
-		$o = $this->find($id)->current();
-		return (empty($o) ? null : $o->toArray());
+		return new Luna_Object($this, $this->_get($id));
+	}
+
+	public function _get($id)
+	{
+		$o = $this->find($id);
+		return (empty($o) ? null : current($o->toArray()));
 	}
 
 	public function getFull($id)
@@ -65,6 +70,29 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 	public function getTableName()
 	{
 		return $this->_name;
+	}
+
+	public function getPrimaryKey()
+	{
+		$this->_setupPrimaryKey();
+		return current($this->_primary);
+	}
+
+	public final function getAcl($id)
+	{
+		if (empty($id))
+			return null;
+
+		$key = $this->db->quoteIdentifier($this->_name) . '.' . $this->db->quoteIdentifier($this->getPrimaryKey());
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from($this->_name, array('createdby'))
+			->joinFull('privileges', $this->db->quoteIdentifier('privileges') . '.' . $this->db->quoteIdentifier('resource_id') . ' = ' . $key . ' AND ' .
+				$this->db->quoteInto('privileges.resource_type = ?', $this->_name),
+				array('user_id', 'role', 'privilege'))
+			->where($this->db->quoteInto($key . ' = ?', $id));
+
+		return $this->db->fetchAll($select);
 	}
 
 	public function deleteId($id)

@@ -34,9 +34,5 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 {
 	protected $_modelName = 'Model_Users';
 
-	public function indexAction()
-	{
-		$table = new Luna_Table('users', $this->model, $this->getRequest());
-		$this->view->table = $table;
-	}
+	protected $_formName = 'Form_Users';
 }

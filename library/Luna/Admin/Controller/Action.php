@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zend_Acl_Resource_Interface
+abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zend_Acl_Resource_Interface
 {
 	protected $_layout = 'index';
 
@@ -43,6 +43,10 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 	protected $_menu = null;
 
 	protected $path = null;
+
+	protected $_form = null;
+
+	protected $object = null;
 
 	protected $_ajaxMessage = false;
 
@@ -68,14 +72,18 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 		Zend_Registry::set('user', $this->user);
 		$this->view->user = $this->user;
 
-		/* Model setup */
-		if (!empty($this->_modelName))
-			$this->model = new $this->_modelName;
-
 		/* ACL setup */
 		$this->acl = new Luna_Acl_Module('acl');
 		$this->acl->setUser($this->user);
 		Zend_Registry::set('acl', $this->acl);
+
+		/* Model setup */
+		if (!empty($this->_modelName))
+		{
+			$this->model = new $this->_modelName;
+			/* Set up any object that might be edited */
+			$this->object = new Luna_Object($this->model, $this->getRequest()->getParam($this->model->getPrimaryKey()));
+		}
 
 		/* Menu */
 		$this->_menu = new Luna_Admin_Menu;
@@ -135,6 +143,7 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 		$this->view->request = $this->getRequest();
 		$this->view->params = $this->getRequest()->getParams();
 		$this->view->path = $this->path;
+		$this->view->form = $this->_form;
 
 		$session = new Zend_Session_Namespace('template');
 		$this->view->errors = $session->errors;
@@ -190,8 +199,122 @@ class Luna_Admin_Controller_Action extends Zend_Controller_Action implements Zen
 		return parent::_redirect($url, $options);
 	}
 
+	/*
+	 * Basic CRUD functionality.
+	 */
+	public function indexAction()
+	{
+		$this->acl->assert($this->model, 'list');
+		$table = new Luna_Table($this->model->getTableName(), $this->model, $this->getRequest());
+		$this->view->table = $table;
+	}
+
+	public function createAction()
+	{
+		$this->getForm();
+		$this->acl->assert($this->model, 'create');
+
+		if ($this->getRequest()->isPost())
+		{
+			if ($this->isValidPost())
+			{
+				if (($this->object->id = $this->saveToDb($this->_form->getValues())) !== false)
+					$this->redirToObject();
+			}
+		}
+	}
+
+	public function readAction()
+	{
+		$this->getForm();
+		if ($this->getRequest()->isPost())
+		{
+			if ($this->isValidPost())
+			{
+				$this->acl->assert($this->object, 'update');
+				if ($this->saveToDb($this->_form->getValues()))
+					$this->redirToObject();
+			}
+		}
+		else
+		{
+			if (!$this->object->load())
+				return $this->_redirect($this->getRequest()->getControllerName());
+
+			$this->acl->assert($this->object, 'read');
+			$this->_form->populate($this->object->toArray());
+		}
+	}
+
+	public function deleteAction()
+	{
+		if ($this->object->load())
+		{
+			$this->acl->assert($this->object, 'delete');
+
+			if ($this->model->deleteId($this->object->id))
+				$this->addMessage('object_deleted');
+			else
+				$this->addError('object_not_deleted');
+		}
+
+		$this->_redirect($this->getRequest()->getControllerName());
+	}
+
+	public function redirToObject()
+	{
+		$request = $this->getRequest();
+		$this->_redirect('/' . $request->getControllerName() . '/read/' . $this->model->getPrimaryKey() . '/' . $this->object->id);
+	}
+
+	public function saveToDb($values)
+	{
+		if ($values instanceof Luna_Object)
+			$values = $values->toArray();
+
+		try
+		{
+			if (($id = $this->model->inject($values)) != false)
+			{
+				$this->addMessage('object_saved');
+				return $id;
+			}
+		}
+		catch (Zend_Db_Exception $e)
+		{
+			$this->addError('object_failed_save_db', array($e->getMessage()));
+			return false;
+		}
+
+		$this->addError('object_failed_save');
+		return false;
+	}
+
+	public function isValidPost()
+	{
+		if (empty($this->_form))
+			if ($this->getForm() == null)
+				return false;
+
+		return $this->_form->isValid($this->getRequest()->getParams());
+	}
+
 	public function getResourceId()
 	{
 		return 'controller-' . $this->getRequest()->getControllerName();
+	}
+
+	public function getForm()
+	{
+		if (!empty($this->_form))
+			return $this->_form;
+
+		if (empty($this->_formName))
+			return null;
+
+		$this->_form = new $this->_formName;
+		$this->_form->setRequest($this->getRequest());
+
+		return $this->_form;
 	}
 }

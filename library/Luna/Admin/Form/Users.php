@@ -30,68 +30,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Stdclass implements Iterator
+class Luna_Admin_Form_Users extends Luna_Form
 {
-	protected $_data = null;
-
-	private $_iter = 0;
-
-	public function __set($name, $value)
+	public function init()
 	{
-		$this->_data[$name] = $value;
-	}
+		parent::init();
 
-	public function __get($name)
-	{
-		if (empty($this->_data))
-			return null;
+		$this->addElement('Hidden', 'id');
+		$this->addElement('Text', 'username', array('required' => true));
+		$this->addElement('Text', 'email', array(
+			'required'	=> true,
+			'validators'	=> array(
+				'EmailAddress'
+			)));
+		$this->addElement('Password', 'password');
+		$this->addElement('Submit', 'submit');
 
-		if (array_key_exists($name, $this->_data))
-			return $this->_data[$name];
-
-		return null;
-	}
-
-	public function __isset($name)
-	{
-		return isset($this->_data[$name]);
-	}
-
-	public function __unset($name)
-	{
-		unset($this->_data[$name]);
-	}
-
-	public function toArray()
-	{
-		return (array)$this->_data;
-	}
-
-	/*
-	 * Iterator functions
-	 */
-	public function rewind()
-	{
-		$this->_iter = 0;
-	}
-
-	public function current()
-	{
-		return $this->_data[$this->_iter];
-	}
-
-	public function key()
-	{
-		return $this->_iter;
-	}
-
-	public function next()
-	{
-		++$this->_iter;
-	}
-
-	public function valid()
-	{
-		return ($this->_iter >= 0 && $this->_iter < count($this->_data));
+		$this->resetDecorators();
 	}
 }
