@@ -1,9 +1,9 @@
 <table cellspacing="0" cellpadding="0" border="0">
 	<tr>
 		{foreach $config.fields as $field}
-			{if $params.order == 'asc'}{$order='desc'}{else}{$order='asc'}{/if}
+			{if $params.order == 'asc' && $params.sort == $field}{$order='desc'}{else}{$order='asc'}{/if}
 			<th><a class="{if $params.sort == $field}active{/if}" href="{url sort=$field order=$order}">{t}{$config.prefix}{$field}{/t}</a>
-			{if $params.sort == $field} {if $params.order == 'desc'}&uarr;{else}&darr;{/if}{/if}
+			{if $params.sort == $field}{if $params.order == 'desc'}&darr;{else}&uarr;{/if}{/if}
 			</th>
 		{/foreach}
 	</tr>
