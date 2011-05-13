@@ -62,10 +62,10 @@ a
 
 #header
 {
-	background: url('/admin/images/header-gradient.png') repeat-x top left;
-	height: 100px;
+	background: -moz-linear-gradient(top, #0b2971, #0a3871);
+	height: 50px;
 	color: #f2f2cc;
-	border-bottom: 2px solid #0A193A;
+	border-bottom: 1px solid #0A193A;
 }
 
 #header img
@@ -389,6 +389,11 @@ table th a
 {
 	color: white;
 	text-decoration: none;
+}
+
+table th a:hover
+{
+	text-decoration: underline;
 }
 
 table th a.active

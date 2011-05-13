@@ -8,7 +8,7 @@
 	</head>
 	<body>
 		<div id="header">
-			<a href="/admin"><img src="/admin/images/header.png" /></a>
+			<a href="/admin"><img src="/admin/images/logo.png" /></a>
 			<span class="domain">{$domainname}</span>
 		</div>
 
