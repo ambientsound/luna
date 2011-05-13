@@ -18,6 +18,9 @@ class Luna_Table_Row extends Luna_Stdclass
 			{
 				switch($this->_config['f'][$field]['type'])
 				{
+					case 'actions':
+						$celltype = 'Actions';
+						break;
 					case 'timestamp':
 						$celltype = 'Timestamp';
 						break;

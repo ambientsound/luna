@@ -9,6 +9,11 @@
 			{foreach $row as $cell}
 				{strip}
 					<td>
+					{if $cell->actions}
+						{foreach $cell->actions as $action}
+							<a href="/admin/{$params.controller}/{$action}/{$table->primary}/{$row->{$table->primary}}">{t}{$config.prefix}action_{$action}{/t}</a> &nbsp;
+						{/foreach}
+					{/if}
 					{if $cell->link}<a href="/admin/{$params.controller}/{$cell->link}/{$table->primary}/{$row->{$table->primary}}">{/if}
 					{$cell}
 					{if $cell->link}</a>{/if}

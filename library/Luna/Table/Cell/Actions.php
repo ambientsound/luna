@@ -30,42 +30,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Cell_Abstract
+class Luna_Table_Cell_Actions extends Luna_Table_Cell_Abstract
 {
-	protected $_field = null;
-
-	protected $_conf = null;
-
-	protected $_config = null;
-
-	protected $_row = null;
-
-	public function __get($name)
+	public function init()
 	{
-		if (empty($this->_conf))
-			return null;
+		if (!isset($this->_config['actions']))
+			return;
 
-		if (isset($this->_conf[$name]))
-			return $this->_conf[$name];
-
-		return null;
-	}
-
-	public function __construct($config, $row, $field)
-	{
-		$this->_config = $config;
-		$this->_field = $field;
-		$this->_row = $row;
-
-		if (!empty($this->_config['f'][$field]))
-			$this->_conf = $this->_config['f'][$field];
-
-		if (method_exists($this, 'init'))
-			$this->init();
+		$this->_conf['actions'] = explode(' ', $this->_config['actions']);
 	}
 
 	public function __toString()
 	{
-		return (string) $this->_row[$this->_field];
+		return '';
 	}
 }
