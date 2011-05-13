@@ -65,7 +65,7 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 			$values = $object->toArray();
 		}
 
-		if (array_search('superuser', $this->user->roles) !== false && array_search('superuser', $object->roles) === false)
+		if ($object->id == $this->user->id && array_search('superuser', $this->user->roles) !== false && array_search('superuser', $object->roles) === false)
 			$values['roles'][] = 'superuser';
 
 		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
