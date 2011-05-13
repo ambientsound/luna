@@ -66,6 +66,6 @@ class Luna_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$viewRenderer->view->addHelperPath(realpath(LUNA_PATH. '/library/Luna/View/Helper'), 'Luna_View_Helper');
 
 		Zend_Paginator::setDefaultScrollingStyle('Elastic');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.tpl');
+		Zend_View_Helper_PaginationControl::setDefaultViewPartial('pagination.tpl');
 	}
 }

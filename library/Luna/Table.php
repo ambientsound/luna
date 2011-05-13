@@ -81,6 +81,7 @@ class Luna_Table implements Iterator
 		/* Pagination */
 		$this->_paginator->setCurrentPageNumber($page);
 		$this->_paginator->setItemCountPerPage($limit);
+		$this->_paginator->setView(Luna_View_Smarty::factory());
 	}
 
 	public function __toString()

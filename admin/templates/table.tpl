@@ -26,3 +26,5 @@
 		</tr>
 	{/foreach}
 </table>
+
+{$table->getPaginator()}
