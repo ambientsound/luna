@@ -385,6 +385,18 @@ table th
 	text-shadow: 1px 1px 3px black;
 }
 
+table th a
+{
+	color: white;
+	text-decoration: none;
+}
+
+table th a.active
+{
+	font-weight: bold;
+	text-decoration: underline;
+}
+
 table td.buttons img
 {
 	margin-right: 4px;

@@ -1,7 +1,10 @@
 <table cellspacing="0" cellpadding="0" border="0">
 	<tr>
 		{foreach $config.fields as $field}
-			<th>{t}{$config.prefix}{$field}{/t}</th>
+			{if $params.order == 'asc'}{$order='desc'}{else}{$order='asc'}{/if}
+			<th><a class="{if $params.sort == $field}active{/if}" href="{url sort=$field order=$order}">{t}{$config.prefix}{$field}{/t}</a>
+			{if $params.sort == $field} {if $params.order == 'desc'}&uarr;{else}&darr;{/if}{/if}
+			</th>
 		{/foreach}
 	</tr>
 	{foreach $table as $row}
