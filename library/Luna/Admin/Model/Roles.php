@@ -47,7 +47,7 @@ class Luna_Admin_Model_Roles extends Luna_Db_Table
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from('users_roles', 'role')
-			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
+			->where($this->db->quoteIdentifier('user_id') . ' = ' . $this->db->quote($userId));
 
 		return $this->db->fetchCol($select);
 	}

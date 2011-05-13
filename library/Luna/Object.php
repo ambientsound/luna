@@ -119,7 +119,12 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 			$this->_loaded = true;
 		}
 
-		$this->_resId = $this->_model->getTableName() . '-' . $this->_data[$this->_pk];
+		if (empty($this->_data[$this->_pk]))
+			$this->_resId = $this->_model->getResourceId();
+		else
+			$this->_resId = $this->_model->getTableName() . '-' . $this->_data[$this->_pk];
+
+		return true;
 	}
 
 	/*

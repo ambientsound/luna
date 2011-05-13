@@ -72,6 +72,18 @@ class Luna_Acl extends Zend_Acl
 		if (empty(self::$_role))
 			return false;
 
+		if (!($resource instanceof Zend_Acl_Resource_Interface))
+			$resource = new Zend_Acl_Resource($resource);
+
+		if (!$this->has($resource))
+		{
+			/* Lazy loading of resource ACL */
+			if ($resource instanceof Luna_Object)
+				$this->loadObject($resource);
+			else
+				$this->addResource($resource);
+		}
+
 		try
 		{
 			foreach (self::$_role as $role)
@@ -90,18 +102,6 @@ class Luna_Acl extends Zend_Acl
 
 	public function assert($resource, $action)
 	{
-		if (!($resource instanceof Zend_Acl_Resource_Interface))
-			$resource = new Zend_Acl_Resource($resource);
-
-		if (!$this->has($resource))
-		{
-			/* Lazy loading of resource ACL */
-			if ($resource instanceof Luna_Object)
-				$this->loadObject($resource);
-			else
-				$this->addResource($resource);
-		}
-
 		if (!$this->can($resource, $action))
 		{
 			if ($resource instanceof Zend_Acl_Resource_Interface)

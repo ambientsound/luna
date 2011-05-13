@@ -41,4 +41,39 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 		$this->_menu->addsub('index');
 		$this->_menu->addsub('create');
 	}
+
+	public function saveToDb($values)
+	{
+		if (!($values instanceof Luna_Object))
+		{
+			$object = new Luna_Object($this->model, $values);
+		}
+		else
+		{
+			$object = $values;
+			$values = $object->toArray();
+		}
+
+		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
+		{
+			$this->acl->assert($object, 'superuser');
+			return parent::saveToDb($object);
+		}
+
+		$object->reload();
+		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
+			$this->acl->assert($object, 'superuser');
+
+		return parent::saveToDb($values);
+	}
+
+	public function getForm()
+	{
+		parent::getForm();
+		$roles = $this->model->getRoleList();
+		$roles = array_combine($roles, $roles);
+		foreach ($roles as &$role)
+			$role = 'role_' . $role;
+		$this->_form->roles->setMultiOptions($roles);
+	}
 }

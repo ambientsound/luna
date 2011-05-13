@@ -32,6 +32,28 @@
 
 class Luna_Admin_Model_Users extends Luna_Db_Table
 {
+	public function _get($id)
+	{
+		$select = $this->select()
+			->from($this->_name)
+			->setIntegrityCheck(false)
+			->joinLeft('users_roles', 'users_roles.user_id = users.id', 'role')
+			->where($this->db->quoteInto('users.id = ?', $id));
+
+		$user = $this->db->fetchAll($select);
+		if (empty($user))
+			return $user;
+
+		$u = $user[0];
+		unset($u['role']);
+		foreach ($user as $us)
+		{
+			$u['roles'][] = $us['role'];
+		}
+
+		return $u;
+	}
+
 	public function getByUsername($username)
 	{
 		$select = $this->select()
@@ -60,7 +82,16 @@ class Luna_Admin_Model_Users extends Luna_Db_Table
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from('users_roles', 'role')
-			->where($this->db->quoteIdentifier('user') . ' = ' . $this->db->quote($userId));
+			->where($this->db->quoteIdentifier('user_id') . ' = ' . $this->db->quote($userId));
+
+		return $this->db->fetchCol($select);
+	}
+
+	public function getRoleList()
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('roles', 'role');
 
 		return $this->db->fetchCol($select);
 	}
@@ -97,13 +128,54 @@ class Luna_Admin_Model_Users extends Luna_Db_Table
 	{
 		$table = new Luna_Db_Table('users_roles');
 		return $table->insert(array(
-			'user'	=> $userid,
-			'role'	=> $role
+			'user_id'	=> $userid,
+			'role'		=> $role
 		));
+	}
+
+	/*
+	 * Adds a role to a user.
+	 */
+	public function setUserRoles($userid, $roles)
+	{
+		$table = new Luna_Db_Table('users_roles');
+
+		if (empty($roles))
+		{
+			$table->delete($this->db->quoteInto('user_id = ?', $userid));
+			return true;
+		}
+
+		$existingroles = $this->db->fetchCol($table->select()->from('users_roles', 'role')->where($this->db->quoteInto('user_id = ?', $userid)));
+
+		$deleteroles = $roles;
+		foreach ($deleteroles as &$role)
+			$role = $this->db->quote($role);
+		$table->delete($this->db->quoteInto('user_id = ? AND role NOT IN ', $userid) . '(' . join(',', $deleteroles) . ')');
+
+		$newroles = array();
+		foreach ($roles as $role)
+			if (array_search($role, $existingroles) === false)
+				$newroles[] = $role;
+
+		if (empty($newroles))
+			return true;
+
+		foreach ($newroles as $role)
+		{
+			if (!$table->insert(array(
+				'user_id'	=> $userid,
+				'role'		=> $role
+			))) return false;
+		}
+
+		return true;
 	}
 
 	public function inject($data)
 	{
+		$this->db->beginTransaction();
+
 		if (empty($data['password']))
 		{
 			unset($data['password']);
@@ -114,6 +186,14 @@ class Luna_Admin_Model_Users extends Luna_Db_Table
 			$data['password'] = $hash->HashPassword($data['password']);
 		}
 
-		return parent::inject($data);
+		$roles = $data['roles'];
+		unset($data['roles']);
+
+		$id = parent::inject($data);
+		if ($id != false && $this->setUserRoles($id, $roles) && $this->db->commit())
+			return $id;
+
+		$this->db->rollBack();
+		return false;
 	}
 }

@@ -44,6 +44,7 @@ class Luna_Admin_Form_Users extends Luna_Form
 				'EmailAddress'
 			)));
 		$this->addElement('Password', 'password');
+		$this->addElement('Multiselect', 'roles');
 		$this->addElement('Submit', 'submit');
 
 		$this->resetDecorators();
