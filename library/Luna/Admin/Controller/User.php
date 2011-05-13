@@ -42,6 +42,17 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 		$this->_menu->addsub('create');
 	}
 
+	public function deleteAction()
+	{
+		if ($this->object->load() && array_search('superuser', $this->object->roles) !== false)
+			$this->acl->assert($object, 'superuser');
+
+		if ($this->object->id == $this->user->id)
+			throw new Zend_Exception($this->translate('error_cant_delete_yourself'));
+
+		return parent::deleteAction();
+	}
+
 	public function saveToDb($values)
 	{
 		if (!($values instanceof Luna_Object))
@@ -53,6 +64,9 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 			$object = $values;
 			$values = $object->toArray();
 		}
+
+		if (array_search('superuser', $this->user->roles) !== false && array_search('superuser', $object->roles) === false)
+			$values['roles'][] = 'superuser';
 
 		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
 		{

@@ -97,7 +97,7 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 
 	public function deleteId($id)
 	{
-		return $this->delete($data, $this->db->quoteIdentifier($this->_primary) . ' = ' . $this->db->quote($id));
+		return $this->delete($this->db->quoteIdentifier($this->_primary) . ' = ' . $this->db->quote($id));
 	}
 
 	public function updateId($data, $id)

@@ -99,6 +99,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 
 		$this->view->setTemplate($this->_getParam('controller') . '/' . $this->_getParam('action'));
 		$this->path->init($this->getRequest());
+
 		/* User check. Skip if we are going to the error or auth controller. */
 		$ct = $this->getRequest()->getControllerName();
 		if ($ct == 'error' || $ct == 'auth')

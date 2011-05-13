@@ -115,21 +115,14 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 			$values = $this->_form->getValues();
 			$values['username'] = 'admin';
 			$values['enabled'] = true;
+			$values['roles'] = array('superuser');
 
 			try
 			{
-				$this->model->db->beginTransaction();
-
 				if ($userid = $this->model->inject($values))
 				{
-					if ($this->model->addUserRole($userid, 'superuser'))
-					{
-						if ($this->model->db->commit())
-						{
-							$this->addMessage('luna_initial_setup_succeeded');
-							return $this->_redirect('/auth/login');
-						}
-					}
+					$this->addMessage('luna_initial_setup_succeeded');
+					return $this->_redirect('/auth/login');
 				}
 			}
 			catch (Zend_Exception $e)
