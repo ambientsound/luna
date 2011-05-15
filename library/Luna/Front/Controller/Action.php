@@ -36,52 +36,58 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 	protected $_t = null;
 
-	protected $user = null;
+	protected $_meta = array();
 
-	protected $acl = null;
-
-	protected $_menu = null;
-
-	protected $_ajaxMessage = false;
+	protected $path = null;
 
 	public function init()
 	{
-		/* Master template setup */
-		if ($this->getRequest()->isXmlHttpRequest())
-		{
-			$this->view->setMaster(null);
-			$this->view->ajax = true;
-		}
-		else
-		{
-			$this->view->setMaster('layouts/' . $this->_layout);
-		}
+		/* Master template */
+		$this->view->setMaster('layouts/' . $this->_layout);
 
 		/* Translation setup */
 		$this->_t = Zend_Registry::get('Zend_Translate');
+
+		/* Breadpath/title setup */
+		$this->path = new Luna_View_Helper_Title;
 	}
 
+	public function setMeta($name, $content, $params = null)
+	{
+		$this->_meta[$name] = $this->_t->_($content, $params);
+	}
+
+	public function preDispatch()
+	{
+		parent::preDispatch();
+
+		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
+		$this->path->add('/', 'title');
+	}
+
+	public function postDispatch()
+	{
+		parent::postDispatch();
+
+		$this->view->request = $this->getRequest();
+		$this->view->params = $this->getRequest()->getParams();
+		$this->view->path = $this->path;
+		$this->view->meta = $this->_meta;
+
+		$session = new Zend_Session_Namespace('template');
+		$this->view->errors = $session->errors;
+		$this->view->messages = $session->messages;
+		unset($session->errors);
+		unset($session->messages);
+
+		if ($this->_ajaxMessage)
+		{
+			echo $this->view->render('message.tpl');
+			$this->_helper->viewRenderer->setNoRender(true);
+		}
+	}
 	public function translate($key, $params = null)
 	{
 		return $this->_t->_($key, $params);
-	}
-
-	public function clearTitle()
-	{
-		$session = new Zend_Session_Namespace('template');
-		unset($session->title);
-	}
-
-	public function addTitle($title, $params = null)
-	{
-		$session = new Zend_Session_Namespace('template');
-		$session->title[] = $this->_t->_($title, $params);
-	}
-
-	public function delTitle()
-	{
-		$session = new Zend_Session_Namespace('template');
-		unset($session->title[count($session->title) - 1]);
-		$session->title = array_values($session->title);
 	}
 }

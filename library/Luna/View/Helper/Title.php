@@ -30,9 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_View_Helper_Title
+class Luna_View_Helper_Title extends Luna_Iterator
 {
-	protected $_title = array();
+	protected $_data = array();
 
 	protected $_translator = null;
 
@@ -70,7 +70,7 @@ class Luna_View_Helper_Title
 
 	public function add($uri, $title, $params = null)
 	{
-		$this->_title[] = array(
+		$this->_data[] = array(
 			'url'		=> $uri,
 			'title'		=> $this->_translator->_($title, $params)
 		);
@@ -78,16 +78,16 @@ class Luna_View_Helper_Title
 
 	public function clear()
 	{
-		$this->_title = array();
+		$this->_data = array();
 	}
 
 	public function getTitle($mode = 'condensed', $separator = ' | ', $direction = 'ltr')
 	{
-		if (empty($this->_title))
+		if (empty($this->_data))
 			return null;
 
 		$titles = array();
-		foreach ($this->_title as $t)
+		foreach ($this->_data as $t)
 		{
 			if (!empty($t['title']))
 				$titles[] = $t['title'];

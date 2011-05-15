@@ -94,5 +94,5 @@ $controller->setBaseUrl('/admin');
 $controller->registerPlugin(new Luna_Controller_Plugin_Localload);
 
 /* Here we go! */
-$application = new Zend_Application(APPLICATION_ENV, ADMIN_PATH . '/configs/application.ini');
+$application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
 $application->bootstrap()->run();

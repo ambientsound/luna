@@ -98,4 +98,24 @@ class Luna_Object_Node extends Luna_Object
 
 		return $this->_parentId;
 	}
+
+	public function loadNode()
+	{
+		if (!$this->load())
+			return false;
+
+		$select = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from($this->nodetype)
+			->where($this->_model->db->quoteInto('id = ?', $this->id))
+			->limit(1);
+
+		$meta = $this->_model->db->fetchRow($select);
+		if (empty($meta))
+			return false;
+
+		$this->_data = array_merge($this->_data, $meta);
+
+		return true;
+	}
 }

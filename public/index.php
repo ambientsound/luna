@@ -35,6 +35,7 @@ function debug($data)
 	echo '<pre>';
 	var_dump($data);
 	echo '</pre>';
+	ob_flush();
 }
 
 function diebug($data)
@@ -43,6 +44,7 @@ function diebug($data)
 	var_dump($data);
 	debug_print_backtrace();
 	echo '</pre>';
+	ob_flush();
 	die;
 }
 
@@ -79,13 +81,22 @@ $autoloader->registerNamespace('Smarty_');
 $autoloader->unshiftAutoloader('smartyAutoload', 'Smarty_');
 
 /* Bring up resource autoloading */
-$resourceLoader = new Zend_Loader_Autoloader_Resource(array(
-	'basePath'  => FRONT_PATH,
+$resourceLoader = new Luna_Loader_Autoloader_Resource(array(
+	'basePath'  => array(LOCAL_PATH, APPLICATION_PATH),
 	'namespace' => '',
 ));
 $resourceLoader->addResourceType('form', 'forms', 'Form');
 $resourceLoader->addResourceType('model', 'models', 'Model');
 
+/* Register our multi-plugin. */
+$controller = Zend_Controller_Front::getInstance();
+$controller->registerPlugin(new Luna_Controller_Plugin_Localload);
+
+/* Set up our routing */
+$routeconfig = Luna_Config::get('routes');
+$router = Zend_Controller_Front::getInstance()->getRouter();
+$router->addConfig($routeconfig, 'routes');
+
 /* Here we go! */
-$application = new Zend_Application(APPLICATION_ENV, FRONT_PATH . '/configs/application.ini');
+$application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
 $application->bootstrap()->run();

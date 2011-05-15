@@ -35,6 +35,22 @@ class Luna_Template
 	/*
 	 * Scan a relative front directory (global, local) for template files.
 	 */
+	public static function getFrontTemplatePath($type, $filename)
+	{
+		$template = glob(LOCAL_FRONT_PATH . '/templates/' . $type . '/' . $filename . '.tpl');
+		if (!empty($template))
+			return current($template);
+
+		$template = glob(FRONT_PATH . '/templates/' . $type . '/' . $filename . '.tpl');
+		if (!empty($template))
+			return current($template);
+
+		return null;
+	}
+
+	/*
+	 * Scan a relative front directory (global, local) for template files.
+	 */
 	public static function scanFront($relative)
 	{
 		$global = self::scan_abs(FRONT_PATH . '/templates/' . $relative);

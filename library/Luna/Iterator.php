@@ -30,42 +30,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Stdclass extends Luna_Iterator
+class Luna_Iterator implements Iterator
 {
 	protected $_data = null;
 
 	private $_iter = 0;
-
-	public function __set($name, $value)
-	{
-		$this->_data[$name] = $value;
-	}
-
-	public function __get($name)
-	{
-		if (empty($this->_data))
-			return null;
-
-		if (array_key_exists($name, $this->_data))
-			return $this->_data[$name];
-
-		return null;
-	}
-
-	public function __isset($name)
-	{
-		return isset($this->_data[$name]);
-	}
-
-	public function __unset($name)
-	{
-		unset($this->_data[$name]);
-	}
-
-	public function toArray()
-	{
-		return (array)$this->_data;
-	}
 
 	/*
 	 * Iterator functions
@@ -93,5 +62,10 @@ class Luna_Stdclass extends Luna_Iterator
 	public function valid()
 	{
 		return ($this->_iter >= 0 && $this->_iter < count($this->_data));
+	}
+
+	public final function count()
+	{
+		return empty($this->_data) ? 0 : count($this->_data);
 	}
 }

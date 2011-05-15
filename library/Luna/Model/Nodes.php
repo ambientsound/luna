@@ -32,6 +32,18 @@
 
 class Luna_Model_Nodes extends Luna_Db_Table
 {
+	public function _get($id)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('nodes')
+			->joinLeft($this->_nodeTable, "nodes.id = {$this->_nodeTable}.id", '*')
+			->where('nodes.id = ' . $this->db->quote($id))
+			->limit(1);
+
+		return $this->db->fetchRow($select);
+	}
+
 	public function getNodeFromUrl($url)
 	{
 		$url = explode('/', trim($url, '/'));
@@ -87,9 +99,12 @@ class Luna_Model_Nodes extends Luna_Db_Table
 		if (count($build) != count($url))
 			return null;
 		
-		$node = $this->get($a['id']);
+		$node = $this->_get($a['id']);
 		$node['path'] = $build;
 		$node['url'] = '/' . join('/', $url);
+
+		$node = new Luna_Object_Node($this, $node);
+		$node->loadNode();
 
 		return $node;
 	}

@@ -32,18 +32,6 @@
 
 abstract class Luna_Admin_Model_Nodes extends Luna_Model_Nodes
 {
-	public function _get($id)
-	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('nodes')
-			->joinLeft($this->_name, "nodes.id = {$this->_name}.id", '*')
-			->where('nodes.id = ' . $this->db->quote($id))
-			->limit(1);
-
-		return $this->db->fetchRow($select);
-	}
-
 	public function deleteId($id)
 	{
 		$node = new Luna_Object($this, $id);
@@ -73,7 +61,7 @@ abstract class Luna_Admin_Model_Nodes extends Luna_Model_Nodes
 
 	public function getTemplates()
 	{
-		return Luna_Template::scanFront('page');
+		return Luna_Template::scanFront($this->_nodeTable);
 	}
 
 	public function getXmlList()
@@ -150,6 +138,7 @@ abstract class Luna_Admin_Model_Nodes extends Luna_Model_Nodes
 				$nodedata[$key] = $value;
 		}
 
+		$nodedata['nodetype'] = $this->_nodeTable;
 		$parent->load();
 
 		/* Some SQL strings */

@@ -62,7 +62,7 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 	 */
 	public function load($rowid = null)
 	{
-		if ($this->_loaded && $rowid == $this->_data[$this->_pk])
+		if ($this->_loaded && ($rowid == null || $rowid == $this->_data[$this->_pk]))
 			return $this->_data;
 
 		if (empty($rowid))
