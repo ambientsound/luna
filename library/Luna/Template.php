@@ -30,51 +30,57 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Template
 {
-	protected $_row = null;
-	
-	protected $_config = null;
-
-	public function __construct($config, $row)
+	/*
+	 * Scan a relative front directory (global, local) for template files.
+	 */
+	public static function scanFront($relative)
 	{
-		$this->_config = $config;
-		$this->_row = $row;
+		$global = self::scan_abs(FRONT_PATH . '/templates/' . $relative);
+		$local = self::scan_abs(LOCAL_FRONT_PATH . '/templates/' . $relative);
 
-		foreach ($this->_config['fields'] as $field)
+		return array_merge($global, $local);
+	}
+
+	/*
+	 * Scan a relative admin directory (global, local) for template files.
+	 */
+	public static function scanAdmin($relative)
+	{
+		$global = self::scan_abs(ADMIN_PATH . '/templates/' . $relative);
+		$local = self::scan_abs(LOCAL_ADMIN_PATH . '/templates/' . $relative);
+
+		return array_merge($global, $local);
+	}
+
+	/*
+	 * Scan a directory for template files.
+	 */
+	public static function scan_abs($dir)
+	{
+		$translate = Zend_Registry::get('Zend_Translate');
+		$files = glob(realpath($dir) . '/*.tpl');
+		if (empty($files))
+			return array();
+
+		$templates = array();
+		foreach ($files as $f)
 		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
+			$h = fopen($f, 'r');
+			while (($line = fgets($h)) !== false)
 			{
-				switch($this->_config['f'][$field]['type'])
+				$matches = array();
+				if (preg_match('/^\s*\*\s+Template:\s+(.*)$/', $line, $matches))
 				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
+					$templates[basename($f, '.tpl')] = $translate->_($matches[1]);
+					fclose($h);
+					continue 2;
 				}
 			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
+			fclose($h);
 		}
-	}
 
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
-
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
+		return $templates;
 	}
 }

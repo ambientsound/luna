@@ -30,51 +30,72 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Object_Node extends Luna_Object
 {
-	protected $_row = null;
-	
-	protected $_config = null;
+	protected $_parentId = null;
 
-	public function __construct($config, $row)
+	public function clear()
 	{
-		$this->_config = $config;
-		$this->_row = $row;
-
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				switch($this->_config['f'][$field]['type'])
-				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
-				}
-			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
+		parent::clear();
+		$this->_parentId = null;
 	}
 
-	public function __get($key)
+	public function isLeaf()
 	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
+		if (!$this->load())
+			return true;
 
-		return null;
+		return ($this->lft + 1 == $this->rgt);
 	}
 
-	public function key()
+	public function getAncestors()
 	{
-		if (!$this->valid())
+		if (!$this->load())
+			return false;
+
+		$select = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
+			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
+			->order('nodes.lft ASC');
+
+		return $this->_model->db->fetchAll($select);
+	}
+
+	public function getDescendants()
+	{
+		if (!$this->load())
+			return false;
+
+		$select = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
+			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
+			->order('nodes.lft ASC');
+
+		return $this->_model->db->fetchAll($select);
+	}
+
+	public function getParentId()
+	{
+		if (!$this->load())
 			return null;
 
-		return $this->_config['fields'][$this->_iter];
+		if (empty($this->_parentId))
+		{
+			$select = $this->_model->select()
+				->setIntegrityCheck(false)
+				->from('nodes', 'id')
+				->where($this->_model->db->quoteInto('lft < ?', $this->lft))
+				->where($this->_model->db->quoteInto('rgt > ?', $this->rgt))
+				->order('lft DESC')
+				->limit(1);
+
+			$this->_parentId = $this->_model->db->fetchOne($select);
+		}
+
+		return $this->_parentId;
 	}
 }

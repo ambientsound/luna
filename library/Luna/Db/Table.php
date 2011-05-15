@@ -42,7 +42,8 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 
 		$this->db =& Zend_Registry::get('db');
 
-		if (!empty($this->_name) && ($pos = strrpos(get_class($this), 'Model_')) !== false)
+		$clsname = get_class($this);
+		if ($this->_name == $clsname && ($pos = strrpos($clsname, 'Model_')) !== false)
 		{
 			$this->_name = strtolower(substr(get_class($this), $pos + 6));
 		}
@@ -83,12 +84,16 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 		if (empty($id))
 			return null;
 
-		$key = $this->db->quoteIdentifier($this->_name) . '.' . $this->db->quoteIdentifier($this->getPrimaryKey());
+		$tablename = $this->_name;
+		if ($this instanceof Luna_Admin_Model_Nodes)
+			$tablename = 'nodes';
+
+		$key = $this->db->quoteIdentifier($tablename) . '.' . $this->db->quoteIdentifier($this->getPrimaryKey());
 		$select = $this->select()
 			->setIntegrityCheck(false)
-			->from($this->_name, array('createdby'))
+			->from($tablename, array('createdby'))
 			->joinFull('privileges', $this->db->quoteIdentifier('privileges') . '.' . $this->db->quoteIdentifier('resource_id') . ' = ' . $key . ' AND ' .
-				$this->db->quoteInto('privileges.resource_type = ?', $this->_name),
+				$this->db->quoteInto('privileges.resource_type = ?', $tablename),
 				array('user_id', 'role', 'privilege'))
 			->where($this->db->quoteInto($key . ' = ?', $id));
 
@@ -115,21 +120,29 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 	 */
 	public function inject($data)
 	{
-		if (!empty($data[current($this->_primary)]))
+		$this->_setupPrimaryKey();
+		$primary = current($this->_primary);
+
+		if (!empty($data[$primary]))
 		{
-			if ($this->updateId($data, $data[current($this->_primary)]) !== FALSE)
-			{
-				return $data[current($this->_primary)];
-			}
-			else
-			{
-				return false;
-			}
+			$record = $this->db->fetchOne($this->select()
+				->from($this->_name, $primary)
+				->where($primary . ' = ' . $this->db->quote($data[$primary]))
+				->limit(1));
+		}
+
+		if (empty($record))
+		{
+			if (($id = $this->insert($data)) !== false)
+				return $id;
 		}
 		else
 		{
-			return $this->insert($data);
+			if ($this->updateId($data, $record) !== false)
+				return $record;
 		}
+
+		return false;
 	}
 
 	/*

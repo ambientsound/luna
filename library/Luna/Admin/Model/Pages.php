@@ -30,51 +30,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Admin_Model_Pages extends Luna_Admin_Model_Nodes
 {
-	protected $_row = null;
-	
-	protected $_config = null;
+	protected $_nodeTable = 'pages';
 
-	public function __construct($config, $row)
+	public function inject($data)
 	{
-		$this->_config = $config;
-		$this->_row = $row;
-
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				switch($this->_config['f'][$field]['type'])
-				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
-				}
-			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
+		return parent::injectSimple($data);
 	}
 
-	public function __get($key)
+	public function selectPages()
 	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('nodes', array('created', 'modified', 'slug', 'title', 'metadesc', 'template'))
+			->join($this->_name, "nodes.id = {$this->_name}.id", '*');
 
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
+		return $select;
 	}
 }

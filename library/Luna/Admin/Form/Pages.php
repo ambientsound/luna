@@ -30,51 +30,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Admin_Form_Pages extends Luna_Form
 {
-	protected $_row = null;
-	
-	protected $_config = null;
-
-	public function __construct($config, $row)
+	public function init()
 	{
-		$this->_config = $config;
-		$this->_row = $row;
+		parent::init();
 
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				switch($this->_config['f'][$field]['type'])
-				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
-				}
-			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
-	}
+		$this->addElement('Hidden', 'id');
+		$this->addElement('Text', 'title', array('required' => true));
+		$this->addElement('Textarea', 'body');
+		$this->addElement('Text', 'slug', array('required' => true));
+		$this->addElement('Select', 'parent');
+		$this->addElement('Text', 'url', array('readonly' => true, 'ignore' => true));
+		//$this->addElement('Picture', 'picture');
+		$this->addElement('Text', 'kicker');
+		$this->addElement('Textarea', 'lead');
+		$this->addElement('Select', 'template');
+		$this->addElement('Textarea', 'metadesc');
 
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
+		$this->addElement('Submit', 'submit');
 
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
+		$this->id->addValidator('Digits');
+		$this->slug->addFilter(new Luna_Filter_Slug);
+		$this->resetDecorators();
 	}
 }

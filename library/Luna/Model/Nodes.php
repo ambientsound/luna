@@ -30,51 +30,67 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Model_Nodes extends Luna_Db_Table
 {
-	protected $_row = null;
-	
-	protected $_config = null;
-
-	public function __construct($config, $row)
+	public function getNodeFromUrl($url)
 	{
-		$this->_config = $config;
-		$this->_row = $row;
-
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				switch($this->_config['f'][$field]['type'])
-				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
-				}
-			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
-	}
-
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
-
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
+		$url = explode('/', trim($url, '/'));
+		if (empty($url))
 			return null;
 
-		return $this->_config['fields'][$this->_iter];
+		$quoteurl = array();
+		foreach ($url as $u)
+			$quoteurl[] = $this->db->quote($u);
+
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->where('slug IN (' . join(',', $quoteurl) . ')')
+			->order('lft ASC');
+
+		$nodes = $this->db->fetchAll($select);
+
+		if (empty($nodes))
+			return null;
+
+		$lft = 0;
+		$rgt = 9999999;
+		$build = array();
+		foreach ($nodes as $a)
+		{
+			if (($a['lft'] > $lft && $a['rgt'] < $rgt) && ($a['slug'] == $url[count($build)]))
+			{
+				$build[] = $a;
+				$lft = $a['lft'];
+				$rgt = $a['rgt'];
+			}
+			else
+			{
+				if ($a['slug'] == $url[0])
+				{
+					$build = array($a);
+					$lft = $a['lft'];
+					$rgt = $a['rgt'];
+				}
+				else
+				{
+					$build = array();
+					$lft = 0;
+					$rgt = 9999999;
+				}
+			}
+
+			if (count($build) == count($url))
+				break;
+		}
+
+		if (count($build) != count($url))
+			return null;
+		
+		$node = $this->get($a['id']);
+		$node['path'] = $build;
+		$node['url'] = '/' . join('/', $url);
+
+		return $node;
 	}
 }

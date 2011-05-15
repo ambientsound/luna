@@ -30,51 +30,42 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 {
-	protected $_row = null;
-	
-	protected $_config = null;
+	protected $_modelName = 'Model_Pages';
 
-	public function __construct($config, $row)
+	protected $_formName = 'Form_Pages';
+
+	public function setupMenu()
 	{
-		$this->_config = $config;
-		$this->_row = $row;
+		$this->_menu->addsub('index');
+		$this->_menu->addsub('create');
+	}
 
-		foreach ($this->_config['fields'] as $field)
+	public function getForm()
+	{
+		parent::getForm();
+		$available = $this->model->getFormTreeList();
+		$this->_form->parent->setMultiOptions($available);
+		$this->object = new Luna_Object_Node($this->model, $this->object->id);
+
+		$this->_form->template->setMultiOptions($this->model->getTemplates());
+
+		if (empty($this->object->id))
+			return $this->_form;
+
+		$this->_form->parent->removeMultiOption($this->object->id);
+		$this->_form->parent->setValue($this->object->getParentId());
+
+		if (!$this->object->isLeaf())
 		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				switch($this->_config['f'][$field]['type'])
-				{
-					case 'actions':
-						$celltype = 'Actions';
-						break;
-					case 'timestamp':
-						$celltype = 'Timestamp';
-						break;
-					default:
-				}
-			}
-			$celltype = 'Luna_Table_Cell' . (empty($celltype) ? $celltype : '_' . $celltype);
-			$this->_data[] = new $celltype($this->_config, $row, $field);
+			/* Disable moving entire trees for now. */
+			$this->_form->parent->setAttrib('disabled', true);
+			$this->_form->parent->setDescription('node_children_locked');
 		}
-	}
 
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
+		$this->_form->url->setValue($available[$this->object->getParentId()] . (substr($available[$this->object->getParentId()], -1, 1) == '/' ? null : '/') . $this->object->slug);
 
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
+		return $this->_form;
 	}
 }
