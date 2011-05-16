@@ -30,69 +30,86 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Controller_Action extends Zend_Controller_Action
+class Luna_Admin_Model_Options extends Luna_Model_Option
 {
-	protected $_layout = 'index';
-
-	protected $_t = null;
-
-	protected $_meta = array();
-
-	protected $path = null;
-
-	protected $options = null;
-
-	public function init()
+	protected function buildTree()
 	{
-		/* Master template */
-		$this->view->setMaster('layouts/' . $this->_layout);
+		$config = Luna_Config::get('options');
+		self::$_tree = array();
 
-		/* Translation setup */
-		$this->_t = Zend_Registry::get('Zend_Translate');
-
-		/* Option manager */
-		$this->options = new Model_Options;
-
-		/* Breadpath/title setup */
-		$this->path = new Luna_View_Helper_Title;
-	}
-
-	public function setMeta($name, $content, $params = null)
-	{
-		$this->_meta[$name] = $this->_t->_($content, $params);
-	}
-
-	public function preDispatch()
-	{
-		parent::preDispatch();
-
-		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
-		$this->path->add('/', $this->options->getValue('main.title'));
-	}
-
-	public function postDispatch()
-	{
-		parent::postDispatch();
-
-		$this->view->request = $this->getRequest();
-		$this->view->params = $this->getRequest()->getParams();
-		$this->view->path = $this->path;
-		$this->view->meta = $this->_meta;
-
-		$session = new Zend_Session_Namespace('template');
-		$this->view->errors = $session->errors;
-		$this->view->messages = $session->messages;
-		unset($session->errors);
-		unset($session->messages);
-
-		if ($this->_ajaxMessage)
+		foreach ($config as $module => $opts)
 		{
-			echo $this->view->render('message.tpl');
-			$this->_helper->viewRenderer->setNoRender(true);
+			foreach ($opts as $option => $params)
+			{
+				if (empty($params))
+					$params = self::$_defaults;
+				else
+					$params = array_merge(self::$_defaults, $params->toArray());
+
+				self::$_tree[$module . '.' . $option] = $params;
+			}
 		}
 	}
-	public function translate($key, $params = null)
+
+	public function getModuleOptions($module)
 	{
-		return $this->_t->_($key, $params);
+		if (empty(self::$_tree))
+		{
+			$this->buildTree();
+			$this->populate();
+		}
+		
+		$opts = array();
+		$module .= '.';
+		foreach (self::$_tree as $key => $opt)
+		{
+			if (substr($key, 0, strlen($module)) == $module)
+				$opts[$key] = $opt;
+		}
+
+		return $opts;
+	}
+
+	public function getModules()
+	{
+		if (empty(self::$_tree))
+		{
+			$this->buildTree();
+			$this->populate();
+		}
+		
+		$opts = array();
+		foreach (self::$_tree as $key => $opt)
+		{
+			if (($pos = strpos($key, '.')) === false)
+				continue;
+
+			$opts[substr($key, 0, $pos)] = true;
+		}
+
+		return array_keys($opts);
+	}
+
+	public function setOptions($values)
+	{
+		$this->db->beginTransaction();
+
+		foreach ($values as $key => $value)
+		{
+			if (!$this->inject(array(
+				'key'	=> $key,
+				'value'	=> $value
+			)))
+			{
+				$this->db->rollBack();
+				return false;
+			}
+		}
+
+		if ($this->db->commit())
+			return true;
+
+		$this->db->rollBack();
+		return false;
 	}
 }

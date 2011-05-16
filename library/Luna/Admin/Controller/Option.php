@@ -30,69 +30,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Controller_Action extends Zend_Controller_Action
+class Luna_Admin_Controller_Option extends Luna_Admin_Controller_Action
 {
-	protected $_layout = 'index';
+	protected $_modelName = 'Model_Options';
 
-	protected $_t = null;
+	protected $_formName = 'Form_Options';
 
-	protected $_meta = array();
-
-	protected $path = null;
-
-	protected $options = null;
-
-	public function init()
+	public function indexAction()
 	{
-		/* Master template */
-		$this->view->setMaster('layouts/' . $this->_layout);
+		$opts = $this->model->getModuleOptions($this->_getParam('section', 'main'));
+		if (empty($opts))
+			return $this->_redirect('/option');
 
-		/* Translation setup */
-		$this->_t = Zend_Registry::get('Zend_Translate');
+		$modules = $this->model->getModules();
+		foreach ($modules as $module)
+			$this->_menu->addsub('index', array('section' => $module), $this->translate('menu_option_' . $module));
 
-		/* Option manager */
-		$this->options = new Model_Options;
+		$this->getForm();
+		$this->_form->setup($opts);
 
-		/* Breadpath/title setup */
-		$this->path = new Luna_View_Helper_Title;
-	}
-
-	public function setMeta($name, $content, $params = null)
-	{
-		$this->_meta[$name] = $this->_t->_($content, $params);
-	}
-
-	public function preDispatch()
-	{
-		parent::preDispatch();
-
-		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
-		$this->path->add('/', $this->options->getValue('main.title'));
-	}
-
-	public function postDispatch()
-	{
-		parent::postDispatch();
-
-		$this->view->request = $this->getRequest();
-		$this->view->params = $this->getRequest()->getParams();
-		$this->view->path = $this->path;
-		$this->view->meta = $this->_meta;
-
-		$session = new Zend_Session_Namespace('template');
-		$this->view->errors = $session->errors;
-		$this->view->messages = $session->messages;
-		unset($session->errors);
-		unset($session->messages);
-
-		if ($this->_ajaxMessage)
+		if ($this->getRequest()->isPost() && $this->_form->isValid($_POST))
 		{
-			echo $this->view->render('message.tpl');
-			$this->_helper->viewRenderer->setNoRender(true);
+			$this->acl->assert($this->model, 'set');
+
+			$values = $this->_form->getValues();
+
+			if ($this->model->setOptions($values))
+			{
+				$this->addMessage('options_saved');
+				return $this->_redirect('/option/index/section/' . $this->_getParam('section', 'main'));
+			}
+			$this->addError('options_not_saved');
 		}
-	}
-	public function translate($key, $params = null)
-	{
-		return $this->_t->_($key, $params);
 	}
 }

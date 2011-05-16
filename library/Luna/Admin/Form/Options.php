@@ -30,69 +30,52 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Controller_Action extends Zend_Controller_Action
+class Luna_Admin_Form_Options extends Luna_Form
 {
-	protected $_layout = 'index';
-
-	protected $_t = null;
-
-	protected $_meta = array();
-
-	protected $path = null;
-
-	protected $options = null;
-
-	public function init()
+	public function setup(array $options)
 	{
-		/* Master template */
-		$this->view->setMaster('layouts/' . $this->_layout);
+		if (empty($options))
+			return false;
 
-		/* Translation setup */
-		$this->_t = Zend_Registry::get('Zend_Translate');
-
-		/* Option manager */
-		$this->options = new Model_Options;
-
-		/* Breadpath/title setup */
-		$this->path = new Luna_View_Helper_Title;
-	}
-
-	public function setMeta($name, $content, $params = null)
-	{
-		$this->_meta[$name] = $this->_t->_($content, $params);
-	}
-
-	public function preDispatch()
-	{
-		parent::preDispatch();
-
-		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
-		$this->path->add('/', $this->options->getValue('main.title'));
-	}
-
-	public function postDispatch()
-	{
-		parent::postDispatch();
-
-		$this->view->request = $this->getRequest();
-		$this->view->params = $this->getRequest()->getParams();
-		$this->view->path = $this->path;
-		$this->view->meta = $this->_meta;
-
-		$session = new Zend_Session_Namespace('template');
-		$this->view->errors = $session->errors;
-		$this->view->messages = $session->messages;
-		unset($session->errors);
-		unset($session->messages);
-
-		if ($this->_ajaxMessage)
+		foreach ($options as $key => $opt)
 		{
-			echo $this->view->render('message.tpl');
-			$this->_helper->viewRenderer->setNoRender(true);
+			switch($opt['type'])
+			{
+				case 'text':
+				default:
+					$type = 'Text';
+					break;
+				case 'textarea':
+					$type = 'Textarea';
+					break;
+			}
+			$key = str_replace('.', '_', $key);
+			$this->addElement($type, $key);
+			if (empty($opt['null']))
+			{
+				$this->$key->setAttrib('required', true);
+				$this->$key->setRequired(true);
+			}
+			if (isset($opt['value']))
+			{
+				$this->$key->setValue($opt['value']);
+			}
 		}
+
+		$this->setPrefix('option');
+		$this->addElement('Submit', 'submit');
+
+		$this->resetDecorators();
 	}
-	public function translate($key, $params = null)
+
+	public function getValues()
 	{
-		return $this->_t->_($key, $params);
+		$values = parent::getValues();
+		$newvals = array();
+
+		foreach ($values as $key => $val)
+			$newvals[str_replace('_', '.', $key)] = $val;
+
+		return $newvals;
 	}
 }

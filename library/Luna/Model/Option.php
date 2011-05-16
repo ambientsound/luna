@@ -30,69 +30,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Controller_Action extends Zend_Controller_Action
+class Luna_Model_Option extends Luna_Db_Table
 {
-	protected $_layout = 'index';
+	protected $_primary = 'key';
 
-	protected $_t = null;
+	protected static $_tree = null;
 
-	protected $_meta = array();
+	protected static $_defaults = array(
+		'type'		=> 'text',
+		'null'		=> true
+	);
 
-	protected $path = null;
-
-	protected $options = null;
-
-	public function init()
+	protected function populate()
 	{
-		/* Master template */
-		$this->view->setMaster('layouts/' . $this->_layout);
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('options', array('key', 'value'));
 
-		/* Translation setup */
-		$this->_t = Zend_Registry::get('Zend_Translate');
+		$options = $this->db->fetchPairs($select);
 
-		/* Option manager */
-		$this->options = new Model_Options;
-
-		/* Breadpath/title setup */
-		$this->path = new Luna_View_Helper_Title;
-	}
-
-	public function setMeta($name, $content, $params = null)
-	{
-		$this->_meta[$name] = $this->_t->_($content, $params);
-	}
-
-	public function preDispatch()
-	{
-		parent::preDispatch();
-
-		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
-		$this->path->add('/', $this->options->getValue('main.title'));
-	}
-
-	public function postDispatch()
-	{
-		parent::postDispatch();
-
-		$this->view->request = $this->getRequest();
-		$this->view->params = $this->getRequest()->getParams();
-		$this->view->path = $this->path;
-		$this->view->meta = $this->_meta;
-
-		$session = new Zend_Session_Namespace('template');
-		$this->view->errors = $session->errors;
-		$this->view->messages = $session->messages;
-		unset($session->errors);
-		unset($session->messages);
-
-		if ($this->_ajaxMessage)
+		if (!empty($options))
+		foreach ($options as $key => $value)
 		{
-			echo $this->view->render('message.tpl');
-			$this->_helper->viewRenderer->setNoRender(true);
+			self::$_tree[$key]['value'] = $value;
 		}
 	}
-	public function translate($key, $params = null)
+
+	public function getOption($key)
 	{
-		return $this->_t->_($key, $params);
+		if (empty(self::$_tree))
+			$this->populate();
+
+		return !isset(self::$_tree[$key]) ? null : self::$_tree[$key];
+	}
+
+	public function getValue($key)
+	{
+		if (empty(self::$_tree))
+			$this->populate();
+
+		return !isset(self::$_tree[$key]) ? null : self::$_tree[$key]['value'];
 	}
 }
