@@ -48,6 +48,10 @@ class Luna_Admin_Form_Options extends Luna_Form
 				case 'textarea':
 					$type = 'Textarea';
 					break;
+				case 'bool':
+				case 'checkbox':
+					$type = 'Checkbox';
+					break;
 			}
 			$key = str_replace('.', '_', $key);
 			$this->addElement($type, $key);

@@ -151,3 +151,13 @@
 {
 	margin: 0 0 1.5em;
 }
+
+
+/*
+ * Options
+ */
+
+#form_options #main_metadesc
+{
+	height: 4em;
+}
