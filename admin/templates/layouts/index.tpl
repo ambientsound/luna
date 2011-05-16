@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<link rel="stylesheet" type="text/css" href="/admin/style.css" />
+		<link rel="stylesheet" type="text/css" href="/admin/forms.css" />
 	</head>
 	<body>
 		<div id="header">

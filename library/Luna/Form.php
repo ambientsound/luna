@@ -172,7 +172,7 @@ class Luna_Form extends Zend_Form
 		$this->_prefixStr = $str;
 	}
 
-	public function render()
+	public function prepareRender()
 	{
 		if (!empty($this->_prefixStr))
 		{
@@ -192,7 +192,11 @@ class Luna_Form extends Zend_Form
 				$e->setLegend($this->_prefixStr . '_' . $e->getName());
 			}
 		}
+	}
 
+	public function render()
+	{
+		$this->prepareRender();
 		return parent::render();
 	}
 }

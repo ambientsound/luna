@@ -30,31 +30,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Pages extends Luna_Form
+class Luna_Filter_Humantime implements Zend_Filter_Interface
 {
-	public function init()
+	private static $ts = null;
+
+	public function filter($value)
 	{
-		parent::init();
+		$ts = strtotime($value);
+		if (empty($ts))
+			return Zend_Registry::get('Zend_Translate')->_('timestamp_zero');
 
-		$this->addElement('Hidden', 'id');
-		$this->addElement('Text', 'title', array('required' => true));
-		$this->addElement('Textarea', 'body');
-		$this->addElement('Text', 'slug', array('required' => true));
-		$this->addElement('Select', 'parent');
-		//$this->addElement('Picture', 'picture');
-		$this->addElement('Text', 'kicker');
-		$this->addElement('Textarea', 'lead');
-		$this->addElement('Select', 'template');
-		$this->addElement('Text', 'modified', array('ignore' => true, 'readonly' => true));
-		$this->addElement('Textarea', 'metadesc');
+		if (empty(self::$ts))
+			self::$ts = Luna_Config::get('site')->formats->timestamp;
 
-		$this->addElement('Submit', 'submit');
-
-		$this->id->addValidator('Digits');
-		$this->slug->addFilter(new Luna_Filter_Slug);
-		$this->modified->addFilter(new Luna_Filter_Humantime);
-
-		$this->addDisplayGroup(array('kicker', 'lead'), 'editorial');
-		$this->resetDecorators();
+		return strftime(self::$ts, $ts);
 	}
 }

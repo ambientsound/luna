@@ -32,12 +32,13 @@
 
 class Luna_Table_Cell_Timestamp extends Luna_Table_Cell_Abstract
 {
+	private static $ht = null;
+
 	public function __toString()
 	{
-		$ts = strtotime($this->_row[$this->_field]);
-		if (empty($ts))
-			return Zend_Registry::get('Zend_Translate')->_('timestamp_zero');
+		if (empty(self::$ht))
+			self::$ht = new Luna_Filter_Humantime;
 
-		return strftime(Luna_Config::get('site')->formats->timestamp, $ts);
+		return self::$ht->filter($this->_row[$this->_field]);
 	}
 }
