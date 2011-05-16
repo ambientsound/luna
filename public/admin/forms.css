@@ -141,3 +141,8 @@
 	float: right;
 	width: 20em;
 }
+
+#form_page .preview
+{
+	margin: 0 0 1.5em;
+}

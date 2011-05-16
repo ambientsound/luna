@@ -49,6 +49,11 @@ a
 	background: transparent;
 }
 
+a:hover
+{
+	color: #915437;
+}
+
 .errordump pre,
 .errordump .stacktrace
 {
@@ -71,6 +76,7 @@ a
 #header img
 {
 	float: left;
+	margin-left: 1em;
 }
 
 .domain
@@ -81,16 +87,43 @@ a
 	margin: 42px 0 0 20px;
 }
 
-#container
+/*
+ * Errors and messages
+ */
+div.message, div.error
 {
-	margin: 0;
-	padding: 0 14px 1em;
-	background: white url('/pub/cms/leftmenu.png') repeat-y top left;
+	font-size: 1.2em;
+	padding: 1em;
+	-moz-box-shadow: 2px 2px 2px black;
 }
+
+div.message
+{
+	background: #c0ffa7;
+}
+
+div.error
+{
+	background: #ffa7a7;
+}
+
+form ul.errors
+{
+	font-weight: bold;
+	list-style: none;
+	padding: 0 0 0 1em;
+	margin: 0.3em 0;
+	color: red;
+}
+
+/*
+ * Left menu
+ */
 
 #leftmenu
 {
-	width: 150px;
+	width: 13em;
+	padding: 0 1.5em;
 	background: transparent;
 	float: left;
 }
@@ -112,8 +145,8 @@ a
 #leftmenu ul li a
 {
 	text-decoration: none;
-	width: 130px;
-	padding: 0 10px;
+	color: black;
+	padding: 0 1em;
 	background: -moz-linear-gradient(top, #edefff, #dfe2ff);
 	display: block;
 }
@@ -126,8 +159,8 @@ a
 
 #leftmenu ul li a:hover
 {
-	text-decoration: underline;
-	background: -moz-linear-gradient(top, #cdd0ff, #a5aaff);
+	background: -moz-linear-gradient(top, #915437, #663b26);
+	background: -moz-linear-gradient(top, #f5c78d, #dd9762);
 }
 
 #leftmenu ul li.active a
@@ -150,15 +183,16 @@ a
 
 #leftmenu ul ul li a
 {
-	color: black;
-	width: 120px;
 	background: transparent;
+	padding-left: 0.5em;
+	color: black;
 }
 
 #leftmenu ul ul li a:hover
 {
 	text-decoration: underline;
 	background: transparent;
+	color: black;
 }
 
 #leftmenu ul ul li.active a
@@ -180,7 +214,7 @@ h1
 	color: black;
 	border-bottom: 1px solid #EFECF9;
 	font-weight: normal;
-	padding: 0.3em 0 0.3em 180px;
+	padding: 0.3em 0 0.3em 10.75em;
 	font-size: 1.5em;
 	margin: 1em 0 0.5em 0;
 }
@@ -204,7 +238,7 @@ h3
 
 #content
 {
-	margin-left: 180px;
+	margin-left: 16em;
 	padding-right: 2em;
 }
 

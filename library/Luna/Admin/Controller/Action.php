@@ -222,6 +222,10 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 				if (($this->object->id = $this->saveToDb($this->_form->getValues())) !== false)
 					$this->redirToObject();
 			}
+			else
+			{
+				$this->addError('form_incomplete');
+			}
 		}
 	}
 
@@ -235,6 +239,10 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 				$this->acl->assert($this->object, 'update');
 				if ($this->saveToDb($this->_form->getValues()))
 					$this->redirToObject();
+			}
+			else
+			{
+				$this->addError('form_incomplete');
 			}
 		}
 		else

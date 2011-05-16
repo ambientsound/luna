@@ -5,6 +5,6 @@
 {/foreach}
 {foreach $errors as $e}
 	<div class="error">
-		<strong>{t}error{/t}:</strong> {$e}
+		{$e}
 	</div>
 {/foreach}

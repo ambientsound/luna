@@ -4,6 +4,12 @@
 	<div class="right">
 		{$form->modified}
 		{$form->submit}
+		{if $form->modified->getUnfilteredValue()}
+			<div class="preview"><a target="_blank" href="{strip}
+				{$form->parent->getMultiOption($form->parent->getValue())}{if $form->parent->getValue() || $form->slug->getValue()}/{/if}
+				{$form->slug->getValue()}
+			{/strip}">&raquo; {t}page_goto_preview{/t}</a></div>
+		{/if}
 		{$form->template}
 		{$form->metadesc}
 	</div>
@@ -13,9 +19,10 @@
 			{$form->slug->renderLabel()}
 			{strip}
 				<span class="server">http://{$smarty.server.SERVER_NAME}</span>
-				<span class="parent">{$form->parent->getMultiOption($form->parent->getValue())}/</span>
+				<span class="parent">{$form->parent->getMultiOption($form->parent->getValue())}{if $form->parent->getValue() || $form->slug->getValue()}/{/if}</span>
 				<span class="slug">{$form->slug->renderViewHelper()}</span>
 			{/strip}
+			{$form->slug->renderErrors()}
 		</div>
 		<div class="parent-selector">
 			{$form->parent}
