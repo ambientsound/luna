@@ -38,20 +38,25 @@ abstract class Luna_Admin_Model_Nodes extends Luna_Model_Nodes
 		if (!$node->load())
 			return false;
 		
-		$this->db->beginTransaction();
-
-		if (!parent::deleteId($node->id))
-		{
-			$this->db->rollBack();
-			return false;
-		}
-
+		$diff = $node->rgt - $node->lft + 1;
 		$tablename = $this->db->quoteIdentifier('nodes');
 		$lft = $this->db->quoteIdentifier('lft');
 		$rgt = $this->db->quoteIdentifier('rgt');
 
-		$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
-		$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
+		$this->db->beginTransaction();
+
+		try
+		{
+			/* FIXME: we should really do an ACL check to see if we are allowed to delete all the objects. */
+			$this->db->query("DELETE FROM {$tablename} WHERE {$lft} >= {$node->lft} AND {$rgt} <= {$node->rgt}");
+			$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - {$diff} WHERE {$lft} >= {$node->lft}");
+			$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - {$diff} WHERE {$rgt} >= {$node->lft}");
+		}
+		catch (Zend_Db_Exception $e)
+		{
+			$this->db->rollBack();
+			return false;
+		}
 
 		if ($this->db->commit())
 			return true;
