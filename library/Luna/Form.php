@@ -148,11 +148,13 @@ class Luna_Form extends Zend_Form
 			switch($e->getType())
 			{
 				case 'Zend_Form_Element_Hidden':
-				case 'Zend_Form_Element_Submit':
 					$e->setDecorators(array('ViewHelper'));
 					break;
 				case 'Zend_Form_Element_File':
 					$e->setDecorators(array('File', 'ElementWrapper', 'Errors', 'Description', 'Label', 'DivWrapper'));
+					break;
+				case 'Zend_Form_Element_Submit':
+					$e->setDecorators(array('ViewHelper', 'ElementWrapper', 'Errors', 'Description', 'DivWrapper'));
 					break;
 				default:
 					$e->setDecorators(array('ViewHelper', 'ElementWrapper', 'Errors', 'Description', 'Label', 'DivWrapper'));
