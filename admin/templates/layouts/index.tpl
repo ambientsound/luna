@@ -15,9 +15,13 @@
 		<div id="header">
 			<a href="/admin"><img src="/admin/images/logo.png" /></a>
 			<div class="meta">
-				<span class="domain"><strong>{$options->main->title}</strong> running at {$smarty.server.SERVER_NAME}</span>
+				<span class="title">{$options->main->title}</span>
 				<span>&nbsp; &middot; &nbsp;</span>
-				<span class="user">{t}topbar_welcome{/t} {$user->username}</span>
+				<span class="domain"><a href="http://{$smarty.server.SERVER_NAME}">{$smarty.server.SERVER_NAME}</a></span>
+				{if $user->isValid()}
+					<span>&nbsp; &middot; &nbsp;</span>
+					<span class="user">{t}topbar_welcome{/t} {$user->username}</span>
+				{/if}
 			</div>
 		</div>
 

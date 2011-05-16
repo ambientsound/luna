@@ -74,6 +74,18 @@ a:hover
 	position: relative;
 }
 
+#header a
+{
+	color: #f2f2cc;
+	text-decoration: none;
+}
+
+#header a:hover
+{
+	color: #f2f2cc;
+	text-decoration: underline;
+}
+
 #header img
 {
 	float: left;
@@ -89,8 +101,9 @@ a:hover
 	bottom: 3px;
 }
 
-#header .domain
+#header .title
 {
+	font-weight: bold;
 }
 
 /*
