@@ -32,6 +32,13 @@
 
 class Luna_Admin_Model_Options extends Luna_Model_Option
 {
+	protected static $_tree = null;
+
+	protected static $_defaults = array(
+		'type'		=> 'text',
+		'null'		=> true
+	);
+
 	protected function buildTree()
 	{
 		$config = Luna_Config::get('options');
@@ -51,43 +58,43 @@ class Luna_Admin_Model_Options extends Luna_Model_Option
 		}
 	}
 
-	public function getModuleOptions($module)
+	protected function collapse(array $src, $base = null)
 	{
-		if (empty(self::$_tree))
+		$re = array();
+
+		foreach ($src as $key => $a)
 		{
-			$this->buildTree();
-			$this->populate();
-		}
-		
-		$opts = array();
-		$module .= '.';
-		foreach (self::$_tree as $key => $opt)
-		{
-			if (substr($key, 0, strlen($module)) == $module)
-				$opts[$key] = $opt;
+			if (is_array($a))
+				$re = array_merge($re, $this->collapse($a, (!strlen($base) ? $key : $base . '.' .$key)));
+			else
+				$re[$base][$key] = $a;
 		}
 
-		return $opts;
+		return $re;
+	}
+
+	public function getModuleOptions($module)
+	{
+		$config = Luna_Config::get('options');
+		if (empty($config->$module))
+			return null;
+
+		$options = $this->collapse($config->$module->toArray(), $module);
+		$dbopts = $this->getAll();
+
+		foreach ($dbopts as $key => $value)
+		{
+			if (isset($options[$key]))
+				$options[$key]['value'] = $value;
+		}
+
+		return $options;
 	}
 
 	public function getModules()
 	{
-		if (empty(self::$_tree))
-		{
-			$this->buildTree();
-			$this->populate();
-		}
-		
-		$opts = array();
-		foreach (self::$_tree as $key => $opt)
-		{
-			if (($pos = strpos($key, '.')) === false)
-				continue;
-
-			$opts[substr($key, 0, $pos)] = true;
-		}
-
-		return array_keys($opts);
+		$config = Luna_Config::get('options');
+		return array_keys($config->toArray());
 	}
 
 	public function setOptions($values)

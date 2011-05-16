@@ -46,6 +46,8 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 
 	protected $_form = null;
 
+	protected $options = null;
+
 	protected $object = null;
 
 	protected $_ajaxMessage = false;
@@ -88,6 +90,9 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		/* Menu */
 		$this->_menu = new Luna_Admin_Menu;
 		$this->setupMenu();
+
+		/* Option manager */
+		$this->options = new Model_Options;
 
 		/* Breadpath/title setup */
 		$this->path = new Luna_View_Helper_Title;
@@ -145,6 +150,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		$this->view->params = $this->getRequest()->getParams();
 		$this->view->path = $this->path;
 		$this->view->form = $this->_form;
+		$this->view->options = $this->options;
 
 		$session = new Zend_Session_Namespace('template');
 		$this->view->errors = $session->errors;

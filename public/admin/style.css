@@ -71,6 +71,7 @@ a:hover
 	height: 50px;
 	color: #f2f2cc;
 	border-bottom: 1px solid #0A193A;
+	position: relative;
 }
 
 #header img
@@ -79,12 +80,17 @@ a:hover
 	margin-left: 1em;
 }
 
-.domain
+#header .meta
 {
-	font: 18px Helvetica,Arial,sans-serif;
-	display: block;
-	float: left;
-	margin: 42px 0 0 20px;
+	color: #F2F2CC;
+	position: absolute;
+	text-shadow: 1px 1px 1px #0a193a;
+	left: 16em;
+	bottom: 3px;
+}
+
+#header .domain
+{
 }
 
 /*

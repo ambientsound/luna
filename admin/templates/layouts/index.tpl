@@ -14,7 +14,11 @@
 	<body>
 		<div id="header">
 			<a href="/admin"><img src="/admin/images/logo.png" /></a>
-			<span class="domain">{$domainname}</span>
+			<div class="meta">
+				<span class="domain"><strong>{$options->main->title}</strong> running at {$smarty.server.SERVER_NAME}</span>
+				<span>&nbsp; &middot; &nbsp;</span>
+				<span class="user">{t}topbar_welcome{/t} {$user->username}</span>
+			</div>
 		</div>
 
 		<h1>{$path->getTitle('top')}</h1>

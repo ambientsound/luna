@@ -67,7 +67,7 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		parent::preDispatch();
 
 		$this->view->setTemplate($this->getRequest()->getControllerName() . '/' . $this->getRequest()->getActionName());
-		$this->path->add('/', $this->options->getValue('main.title'));
+		$this->path->add('/', $this->options->main->title);
 	}
 
 	public function postDispatch()
@@ -78,6 +78,7 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		$this->view->params = $this->getRequest()->getParams();
 		$this->view->path = $this->path;
 		$this->view->meta = $this->_meta;
+		$this->view->options = $this->options;
 
 		$session = new Zend_Session_Namespace('template');
 		$this->view->errors = $session->errors;

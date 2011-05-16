@@ -34,41 +34,61 @@ class Luna_Model_Option extends Luna_Db_Table
 {
 	protected $_primary = 'key';
 
-	protected static $_tree = null;
+	protected static $_data = null;
 
-	protected static $_defaults = array(
-		'type'		=> 'text',
-		'null'		=> true
-	);
+	public function __get($key)
+	{
+		if (empty(self::$_data))
+			$this->populate();
 
-	protected function populate()
+		return !isset(self::$_data->$key) ? null : self::$_data->$key;
+	}
+
+	protected function getAll()
 	{
 		$select = $this->select()
 			->setIntegrityCheck(false)
-			->from('options', array('key', 'value'));
+			->from('options', array('key', 'value'))
+			->order('key ASC');
 
-		$options = $this->db->fetchPairs($select);
+		return $this->db->fetchPairs($select);
+	}
 
-		if (!empty($options))
-		foreach ($options as $key => $value)
+	protected function populate()
+	{
+		self::$_data = array();
+		$this->addpopulation(self::$_data, $this->getAll(), null);
+		self::$_data = new Zend_Config(self::$_data);
+	}
+
+	/*
+	 * Recursive function, builds a nested array of configuration variables.
+	 */
+	public function addpopulation(&$dest, &$src, $base)
+	{
+		reset($src);
+		$key = key($src);
+
+		while (!empty($src) && (!strlen($base) || substr($key, 0, strlen($base)) == $base))
 		{
-			self::$_tree[$key]['value'] = $value;
+			$key = (!strlen($base) ? $key : substr($key, strlen($base) + 1));
+			$deep = explode('.', $key);
+
+			/* Leaf node? */
+			if (count($deep) == 1)
+			{
+				$dest[$key] = array_shift($src);
+				$key = key($src);
+				continue;
+			}
+
+			/* Recurse into deeper level */
+			$key = $deep[0];
+			$dest[$key] = array();
+			$this->addpopulation($dest[$key], $src, (!strlen($base) ? $key : $base . '.' . $key));
+
+			reset($src);
+			$key = key($src);
 		}
-	}
-
-	public function getOption($key)
-	{
-		if (empty(self::$_tree))
-			$this->populate();
-
-		return !isset(self::$_tree[$key]) ? null : self::$_tree[$key];
-	}
-
-	public function getValue($key)
-	{
-		if (empty(self::$_tree))
-			$this->populate();
-
-		return !isset(self::$_tree[$key]) ? null : self::$_tree[$key]['value'];
 	}
 }
