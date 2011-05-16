@@ -59,6 +59,11 @@
 	background: #dfe2ff;
 }
 
+#form_page .selector
+{
+	height: 6em;
+}
+
 #form_page .url-selector
 {
 	float: left;

@@ -38,7 +38,7 @@ class Luna_Admin_Form_Pages extends Luna_Form
 
 		$this->addElement('Hidden', 'id');
 		$this->addElement('Text', 'title', array('required' => true));
-		$this->addElement('Textarea', 'body');
+		$this->addElement('Tinymce', 'body');
 		$this->addElement('Text', 'slug', array('required' => true));
 		$this->addElement('Select', 'parent');
 		//$this->addElement('Picture', 'picture');

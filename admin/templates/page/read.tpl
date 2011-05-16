@@ -15,17 +15,19 @@
 	</div>
 	<div class="left">
 		{$form->title}
-		<div class="url-selector">
-			{$form->slug->renderLabel()}
-			{strip}
-				<span class="server">http://{$smarty.server.SERVER_NAME}</span>
-				<span class="parent">{$form->parent->getMultiOption($form->parent->getValue())}{if $form->parent->getValue() || $form->slug->getValue()}/{/if}</span>
-				<span class="slug">{$form->slug->renderViewHelper()}</span>
-			{/strip}
-			{$form->slug->renderErrors()}
-		</div>
-		<div class="parent-selector">
-			{$form->parent}
+		<div class="selector">
+			<div class="url-selector">
+				{$form->slug->renderLabel()}
+				{strip}
+					<span class="server">http://{$smarty.server.SERVER_NAME}</span>
+					<span class="parent">{$form->parent->getMultiOption($form->parent->getValue())}{if $form->parent->getValue() || $form->slug->getValue()}/{/if}</span>
+					<span class="slug">{$form->slug->renderViewHelper()}</span>
+				{/strip}
+				{$form->slug->renderErrors()}
+			</div>
+			<div class="parent-selector">
+				{$form->parent}
+			</div>
 		</div>
 		{$form->body}
 		{$form->editorial}

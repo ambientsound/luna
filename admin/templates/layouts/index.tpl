@@ -5,7 +5,9 @@
 		<title>{$path->getTitle('condensed', ' &raquo; ', 'ltr')}</title>
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<script type="text/javascript" src="/admin/lib/jquery-1.6.1.min.js"></script>
+		<script type="text/javascript" src="/admin/lib/tinymce/jquery.tinymce.js"></script>
 		<script type="text/javascript" src="/admin/js/page.js"></script>
+		<script type="text/javascript" src="/admin/js/tinymce.js"></script>
 		<link rel="stylesheet" type="text/css" href="/admin/style.css" />
 		<link rel="stylesheet" type="text/css" href="/admin/forms.css" />
 	</head>

@@ -62,7 +62,7 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 			/* Disable moving entire trees for now. */
 			$this->_form->slug->setAttrib('readonly', true);
 			$this->_form->parent->setAttrib('disabled', true);
-			$this->_form->parent->setDescription('page_children_locked');
+			$this->_form->parent->addError('page_children_locked');
 		}
 
 		return $this->_form;
