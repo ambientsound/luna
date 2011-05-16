@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_View_Helper_FormSubmit extends Zend_View_Helper_FormText
+class Luna_View_Helper_FormSubmit extends Zend_View_Helper_FormElement
 {
 	public function formSubmit($name, $value = null, $attribs = null)
 	{

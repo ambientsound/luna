@@ -88,11 +88,6 @@ a
 	background: white url('/pub/cms/leftmenu.png') repeat-y top left;
 }
 
-.lfloat	{ float: left; margin: 1em 2em 1em 1em; }
-.rfloat	{ float: right; margin: 1em 1em 1em 2em; }
-.left { float: left; }
-.right { float: right; }
-
 #leftmenu
 {
 	width: 150px;
@@ -213,150 +208,6 @@ h3
 	padding-right: 10px;
 }
 
-#content .floatcontainer
-{
-	float: left;
-	width: 100%;
-}
-
-#content #main
-{
-	clear: both;
-}
-
-#articlecontent
-{
-	width: 100%;
-	height: 45em;
-}
-
-.connect_left
-{
-	width: 49%;
-	margin-right: 1%;
-	float: left;
-	height: 500px;
-	overflow-y: scroll;
-}
-
-.connect_right
-{
-	width: 48%;
-	margin-left: 1%;
-	float: left;
-	height: 500px;
-	overflow-y: scroll;
-}
-
-.sortable table
-{
-	padding: 2px;
-}
-
-.sortable table tr
-{
-	cursor: move;
-}
-
-.sortable table .nodrop
-{
-	cursor: inherit;
-}
-
-
-.inline
-{
-	display: inline !important;
-	width: auto !important;
-	clear: none !important;
-}
-
-.red
-{
-	color: #AA1910;
-	font-weight: bold;
-}
-
-.clear
-{
-	clear: both;
-}
-
-.thumbnailbox
-{
-	float: left;
-	clear: none !important;
-	margin: 0 1em 1em 0;
-	width: 180px;
-	height: 230px;
-	padding: 10px;
-	background: #EAECED;
-}
-
-.thumbnailbox img
-{
-	max-width: 180px;
-	max-height: 135px;
-}
-
-.pagestat
-{
-	text-align: center;
-	margin: 1em 0;
-}
-
-.new
-{
-	color: #7F5D35;
-	font-weight: bold;
-}
-
-.limit
-{
-	width: 5em;
-}
-
-.gallerylist
-{
-	background: #F7F5F9;
-	overflow-x: scroll;
-}
-
-.gallerybox
-{
-	width: 150px;
-	padding: 10px;
-	margin: 0 10px 10px 0;
-	text-align: center;
-	float: left;
-}
-
-.gallerybox_active
-{
-	background: #E2DCF5;
-}
-
-.gallerybox img
-{
-	border: 1px solid black;
-}
-
-.gallerybox .title
-{
-	font-family: "Georgia",sans-serif;
-	display: block;
-	font-style: italic;
-	color: black;
-	margin: 0.5em 0 0;
-}
-
-.subtitle
-{
-	font-style: italic;
-	margin: 0.2em 0 1em;
-	font-size: 0.9em;
-}
-
 table
 {
 	width: 100%;
@@ -417,73 +268,6 @@ table tr.gray
 	background: #edefff;
 }
 
-.table_drop_added
-{
-	background: #B7FF96 !important;
-}
-
-.table_drop_removed
-{
-	background: #FFA396 !important;
-}
-
-.table_drag
-{
-	background: #FFE496 !important;
-}
-
-.table_droptarget
-{
-	border: 2px solid #0A3871;
-	padding: 0 !important;
-}
-
-table tr.deleteselection td
-{
-	text-decoration: line-through;
-	font-weight: bold;
-	color: gray;
-}
-
-.invisible
-{
-	display: none !important;
-}
-
-table tr.editactive
-{
-	background: #EFEB7A;
-}
-
-table tr.editactive td
-{
-	border: 1px solid #C4BD00;
-	border-left: 0;
-	border-right: 0;
-}
-
-table td.space
-{
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-}
-
-table .locked
-{
-	background: #F7E4E0 !important;
-}
-
-table .expander
-{
-	cursor: pointer;
-}
-
-th.cb,
-td.cb
-{
-	width: 3em;
-}
-
 .pagination
 {
 	margin: 1.5em 0;
@@ -496,277 +280,37 @@ td.cb
 }
 
 
-
 /*
  * Form styles
  */
 
-.form
-{
-	margin: 1em 0;
-	background: #F5F6F9;
-	border: 1px solid #F1F2F5;
-	padding: 0 1em;
-}
-
 form
 {
+	margin: 1em 0;
 	padding: 0;
 	border: 0;
 	background: 0;
+	width: 50em;
 }
 
-form dt, form .hint
+input, textarea
 {
-	margin: 0.5em 0 0.5em;
+	width: 100%;
 }
 
-form dd .errors
-{
-	list-style-position: inside;
-	margin: 0.5em 0;
-	padding: 0;
-	color: #F82217;
-}
-
-.border
-{
-	border: 1px solid;
-	border-color: #BFB9D7;
-	border-left: 0;
-	border-right: 0;
-	padding: 0.9em;
-	margin: 0 0 2em;
-	background: #F6F5F8;
-}
-
-form input.small
-{
-	width: 3em !important;
-}
-
-form button
-{
-	width: auto;
-	margin: 1em 0 0;
-}
-
-#topsearch button
-{
-	margin: 0;
-}
-
-.invistext
-{
-	width: auto;
-	border: 0;
-	background: transparent;
-}
-
-select, input
-{
-	width: 30em;
-}
-
-input.customtitle
-{
-	width: auto;
-	display: block;
-	margin: 0 0 0.5em;
-}
-
-#submit
+.checkbox-element input
 {
 	width: auto;
 }
 
-.bigselect
-{
-	width: 20em;
-	height: 20em;
-}
-textarea.invistext
-{
-	height: 2.5em;
-	width: 100% !important;
-	border: 1px solid gray;
-	padding: 0.1em;
-}
-
-.invistext:hover
-{
-	background: #E2FFC9;
-}
-
-.invistext:focus,
-.invistext:active
-{
-	background: #F0FA9C;
-}
-
-input.i18n
+.submit-element input
 {
 	width: auto;
+	margin-top: 1em;
 }
 
-input.nobreak
-{
-	display: inline;
-}
-
-#formlist .formation
-{
-	margin: 1em 2em;
-}
-
-.formation p
-{
-	margin: 0.2em 0;
-}
-
-p.message
-{
-	border: 2px solid #9BF700;
-	background: #F3FFDF url('/admin/icons/info.png');
-}
-
-p.error
-{
-	border: 2px solid #F74700;
-	background: #FFDDCF url('/admin/icons/warning.png');
-}
-
-p.error, p.message
-{
-	border-left: 0;
-	border-right: 0;
-	padding: 1em 1em 1em 46px;
-	background-position: 10px center;
-	background-repeat: no-repeat;
-}
-
-.inlinetable
-{
-	width: auto;
-}
-
-.inlinetable,
-.inlinetable tr,
-.inlinetable th,
-.inlinetable td
-{
-	line-height: 1.2em;
-}
-
-.inlinetable th
-{
-	padding: 0.2em 1.5em 0.2em 0.1em;
-}
-
-
-
-
-/*
- * Special formation style - line up items
- */
-.tableform span
-{
-	display: none;
-}
-
-.tableform div
-{
-	float: none;
-	display: inline;
-}
-
-.tableform .group
-{
-	float: left;
-	clear: left;
-}
-
-.tableform input, .tableform select
-{
-	float: none;
-	display: inline;
-	width: auto;
-}
-
-.tableform button
+label
 {
 	display: block;
-}
-
-.tableform .duplicator
-{
-	display: block;
-}
-
-.terminator
-{
-	display: none;
-	clear: none;
-	float: left;
-}
-
-
-/*
- * Tabs-style menu
- */
-
-.tabs ul
-{
-	height: 22px;
-	border-bottom: 1px solid #DCD6EE;
-	margin: 0 0 1em;
-	padding: 0;
-}
-
-.tabs ul li
-{
-	display: inline;
-	list-style: none;
-}
-
-.tabs ul li a
-{
-	line-height: 12px;
-	background: transparent;
-	font-size: 12px;
-	margin: 0 0.5em 0 0.5em;
-	padding: 6px 0.9em 3px;
-	float: left;
-	font-weight: bold;
-	text-align: center;
-	text-decoration: none;
-}
-
-.tabs ul li a:hover
-{
-	text-decoration: underline;
-}
-
-.tabs ul li.active a
-{
-	border: 1px solid #DCD6EE;
-	background: transparent !important;
-	color: black !important;
-	padding-bottom: 4px !important;
-	padding-top: 5px !important;
-	border-bottom: 1px solid white;
-	text-decoration: none !important;
-	cursor: default !important;
-}
-
-.stat_table
-{
-	width: 48%;
-	margin-right: 1%;
-	float: left;
-}
-
-.stat_table h2
-{
-	clear: none;
+	margin: 0.8em 0 0.2em;
 }
