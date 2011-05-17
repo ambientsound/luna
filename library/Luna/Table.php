@@ -46,8 +46,6 @@ class Luna_Table implements Iterator
 
 	private $_iter = 0;
 
-	public $primary = null;
-
 	public function __construct($config, Zend_Db_Table $source, Zend_Controller_Request_Abstract $request)
 	{
 		if ($config instanceof Zend_Config)
@@ -63,7 +61,7 @@ class Luna_Table implements Iterator
 		$this->_config = array_merge(Luna_Config::get('table')->_defaultparams->toArray(), $this->_config);
 		$this->_model = $source;
 		$this->_info = $this->_model->info();
-		$this->primary = current($this->_info['primary']);
+		$this->_config['primary'] = current($this->_info['primary']);
 
 		/* Determine source */
 		$fn = 'select' . strtoupper($this->_info['name'][0]) . strtolower(substr($this->_info['name'], 1));
@@ -82,9 +80,9 @@ class Luna_Table implements Iterator
 			$this->_config['prefix'] = $this->_info['name'] . '_t_';
 
 		/* Sanitize user input into reasonable pagination defaults */
-		$sort = strtolower($request->getParam('sort', $this->primary));
+		$sort = strtolower($request->getParam('sort', $this->_config['primary']));
 		if (array_search($sort, $this->_info['cols']) === false)
-			$sort = $this->primary;
+			$sort = $this->_config['primary'];
 		$order = strtoupper($request->getParam('order', 'ASC'));
 		if ($order != 'ASC' && $order != 'DESC')
 			$order = 'ASC';

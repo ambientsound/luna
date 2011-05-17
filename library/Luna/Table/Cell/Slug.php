@@ -30,50 +30,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
+class Luna_Table_Cell_Slug extends Luna_Table_Cell_Abstract
 {
-	protected $_modelName = 'Model_Pages';
+	protected static $_map = null;
 
-	protected $_formName = 'Form_Pages';
-
-	public function setupMenu()
+	public static function setMap($map)
 	{
-		$available = $this->model->getFormTreeList();
-		$this->_menu->addsub('index');
-		$this->_menu->addsub('create');
+		self::$_map = $map;
 	}
 
-	public function indexAction()
+	public function __toString()
 	{
-		Luna_Table_Cell_Slug::setMap($this->model->getFormTreeList());
-		$this->acl->assert($this->model, 'list');
-		$table = new Luna_Table($this->model->getTableName(), $this->model, $this->getRequest());
-		$this->view->table = $table;
-	}
-
-	public function getForm()
-	{
-		parent::getForm();
-		$available = $this->model->getFormTreeList();
-		$this->_form->parent->setMultiOptions($available);
-		$this->object = new Luna_Object_Node($this->model, $this->object->id);
-
-		$this->_form->template->setMultiOptions($this->model->getTemplates());
-
-		if (empty($this->object->id))
-			return $this->_form;
-
-		$this->_form->parent->removeMultiOption($this->object->id);
-		$this->_form->parent->setValue($this->object->getParentId());
-
-		if (!$this->object->isLeaf())
-		{
-			/* Disable moving entire trees for now. */
-			$this->_form->slug->setAttrib('readonly', true);
-			$this->_form->parent->setAttrib('disabled', true);
-			$this->_form->parent->addError('page_children_locked');
-		}
-
-		return $this->_form;
+		return self::$_map[$this->_row[$this->_config['primary']]];
 	}
 }

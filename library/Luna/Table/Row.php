@@ -48,6 +48,9 @@ class Luna_Table_Row extends Luna_Stdclass
 			{
 				switch($this->_config['f'][$field]['type'])
 				{
+					case 'slug':
+						$celltype = 'Slug';
+						break;
 					case 'actions':
 						$celltype = 'Actions';
 						break;
