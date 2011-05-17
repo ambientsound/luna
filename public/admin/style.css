@@ -240,9 +240,8 @@ h1
 
 h2
 {
-	font-family: "Georgia",serif;
 	background: transparent;
-	margin: 1em 0;
+	margin: 0.5em 0;
 	font-size: 1.3em;
 	font-weight: normal;
 }
@@ -384,4 +383,15 @@ fieldset
 legend
 {
 	font-weight: bold;
+}
+
+#content .left
+{
+	margin-right: 23em;
+}
+
+#content .right
+{
+	float: right;
+	width: 20em;
 }

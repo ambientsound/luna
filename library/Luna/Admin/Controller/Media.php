@@ -1,3 +1,4 @@
+<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -29,124 +30,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#form_page
+class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 {
-	width: auto;
-}
+	protected $_modelName = 'Model_Files';
 
-#form_page #title-div label
-{
-	float: left;
-	width: 5em;
-}
+	protected $_formName = 'Form_File';
 
-#form_page #title-div label,
-#form_page #body-div label
-{
-	display: none;
-}
+	public function setupMenu()
+	{
+		$this->_menu->addsub('index');
+		$this->_menu->addsub('create');
+	}
 
-#form_page #title-div input
-{
-	border: 1px solid #dfe2ff;
-	padding: 0.2em 0.3em;
-	font-size: 1.5em;
-}
+	public function saveToDb($source)
+	{
+		if ($source instanceof Zend_Form)
+		{
+			$old = new Luna_Object($this->model, $source->getValues());
+			$old->load();
 
-#form_page #title-div input:focus
-{
-	border: 1px solid #0E2C74;
-	background: #dfe2ff;
-}
+			if (!empty($old->id))
+				$this->acl->assert($old, 'update');
 
-#form_page .selector
-{
-	height: 6em;
-}
+			$insertId = $this->model->upload($source->upload, $old->id);
+			if (empty($insertId) && empty($old->id))
+				return false;
+		}
 
-#form_page .url-selector
-{
-	float: left;
-}
+		$values = $source->getValues();
+		unset($values['upload']);
+		$values['id'] = (empty($insertId) ? $values['id'] : $insertId);
 
-#form_page .parent-selector
-{
-	float: right;
-	text-align: right;
-}
-
-#form_page .url-selector label
-{
-	font-weight: bold;
-}
-
-#form_page .url-selector .slug input
-{
-	display: inline;
-	width: auto;
-	border: 0;
-	font-weight: bold;
-	margin: 0 0 0 -3px;
-}
-
-#form_page .submit-element input
-{
-	padding: 0.2em 0.5em;
-	font-size: 1.2em;
-	font-weight: bold;
-	margin: 0 0 1em;
-	background: -moz-linear-gradient(top, #4663a2, #0b2971);
-	color: #F2F2CC;
-}
-
-#form_page .right input, #form_page .right select
-{
-	width: 100%;
-}
-
-#form_page #modified-div label
-{
-	margin-top: 0;
-}
-
-#form_page #modified-div
-{
-	margin-bottom: 1em;
-}
-
-#form_page #modified
-{
-	border: 0;
-	background: transparent;
-	font-weight: bold;
-}
-
-#form_page #lead
-{
-	height: 4em;
-}
-
-#form_page #metadesc
-{
-	height: 10em;
-}
-
-#form_page #fieldset-editorial
-{
-	width: 98%;
-}
-
-#form_page .preview
-{
-	margin: 0 0 1.5em;
-}
-
-
-/*
- * Options
- */
-
-#form_options #main_metadesc
-{
-	height: 4em;
+		return parent::saveToDb($values);
+	}
 }

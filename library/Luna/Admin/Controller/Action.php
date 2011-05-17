@@ -86,6 +86,10 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 			/* Set up any object that might be edited */
 			$this->object = new Luna_Object($this->model, $this->getRequest()->getParam($this->model->getPrimaryKey()));
 		}
+		else
+		{
+			$this->object = new Luna_Stdclass;
+		}
 
 		/* Menu */
 		$this->_menu = new Luna_Admin_Menu;
@@ -151,6 +155,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		$this->view->path = $this->path;
 		$this->view->form = $this->_form;
 		$this->view->options = $this->options;
+		$this->view->object = $this->object;
 
 		$session = new Zend_Session_Namespace('template');
 		$this->view->errors = $session->errors;
@@ -225,7 +230,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		{
 			if ($this->isValidPost())
 			{
-				if (($this->object->id = $this->saveToDb($this->_form->getValues())) !== false)
+				if (($this->object->id = $this->saveToDb($this->_form)) !== false)
 					$this->redirToObject();
 			}
 			else
@@ -243,7 +248,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 			if ($this->isValidPost())
 			{
 				$this->acl->assert($this->object, 'update');
-				if ($this->saveToDb($this->_form->getValues()))
+				if ($this->saveToDb($this->_form))
 					$this->redirToObject();
 			}
 			else
@@ -282,10 +287,16 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		$this->_redirect('/' . $request->getControllerName() . '/read/' . $this->model->getPrimaryKey() . '/' . $this->object->id);
 	}
 
-	public function saveToDb($values)
+	public function saveToDb($source)
 	{
-		if ($values instanceof Luna_Object)
-			$values = $values->toArray();
+		if ($source instanceof Luna_Object)
+			$values = $source->toArray();
+		elseif ($source instanceof Zend_Form)
+			$values = $source->getValues();
+		elseif (is_array($source))
+			$values = $source;
+		else
+			return false;
 
 		try
 		{
