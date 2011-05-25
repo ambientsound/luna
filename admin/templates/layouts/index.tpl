@@ -4,16 +4,16 @@
 		<meta charset="utf-8" />
 		<title>{$path->getTitle('condensed', ' &raquo; ', 'ltr')}</title>
 		<meta http-equiv="Content-Style-Type" content="text/css" />
-		<script type="text/javascript" src="/admin/lib/jquery-1.6.1.min.js"></script>
-		<script type="text/javascript" src="/admin/lib/tinymce/jquery.tinymce.js"></script>
-		<script type="text/javascript" src="/admin/js/page.js"></script>
-		<script type="text/javascript" src="/admin/js/tinymce.js"></script>
-		<link rel="stylesheet" type="text/css" href="/admin/style.css" />
-		<link rel="stylesheet" type="text/css" href="/admin/forms.css" />
+		<script type="text/javascript" src="/admin/include/lib/jquery-1.6.1.min.js"></script>
+		<script type="text/javascript" src="/admin/include/lib/tinymce/jquery.tinymce.js"></script>
+		<script type="text/javascript" src="/admin/include/js/page.js"></script>
+		<script type="text/javascript" src="/admin/include/js/tinymce.js"></script>
+		<link rel="stylesheet" type="text/css" href="/admin/include/style.css" />
+		<link rel="stylesheet" type="text/css" href="/admin/include/forms.css" />
 	</head>
 	<body>
 		<div id="header">
-			<a href="/admin"><img src="/admin/images/logo.png" /></a>
+			<a href="/admin"><img src="/admin/include/images/logo.png" /></a>
 			<div class="meta">
 				<span class="title">{$options->main->title}</span>
 				<span>&nbsp; &middot; &nbsp;</span>

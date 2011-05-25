@@ -33,7 +33,7 @@ $(document).ready(function()
 {
 	$('.tinymce-element textarea').tinymce({
 
-		script_url : "/admin/lib/tinymce/tiny_mce.js",
+		script_url : "/admin/include/lib/tinymce/tiny_mce.js",
 
 		// General options
 		theme : "advanced",
