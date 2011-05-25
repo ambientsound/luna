@@ -28,7 +28,9 @@
 		<h1>{$path->getTitle('top')}</h1>
 
 		<div id="leftmenu">
-			{include file='menu.tpl'}
+			{if $user->isValid()}
+				{include file='menu.tpl'}
+			{/if}
 		</div>
 
 		<div id="content">
