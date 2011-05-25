@@ -55,7 +55,7 @@ define('FRONT_PATH', realpath(LUNA_PATH . '/front'));
 define('LOCAL_BASE_PATH', realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../..'));
 define('LOCAL_ADMIN_PATH', realpath(LOCAL_BASE_PATH . '/admin'));
 define('LOCAL_FRONT_PATH', realpath(LOCAL_BASE_PATH . '/front'));
-define('PUBLIC_PATH', realpath(LUNA_PATH . '/public'));
+define('PUBLIC_PATH', realpath(LOCAL_BASE_PATH . '/public'));
 define('APPLICATION_PATH', ADMIN_PATH);
 define('LOCAL_PATH', LOCAL_ADMIN_PATH);
 define('APPLICATION_TYPE', 'admin');
