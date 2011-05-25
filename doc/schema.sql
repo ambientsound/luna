@@ -68,7 +68,7 @@ CREATE TABLE pages (
     publish_from timestamp with time zone,
     publish_to timestamp with time zone,
     published boolean default false,
-    nodetype character varying(32) NOT NULL,
+    nodetype character varying(32),
     template character varying(64) NOT NULL,
     slug character varying(128) NOT NULL,
     title character varying(128) NOT NULL,

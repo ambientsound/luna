@@ -30,28 +30,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Pages extends Luna_Form
+class Luna_Front_Controller_Page extends Luna_Front_Controller_Action
 {
-	public function init()
+	protected $page = null;
+
+	/*
+	 * Fetches articles from database based on URL information.
+	 * This controller is always the route destination if no other static routes match.
+	 */
+	public function indexAction()
 	{
-		parent::init();
+		$model = new Model_Pages;
+		$uri = $this->_getParam(1);
+		$this->page = $model->getFromUrl($uri);
 
-		$this->addElement('Hidden', 'id');
-		$this->addElement('Text', 'title', array('required' => true));
-		$this->addElement('Tinymce', 'body');
-		$this->addElement('Text', 'slug', array('required' => true));
-		$this->addElement('Select', 'parent');
-		//$this->addElement('Picture', 'picture');
-		$this->addElement('Select', 'template');
-		$this->addElement('Text', 'modified', array('ignore' => true, 'readonly' => true));
-		$this->addElement('Textarea', 'metadesc');
+		if (empty($this->page))
+			throw new Zend_Exception('Path /' . $uri . ' does not exist in the database.', 404);
 
-		$this->addElement('Submit', 'submit');
+		if (empty($this->page->nodetype))
+			$this->page->nodetype = 'pages';
 
-		$this->id->addValidator('Digits');
-		$this->slug->addFilter(new Luna_Filter_Slug);
-		$this->modified->addFilter(new Luna_Filter_Humantime);
+		$template = Luna_Template::getFrontTemplatePath($this->page->nodetype, $this->page->template);
+		if (!file_exists($template))
+			throw new Zend_Exception("Page {$this->article['id']} points to template '{$template}' which does not exist on file system.", 503);
 
-		$this->resetDecorators();
+		$this->view->setTemplate($this->page->nodetype . '/' . $this->page->template);
+
+		$baseurl = null;
+
+		if (!empty($this->page->path))
+		foreach ($this->page->path as $sub)
+		{
+			$baseurl .= '/' . $sub['slug'];
+			$this->path->add($baseurl, $sub['title']);
+		}
+
+		if (!empty($this->page->metadesc))
+			$this->setMeta('description', $this->article['metadesc']);
+
+		$this->view->page = $this->page;
 	}
 }

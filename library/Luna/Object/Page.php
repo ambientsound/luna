@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Object_Node extends Luna_Object
+class Luna_Object_Page extends Luna_Object
 {
 	protected $_parentId = null;
 
@@ -55,10 +55,10 @@ class Luna_Object_Node extends Luna_Object
 
 		$select = $this->_model->select()
 			->setIntegrityCheck(false)
-			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
 			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
 			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
-			->order('nodes.lft ASC');
+			->order('pages.lft ASC');
 
 		return $this->_model->db->fetchAll($select);
 	}
@@ -70,10 +70,10 @@ class Luna_Object_Node extends Luna_Object
 
 		$select = $this->_model->select()
 			->setIntegrityCheck(false)
-			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
 			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
 			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
-			->order('nodes.lft ASC');
+			->order('pages.lft ASC');
 
 		return $this->_model->db->fetchAll($select);
 	}
@@ -87,7 +87,7 @@ class Luna_Object_Node extends Luna_Object
 		{
 			$select = $this->_model->select()
 				->setIntegrityCheck(false)
-				->from('nodes', 'id')
+				->from('pages', 'id')
 				->where($this->_model->db->quoteInto('lft < ?', $this->lft))
 				->where($this->_model->db->quoteInto('rgt > ?', $this->rgt))
 				->order('lft DESC')
@@ -99,9 +99,9 @@ class Luna_Object_Node extends Luna_Object
 		return $this->_parentId;
 	}
 
-	public function loadNode()
+	public function loadRelation()
 	{
-		if (!$this->load())
+		if (!$this->load() || empty($this->nodetype))
 			return false;
 
 		$select = $this->_model->select()

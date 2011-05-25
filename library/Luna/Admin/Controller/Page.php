@@ -56,7 +56,7 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		parent::getForm();
 		$available = $this->model->getFormTreeList();
 		$this->_form->parent->setMultiOptions($available);
-		$this->object = new Luna_Object_Node($this->model, $this->object->id);
+		$this->object = new Luna_Object_Page($this->model, $this->object->id);
 
 		$this->_form->template->setMultiOptions($this->model->getTemplates());
 

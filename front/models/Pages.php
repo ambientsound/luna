@@ -30,6 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class NodeController extends Luna_Front_Controller_Node
+class Model_Pages extends Luna_Front_Model_Pages
 {
 }

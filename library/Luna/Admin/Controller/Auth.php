@@ -111,6 +111,7 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 
 		if ($this->getRequest()->isPost() && $this->_form->isValid($_POST))
 		{
+			$roleModel = new Model_Roles;
 			$hash = new Luna_Phpass(null, true);
 			$values = $this->_form->getValues();
 			$values['username'] = 'admin';
@@ -119,6 +120,8 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 
 			try
 			{
+				$roleModel->createRole('superuser');
+
 				if ($userid = $this->model->inject($values))
 				{
 					$this->addMessage('luna_initial_setup_succeeded');
@@ -127,6 +130,9 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 			}
 			catch (Zend_Exception $e)
 			{
+				$this->addError('luna_initial_setup_failed_dberr', $e->getMessage());
+				$this->model->db->rollBack();
+				return;
 			}
 
 			$this->model->db->rollBack();

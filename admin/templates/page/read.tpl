@@ -30,6 +30,5 @@
 			</div>
 		</div>
 		{$form->body}
-		{$form->editorial}
 	</div>
 </form>

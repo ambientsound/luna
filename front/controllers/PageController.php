@@ -30,7 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Model_Nodes extends Luna_Model_Nodes
+class PageController extends Luna_Front_Controller_Page
 {
-	protected $_name = 'nodes';
 }

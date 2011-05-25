@@ -51,4 +51,12 @@ class Luna_Admin_Model_Roles extends Luna_Db_Table
 
 		return $this->db->fetchCol($select);
 	}
+
+	public function createRole($role, $inherit = null)
+	{
+		return $this->inject(array(
+			'role'		=> $role,
+			'inherit'	=> $inherit
+		));
+	}
 }

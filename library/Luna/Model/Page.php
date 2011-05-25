@@ -30,21 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Model_Nodes extends Luna_Db_Table
+class Luna_Model_Page extends Luna_Db_Table
 {
-	public function _get($id)
-	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('nodes')
-			->joinLeft($this->_nodeTable, "nodes.id = {$this->_nodeTable}.id", '*')
-			->where('nodes.id = ' . $this->db->quote($id))
-			->limit(1);
-
-		return $this->db->fetchRow($select);
-	}
-
-	public function getNodeFromUrl($url)
+	public function getFromUrl($url)
 	{
 		$url = explode('/', trim($url, '/'));
 		if (empty($url))
@@ -55,8 +43,7 @@ class Luna_Model_Nodes extends Luna_Db_Table
 			$quoteurl[] = $this->db->quote($u);
 
 		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('nodes', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
 			->where('slug IN (' . join(',', $quoteurl) . ')')
 			->order('lft ASC');
 
@@ -103,8 +90,8 @@ class Luna_Model_Nodes extends Luna_Db_Table
 		$node['path'] = $build;
 		$node['url'] = '/' . join('/', $url);
 
-		$node = new Luna_Object_Node($this, $node);
-		$node->loadNode();
+		$node = new Luna_Object_Page($this, $node);
+		$node->loadRelation();
 
 		return $node;
 	}
