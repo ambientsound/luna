@@ -30,75 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Object_Page extends Luna_Object
+class Luna_Object_Page extends Luna_Object_Preorder
 {
-	protected $_parentId = null;
-
-	public function clear()
-	{
-		parent::clear();
-		$this->_parentId = null;
-	}
-
-	public function isLeaf()
-	{
-		if (!$this->load())
-			return true;
-
-		return ($this->lft + 1 == $this->rgt);
-	}
-
-	public function getAncestors()
-	{
-		if (!$this->load())
-			return false;
-
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
-			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
-			->order('pages.lft ASC');
-
-		return $this->_model->db->fetchAll($select);
-	}
-
-	public function getDescendants()
-	{
-		if (!$this->load())
-			return false;
-
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
-			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
-			->order('pages.lft ASC');
-
-		return $this->_model->db->fetchAll($select);
-	}
-
-	public function getParentId()
-	{
-		if (!$this->load())
-			return null;
-
-		if (empty($this->_parentId))
-		{
-			$select = $this->_model->select()
-				->setIntegrityCheck(false)
-				->from('pages', 'id')
-				->where($this->_model->db->quoteInto('lft < ?', $this->lft))
-				->where($this->_model->db->quoteInto('rgt > ?', $this->rgt))
-				->order('lft DESC')
-				->limit(1);
-
-			$this->_parentId = $this->_model->db->fetchOne($select);
-		}
-
-		return $this->_parentId;
-	}
-
 	public function loadRelation()
 	{
 		if (!$this->load() || empty($this->nodetype))

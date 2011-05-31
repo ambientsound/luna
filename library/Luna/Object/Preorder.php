@@ -30,38 +30,72 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Files extends Luna_Model_File
+class Luna_Object_Preorder extends Luna_Object
 {
-	private $_folderFilter = null;
+	protected $_parentId = null;
 
-	public function selectFiles()
+	public function clear()
 	{
-		$select = $this->select();
-		if (empty($this->_folderFilter))
-			return $select;
-
-		foreach ($this->_folderFilter as &$f)
-			$f = $this->db->quote($f);
-
-		return $select->where('folder_id IN (' . join(',', $this->_folderFilter) . ')');
+		parent::clear();
+		$this->_parentId = null;
 	}
 
-	public function setFolderFilter($folder_id, $recurse = false)
+	public function isLeaf()
 	{
-		if (!$recurse)
-		{
-			$this->_folderFilter = array(intval($folder_id));
-		}
-		else
-		{
-			$this->_folderFilter = null;
-			$folder = new Luna_Object_Folder(new Model_Folders, $folder_id);
-			$children = $folder->getDescendants();
-			if (empty($children))
-				return;
+		if (!$this->load())
+			return true;
 
-			foreach ($children as $child)
-				$this->_folderFilter[] = intval($child['id']);
+		return ($this->lft + 1 == $this->rgt);
+	}
+
+	public function getAncestors()
+	{
+		if (!$this->load())
+			return false;
+
+		$select = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from($this->_model->getTableName(), array('id', 'lft', 'rgt'))
+			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
+			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
+			->order('lft ASC');
+
+		return $this->_model->db->fetchAll($select);
+	}
+
+	public function getDescendants()
+	{
+		if (!$this->load())
+			return false;
+
+		$select = $this->_model->select()
+			->setIntegrityCheck(false)
+			->from($this->_model->getTableName(), array('id', 'lft', 'rgt'))
+			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
+			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
+			->order('lft ASC');
+
+		return $this->_model->db->fetchAll($select);
+	}
+
+	public function getParentId()
+	{
+		if (!$this->load())
+			return null;
+
+		if (empty($this->_parentId))
+		{
+			$select = $this->_model->select()
+				->setIntegrityCheck(false)
+				->from($this->_model->getTableName(), 'id')
+				->where($this->_model->db->quoteInto('lft < ?', $this->lft))
+				->where($this->_model->db->quoteInto('rgt > ?', $this->rgt))
+				->order('lft DESC')
+				->limit(1);
+
+			$this->_parentId = $this->_model->db->fetchOne($select);
 		}
+
+		return $this->_parentId;
 	}
 }

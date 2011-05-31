@@ -42,6 +42,35 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$this->_menu->addsub('create');
 	}
 
+	public function indexAction()
+	{
+		$model = new Model_Folders;
+		$folders = $model->getFlatAssocList('name');
+		$foldform = new Form_Folder;
+		$foldform->folder->setMultiOptions(array('/'));
+		$foldform->folder->addMultiOptions($folders);
+		$foldform->folder->setValue($this->_getParam('folder', 0));
+
+		if ($this->getRequest()->isPost() && $foldform->isValid($_POST))
+		{
+			if (($name = $foldform->getValue('newfolder')) != null)
+			{
+				$id = $model->inject(array(
+					'parent'	=> $foldform->getValue('folder'),
+					'name'		=> $name
+				));
+				if (!empty($id))
+					return $this->_redirect('/media?folder=' . $id);
+			}
+		}
+
+		$this->model->setFolderFilter($foldform->getValue('folder'), $foldform->getValue('recurse'));
+
+		parent::indexAction();
+
+		$this->view->folders = $foldform;
+	}
+
 	public function saveToDb($source)
 	{
 		if ($source instanceof Zend_Form)
@@ -62,5 +91,17 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$values['id'] = (empty($insertId) ? $values['id'] : $insertId);
 
 		return parent::saveToDb($values);
+	}
+
+	public function getForm()
+	{
+		if (!parent::getForm())
+			return false;
+
+		$model = new Model_Folders;
+		$folders = $model->getFlatAssocList('name');
+		$this->_form->folder_id->setMultiOptions(array('/'));
+		$this->_form->folder_id->addMultiOptions($folders);
+		$this->_form->folder_id->setValue($this->_getParam('folder', 0));
 	}
 }

@@ -185,6 +185,9 @@ class Luna_Model_File extends Luna_Db_Table
 				$values['title'] = $values['filename'];
 		}
 
+		if (isset($values['folder_id']) && empty($values['folder_id']))
+			$values['folder_id'] = new Zend_Db_Expr('NULL');
+
 		return parent::inject($values);
 	}
 

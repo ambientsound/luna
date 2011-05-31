@@ -71,7 +71,11 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 		if (empty($rowid) || is_array($rowid) || is_object($rowid))
 			return false;
 
-		$this->set($this->_model->_get($rowid));
+		$data = $this->_model->_get($rowid);
+		if (empty($data))
+			return false;
+
+		$this->set($data);
 
 		return $this->_data;
 	}

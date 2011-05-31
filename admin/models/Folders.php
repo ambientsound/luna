@@ -30,38 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Files extends Luna_Model_File
+class Model_Folders extends Luna_Admin_Model_Folders
 {
-	private $_folderFilter = null;
-
-	public function selectFiles()
-	{
-		$select = $this->select();
-		if (empty($this->_folderFilter))
-			return $select;
-
-		foreach ($this->_folderFilter as &$f)
-			$f = $this->db->quote($f);
-
-		return $select->where('folder_id IN (' . join(',', $this->_folderFilter) . ')');
-	}
-
-	public function setFolderFilter($folder_id, $recurse = false)
-	{
-		if (!$recurse)
-		{
-			$this->_folderFilter = array(intval($folder_id));
-		}
-		else
-		{
-			$this->_folderFilter = null;
-			$folder = new Luna_Object_Folder(new Model_Folders, $folder_id);
-			$children = $folder->getDescendants();
-			if (empty($children))
-				return;
-
-			foreach ($children as $child)
-				$this->_folderFilter[] = intval($child['id']);
-		}
-	}
 }
