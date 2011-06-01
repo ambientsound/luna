@@ -111,6 +111,19 @@ CREATE TABLE pages_files (
     created timestamp with time zone
 );
 
+CREATE TABLE galleries (
+    id serial PRIMARY KEY NOT NULL,
+    folder_id integer references folders on delete restrict
+);
+
+CREATE TABLE galleries_files (
+    id serial PRIMARY KEY NOT NULL,
+    gallery_id integer not null references galleries on delete cascade,
+    file_id integer not null references files on delete cascade,
+    createdby integer references users on delete restrict,
+    created timestamp with time zone
+);
+
 CREATE TABLE options (
     key character varying(128) PRIMARY KEY NOT NULL,
     createdby integer references users on delete restrict,

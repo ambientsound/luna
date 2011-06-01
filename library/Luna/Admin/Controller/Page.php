@@ -60,6 +60,10 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 
 		$this->_form->template->setMultiOptions($this->model->getTemplates());
 
+		$nodetypes = Luna_Config::get('site')->formats->pagetypes;
+		foreach ($nodetypes as $type)
+			$this->_form->nodetype->addMultiOption($type, 'form_pages_nodetype_' . $type);
+
 		if (empty($this->object->id))
 			return $this->_form;
 

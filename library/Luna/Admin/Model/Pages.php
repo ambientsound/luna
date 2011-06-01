@@ -32,38 +32,6 @@
 
 abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 {
-	public function deleteId($id)
-	{
-		$node = new Luna_Object($this, $id);
-		if (!$node->load())
-			return false;
-		
-		$diff = $node->rgt - $node->lft + 1;
-		$tablename = $this->db->quoteIdentifier('pages');
-		$lft = $this->db->quoteIdentifier('lft');
-		$rgt = $this->db->quoteIdentifier('rgt');
-
-		$this->db->beginTransaction();
-
-		try
-		{
-			/* FIXME: we should really do an ACL check to see if we are allowed to delete all the objects. */
-			$this->db->query("DELETE FROM {$tablename} WHERE {$lft} >= {$node->lft} AND {$rgt} <= {$node->rgt}");
-			$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - {$diff} WHERE {$lft} >= {$node->lft}");
-			$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - {$diff} WHERE {$rgt} >= {$node->lft}");
-		}
-		catch (Zend_Db_Exception $e)
-		{
-			$this->db->rollBack();
-			return false;
-		}
-
-		if ($this->db->commit())
-			return true;
-
-		return false;
-	}
-
 	public function getTemplates()
 	{
 		return Luna_Template::scanFront($this->_name);
@@ -131,95 +99,26 @@ abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 		$cols = $this->info();
 		$cols = $cols['cols'];
 
-		$node = new Luna_Object_Page($this, $data['id']);
-		$parent = new Luna_Object_Page($this, $data['parent']);
-		$deptable = null;
-
-		/* Disable moving entire node trees */
-		if ($node->load() && $node->lft + 1 != $node->rgt)
-			$parent->load($node->getParentId());
-
-		unset($data['parent']);
-
-		$nodedata = array();
-		$local = array();
-
-		if (!empty($data['nodetype']))
+		if (!empty($data['nodetype']) && $data['nodetype'] != $this->_name)
 		{
 			$nodedata['nodetype'] = $data['nodetype'];
 			$deptable = new Luna_Db_Table($data['nodetype']);
 		}
+		else
+		{
+			$nodedata['nodetype'] = new Zend_Db_Expr('NULL');
+		}
+		$nodedata['parent'] = $data['parent'];
+		unset($data['parent']);
 		unset($data['nodetype']);
 
 		foreach ($data as $key => $value)
 		{
-			if (array_search($key, $cols) === false)
-				$local[$key] = $value;
-			else
+			if (array_search($key, $cols) !== false)
 				$nodedata[$key] = $value;
+			else
+				$local[$key] = $value;
 		}
-
-		$parent->load();
-
-		/* Some SQL strings */
-		$tablename = $this->db->quoteIdentifier('pages');
-		$lft = $this->db->quoteIdentifier('lft');
-		$rgt = $this->db->quoteIdentifier('rgt');
-
-		do
-		{
-			if (!empty($parent->id))
-			{
-				if (!empty($node->id))
-				{
-					if ($parent->id == $node->getParentId())
-					{
-						/* Parent stays the same and no change to rgt/lft needed, just save. */
-						$nodedata['lft'] = $node->lft;
-						$nodedata['rgt'] = $node->rgt;
-						break;
-					}
-
-					/* Old article is not empty, but moved to a different parent. It will be appended to the end, so let's adjust the rest accordingly. */
-					$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
-					$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
-				}
-
-				$parent->reload();
-				$nodedata['lft'] = $parent->rgt;
-				$nodedata['rgt'] = $nodedata['lft'] + 1;
-
-				$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} + 2 WHERE {$lft} >= {$nodedata['lft']}");
-				$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} + 2 WHERE {$rgt} >= {$nodedata['lft']}");
-
-				break;
-			}
-
-			if (!empty($node->id))
-			{
-				$path = $node->getAncestors();
-				if (count($path) == 1)
-				{
-					/* This is already a bottom node, no need to change lft/rgt. */
-					$nodedata['lft'] = $node->lft;
-					$nodedata['rgt'] = $node->rgt;
-
-					break;
-				}
-
-				/* Old article is not empty, but moved to bottom. It will be appended to the end, so let's adjust the rest accordingly. */
-				$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
-				$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
-			}
-
-			/* This node doesn't have a valid lft/rgt, OR it is a new node. Insert it at the very end. */
-
-			$nodedata['lft'] = $this->db->fetchOne($this->select()->setIntegrityCheck(false)->from('pages', "MAX({$rgt}) + 1"));
-			if (empty($nodedata['lft']))
-				$nodedata['lft'] = 1;
-			$nodedata['rgt'] = $nodedata['lft'] + 1;
-		}
-		while (false);
 
 		$local['id'] = parent::inject($nodedata);
 		if ($local['id'] == false)

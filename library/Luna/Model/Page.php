@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Model_Page extends Luna_Db_Table
+class Luna_Model_Page extends Luna_Model_Preorder
 {
 	public function getFromUrl($url)
 	{

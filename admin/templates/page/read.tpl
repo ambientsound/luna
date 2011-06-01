@@ -10,6 +10,7 @@
 				{$form->slug->getValue()}
 			{/strip}">&raquo; {t}page_goto_preview{/t}</a></div>
 		{/if}
+		{$form->nodetype}
 		{$form->template}
 		{$form->metadesc}
 	</div>
