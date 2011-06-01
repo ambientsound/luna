@@ -63,4 +63,17 @@ $(document).ready(function()
 			});
 		}
 	});
+
+	$('#nodetype').change(function()
+	{
+		$.getJSON('/admin/util/templates', { type : $(this).val() }, function(data)
+		{
+			var items = [];
+			$.each(data, function(key, val)
+			{
+				items.push('<option value="' + key + '">' + val + '</option>');
+			});
+			$('#template').html(items.join(''));
+		});
+	});
 });

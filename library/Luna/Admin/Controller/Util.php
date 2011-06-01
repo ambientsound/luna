@@ -38,4 +38,10 @@ class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
 		echo $filter->filter($this->_getParam('source'));
 		$this->_helper->viewRenderer->setNoRender(true);
 	}
+
+	public function templatesAction()
+	{
+		echo json_encode(Luna_Template::scanFront($this->_getParam('type', 'pages')));
+		$this->_helper->viewRenderer->setNoRender(true);
+	}
 }

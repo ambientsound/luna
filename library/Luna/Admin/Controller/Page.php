@@ -73,8 +73,11 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		$available = $this->model->getFormTreeList();
 		$this->_form->parent->setMultiOptions($available);
 		$this->object = new Luna_Object_Page($this->model, $this->object->id);
+		$this->object->load();
 
-		$this->_form->template->setMultiOptions(Luna_Template::scanFront($this->_form->getValue('nodetype')));
+		$nodetype = $this->_getParam('nodetype', $this->object->nodetype);
+		$nodetype = empty($nodetype) ? 'pages' : $nodetype;
+		$this->_form->template->setMultiOptions(Luna_Template::scanFront($nodetype));
 
 		$nodetypes = Luna_Config::get('site')->formats->pagetypes;
 		foreach ($nodetypes as $type)
