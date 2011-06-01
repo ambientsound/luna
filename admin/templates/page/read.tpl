@@ -30,6 +30,6 @@
 				{$form->parent}
 			</div>
 		</div>
-		{$form->body}
+		{include file="page/type/`$form->getValue('nodetype')`.tpl"}
 	</div>
 </form>

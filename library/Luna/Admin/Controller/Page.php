@@ -53,7 +53,23 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 
 	public function getForm()
 	{
-		parent::getForm();
+		if (!empty($this->_form))
+			return $this->_form;
+
+		$formname = $this->getRequest()->getParam('nodetype');
+		if (!empty($formname))
+		{
+			$formname[0] = strtoupper($formname[0]);
+			$formname = 'Form_Page_' . $formname;
+			if (class_exists($formname))
+			{
+				$this->_formName = $formname;
+			}
+		}
+
+		$this->_form = new $this->_formName;
+		$this->_form->setRequest($this->getRequest());
+
 		$available = $this->model->getFormTreeList();
 		$this->_form->parent->setMultiOptions($available);
 		$this->object = new Luna_Object_Page($this->model, $this->object->id);

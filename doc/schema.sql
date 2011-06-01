@@ -120,6 +120,7 @@ CREATE TABLE galleries_files (
     id serial PRIMARY KEY NOT NULL,
     gallery_id integer not null references galleries on delete cascade,
     file_id integer not null references files on delete cascade,
+    position integer not null default 0,
     createdby integer references users on delete restrict,
     created timestamp with time zone
 );
