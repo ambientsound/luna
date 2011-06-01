@@ -32,11 +32,6 @@
 
 abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 {
-	public function getTemplates()
-	{
-		return Luna_Template::scanFront($this->_name);
-	}
-
 	public function getXmlList()
 	{
 		$select = $this->select()
@@ -102,11 +97,15 @@ abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 		if (!empty($data['nodetype']) && $data['nodetype'] != $this->_name)
 		{
 			$nodedata['nodetype'] = $data['nodetype'];
-			$deptable = new Luna_Db_Table($data['nodetype']);
+			$deptable = 'Model_Page_' . strtoupper($data['nodetype'][0]) . strtolower(substr($data['nodetype'], 1));
+			if (class_exists($deptable))
+				$deptable = new $deptable;
+			else
+				$deptable = new Luna_Db_Table($data['nodetype']);
 		}
 		else
 		{
-			$nodedata['nodetype'] = new Zend_Db_Expr('NULL');
+			$nodedata['nodetype'] = $this->_name;
 		}
 		$nodedata['parent'] = $data['parent'];
 		unset($data['parent']);

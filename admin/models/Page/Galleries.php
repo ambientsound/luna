@@ -30,30 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Pages extends Luna_Form
+class Model_Page_Galleries extends Luna_Admin_Model_Page_Galleries
 {
-	public function init()
-	{
-		parent::init();
-
-		$this->addElement('Hidden', 'id');
-		$this->addElement('Text', 'title', array('required' => true));
-		$this->addElement('Tinymce', 'body');
-		$this->addElement('Text', 'slug', array('required' => true));
-		$this->addElement('Select', 'parent');
-		//$this->addElement('Picture', 'picture');
-		$this->addElement('Select', 'nodetype');
-		$this->addElement('Select', 'template');
-		$this->addElement('Text', 'modified', array('ignore' => true, 'readonly' => true));
-		$this->addElement('Textarea', 'metadesc');
-
-		$this->addElement('Submit', 'submit');
-
-		$this->id->addValidator('Digits');
-		$this->slug->addFilter(new Luna_Filter_Slug);
-		$this->modified->addFilter(new Luna_Filter_Humantime);
-		$this->nodetype->setValue('pages');
-
-		$this->resetDecorators();
-	}
 }
