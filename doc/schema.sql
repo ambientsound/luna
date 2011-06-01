@@ -86,7 +86,8 @@ CREATE TABLE folders (
     createdby integer references users on delete restrict,
     modifiedby integer references users on delete restrict,
     created timestamp with time zone,
-    modified timestamp with time zone
+    modified timestamp with time zone,
+    name character varying(128) NOT NULL
 );
 
 CREATE TABLE files (
