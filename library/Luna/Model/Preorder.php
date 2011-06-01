@@ -72,101 +72,111 @@ abstract class Luna_Model_Preorder extends Luna_Db_Table
 	 */
 	public function inject($data)
 	{
-		/* Workaround since Zend is missing something like hasTransaction() */
 		try
 		{
-			$this->db->beginTransaction();
-		}
-		catch (Exception $e)
-		{
-			$nocommit = true;
-		}
-
-		$cols = $this->info();
-		$cols = $cols['cols'];
-
-		$node = new Luna_Object_Preorder($this, $data['id']);
-		$parent = new Luna_Object_Preorder($this, $data['parent']);
-
-		/* Disable moving entire node trees */
-		if ($node->load() && $node->lft + 1 != $node->rgt)
-			$parent->load($node->getParentId());
-
-		unset($data['parent']);
-
-		/* Some SQL strings */
-		$tablename = $this->db->quoteIdentifier($this->_name);
-		$lft = $this->db->quoteIdentifier('lft');
-		$rgt = $this->db->quoteIdentifier('rgt');
-
-		$parent->load();
-
-		do
-		{
-			if (!empty($parent->id))
+			/* Workaround since Zend is missing something like hasTransaction() */
+			try
 			{
-				if (!empty($node->id))
-				{
-					if ($parent->id == $node->getParentId())
-					{
-						/* Parent stays the same and no change to rgt/lft needed, just save. */
-						$data['lft'] = $node->lft;
-						$data['rgt'] = $node->rgt;
-						break;
-					}
-
-					/* Old article is not empty, but moved to a different parent. It will be appended to the end, so let's adjust the rest accordingly. */
-					$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
-					$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
-				}
-
-				$parent->reload();
-				$data['lft'] = $parent->rgt;
-				$data['rgt'] = $data['lft'] + 1;
-
-				$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} + 2 WHERE {$lft} >= {$data['lft']}");
-				$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} + 2 WHERE {$rgt} >= {$data['lft']}");
-
-				break;
+				$this->db->beginTransaction();
+			}
+			catch (Exception $e)
+			{
+				$nocommit = true;
 			}
 
-			if (!empty($node->id))
+			$cols = $this->info();
+			$cols = $cols['cols'];
+
+			$node = new Luna_Object_Preorder($this, $data['id']);
+			$parent = new Luna_Object_Preorder($this, $data['parent']);
+
+			/* Disable moving entire node trees */
+			if ($node->load() && $node->lft + 1 != $node->rgt)
+				$parent->load($node->getParentId());
+
+			unset($data['parent']);
+
+			/* Some SQL strings */
+			$tablename = $this->db->quoteIdentifier($this->_name);
+			$lft = $this->db->quoteIdentifier('lft');
+			$rgt = $this->db->quoteIdentifier('rgt');
+
+			$parent->load();
+
+			do
 			{
-				$path = $node->getAncestors();
-				if (count($path) == 1)
+				if (!empty($parent->id))
 				{
-					/* This is already a bottom node, no need to change lft/rgt. */
-					$data['lft'] = $node->lft;
-					$data['rgt'] = $node->rgt;
+					if (!empty($node->id))
+					{
+						if ($parent->id == $node->getParentId())
+						{
+							/* Parent stays the same and no change to rgt/lft needed, just save. */
+							$data['lft'] = $node->lft;
+							$data['rgt'] = $node->rgt;
+							break;
+						}
+
+						/* Old article is not empty, but moved to a different parent. It will be appended to the end, so let's adjust the rest accordingly. */
+						$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
+						$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
+					}
+
+					$parent->reload();
+					$data['lft'] = $parent->rgt;
+					$data['rgt'] = $data['lft'] + 1;
+
+					$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} + 2 WHERE {$lft} >= {$data['lft']}");
+					$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} + 2 WHERE {$rgt} >= {$data['lft']}");
 
 					break;
 				}
 
-				/* Old article is not empty, but moved to bottom. It will be appended to the end, so let's adjust the rest accordingly. */
-				$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
-				$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
+				if (!empty($node->id))
+				{
+					$path = $node->getAncestors();
+					if (count($path) == 1)
+					{
+						/* This is already a bottom node, no need to change lft/rgt. */
+						$data['lft'] = $node->lft;
+						$data['rgt'] = $node->rgt;
+
+						break;
+					}
+
+					/* Old article is not empty, but moved to bottom. It will be appended to the end, so let's adjust the rest accordingly. */
+					$this->db->query("UPDATE {$tablename} SET {$lft} = {$lft} - 2 WHERE {$lft} >= {$node->lft}");
+					$this->db->query("UPDATE {$tablename} SET {$rgt} = {$rgt} - 2 WHERE {$rgt} >= {$node->lft}");
+				}
+
+				/* This node doesn't have a valid lft/rgt, OR it is a new node. Insert it at the very end. */
+
+				$data['lft'] = $this->db->fetchOne($this->select()->setIntegrityCheck(false)->from($this->_name, "MAX({$rgt}) + 1"));
+				if (empty($data['lft']))
+					$data['lft'] = 1;
+				$data['rgt'] = $data['lft'] + 1;
+			}
+			while (false);
+
+			$id = parent::inject($data);
+
+			if (empty($nocommit))
+			{
+				if (empty($id))
+					$this->db->rollBack();
+				else
+					$this->db->commit();
 			}
 
-			/* This node doesn't have a valid lft/rgt, OR it is a new node. Insert it at the very end. */
-
-			$data['lft'] = $this->db->fetchOne($this->select()->setIntegrityCheck(false)->from($this->_name, "MAX({$rgt}) + 1"));
-			if (empty($data['lft']))
-				$data['lft'] = 1;
-			$data['rgt'] = $data['lft'] + 1;
+			return $id;
 		}
-		while (false);
-
-		$id = parent::inject($data);
-
-		if (empty($nocommit))
+		catch (Exception $e)
 		{
-			if (empty($id))
+			if (empty($nocommit))
 				$this->db->rollBack();
-			else
-				$this->db->commit();
-		}
 
-		return $id;
+			throw $e;
+		}
 	}
 
 	public function getOrderedList(array $fields = array())

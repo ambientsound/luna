@@ -55,10 +55,17 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		{
 			if (($name = $foldform->getValue('newfolder')) != null)
 			{
-				$id = $model->inject(array(
-					'parent'	=> $foldform->getValue('folder'),
-					'name'		=> $name
-				));
+				try
+				{
+					$id = $model->inject(array(
+						'parent'	=> $foldform->getValue('folder'),
+						'name'		=> $name
+					));
+				}
+				catch (PDOException $e)
+				{
+					$this->addError('object_failed_save_db', $e->getMessage());
+				}
 				if (!empty($id))
 					return $this->_redirect('/media?folder=' . $id);
 			}

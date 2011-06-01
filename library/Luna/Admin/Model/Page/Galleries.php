@@ -32,9 +32,66 @@
 
 class Luna_Admin_Model_Page_Galleries extends Luna_Db_Table
 {
+	protected $_name = 'galleries';
+
 	public function inject($data)
 	{
-		return $data['id'];
-		/* TODO: inject picture relations and positions */
+		$values = array('id' => $data['id']);
+		$values['folder_id'] = $data['use_folder'] && !empty($data['folder_id']) ? $data['folder_id'] : new Zend_Db_Expr('NULL');
+		$pictures = empty($data['pictures']) ? null : explode(',', $data['pictures']);
+		unset($data['pictures']);
+
+		if (($id = parent::inject($values)) != false)
+		{
+			if ($this->setGalleryImages($values['id'], $pictures))
+				return $id;
+		}
+
+		return false;
+	}
+
+	public function setGalleryImages($gallery_id, $pictures)
+	{
+		$table = new Luna_Db_Table('galleries_files');
+
+		$table->delete($this->db->quoteInto('gallery_id = ?', $gallery_id));
+
+		if (empty($pictures))
+			return true;
+
+		$pictures = array_values($pictures);
+
+		foreach ($pictures as $position => $picture)
+		{
+			if (!$table->insert(array(
+				'gallery_id'	=> $gallery_id,
+				'file_id'	=> $picture,
+				'position'	=> $position
+			))) return false;
+		}
+
+		return true;
+	}
+	public function getGalleryImages($gallery_id)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('files')
+			->join('galleries_files', 'galleries_files.file_id = files.id', null)
+			->where('galleries_files.gallery_id = ' . intval($gallery_id))
+			->order('galleries_files.position ASC');
+
+		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
+	}
+
+	public function getFolderImages($folder_id)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('files')
+			->where('folder_id = ' . intval($folder_id))
+			->order('id DESC');
+
+		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}
 }

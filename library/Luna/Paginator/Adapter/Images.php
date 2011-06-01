@@ -30,28 +30,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Page_Galleries extends Luna_Admin_Form_Pages
+class Luna_Paginator_Adapter_Images extends Zend_Paginator_Adapter_DbSelect
 {
-	public function init()
+	private static $_model;
+
+	public function getItems($offset, $itemCountPerPage)
 	{
-		parent::init();
+		$items = parent::getItems($offset, $itemCountPerPage);
 
-		$this->addElement('Hidden', 'pictures');
-		$this->addElement('Checkbox', 'use_folder');
-		$this->addElement('Select', 'folder_id');
+		if (empty(self::$_model))
+			self::$_model = new Model_Files;
 
-		$model = new Model_Folders;
-		$folders = $model->getFlatAssocList('name');
-		$this->folder_id->setMultiOptions(array('/'));
-		$this->folder_id->addMultiOptions($folders);
-
-		$this->resetDecorators();
-	}
-
-	public function populate(array $values)
-	{
-		parent::populate($values);
-		if (!empty($values['folder_id']))
-			$this->use_folder->setValue(true);
+		return self::$_model->appendMeta($items);
 	}
 }

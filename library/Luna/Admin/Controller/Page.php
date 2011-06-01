@@ -56,7 +56,11 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		if (!empty($this->_form))
 			return $this->_form;
 
-		$formname = $this->getRequest()->getParam('nodetype');
+		$this->object = new Luna_Object_Page($this->model, $this->object->id);
+		$this->object->load();
+		$this->object->loadRelation();
+
+		$formname = $this->getRequest()->getParam('nodetype', $this->object->nodetype);
 		if (!empty($formname))
 		{
 			$formname[0] = strtoupper($formname[0]);
@@ -69,11 +73,10 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 
 		$this->_form = new $this->_formName;
 		$this->_form->setRequest($this->getRequest());
+		$this->_form->setPrefix('form_pages');
 
 		$available = $this->model->getFormTreeList();
 		$this->_form->parent->setMultiOptions($available);
-		$this->object = new Luna_Object_Page($this->model, $this->object->id);
-		$this->object->load();
 
 		$nodetype = $this->_getParam('nodetype', $this->object->nodetype);
 		$nodetype = empty($nodetype) ? 'pages' : $nodetype;
@@ -96,6 +99,8 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 			$this->_form->parent->setAttrib('disabled', true);
 			$this->_form->parent->addError('page_children_locked');
 		}
+
+		$this->_form->populate($this->object->toArray());
 
 		return $this->_form;
 	}

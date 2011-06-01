@@ -43,27 +43,36 @@ class Luna_Model_File extends Luna_Db_Table
 		if (empty($image))
 			return null;
 
+		return current($this->appendMeta(array($image)));
+	}
+
+	public function appendMeta(array $images)
+	{
 		$config = Luna_Config::get('site')->media;
-			
-		$image['pub'] = $config->path . '/' . $image['filename'];
-		$image['path'] = realpath(PUBLIC_PATH . $config->path) . '/' . $image['filename'];
 		$tsizes = $this->getThumbSizes();
 
-		foreach ($tsizes as $tdest => $size)
+		foreach ($images as &$image)
 		{
-			$filename = realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'];
-			if (!file_exists($filename))
-				continue;
+			$image['pub'] = $config->path . '/' . $image['filename'];
+			$image['path'] = realpath(PUBLIC_PATH . $config->path) . '/' . $image['filename'];
 
-			$image['thumbnail'][$tdest] = array(
-				'pub'	=> $config->path . '/' . $tdest . '/' . $image['filename'],
-				'path'	=> realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'],
-				'dir'	=> $tdest,
-				'size'	=> $size,
-			);
+			foreach ($tsizes as $tdest => $size)
+			{
+				$filename = realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'];
+				if (!file_exists($filename))
+					continue;
+
+				$image['thumbnail'][$tdest] = array(
+					'pub'	=> $config->path . '/' . $tdest . '/' . $image['filename'],
+					'path'	=> realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'],
+					'dir'	=> $tdest,
+					'size'	=> $size,
+				);
+			}
 		}
 
-		return $image;
+		reset($images);
+		return $images;
 	}
 
 	/*

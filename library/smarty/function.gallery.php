@@ -30,28 +30,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Page_Galleries extends Luna_Admin_Form_Pages
+function smarty_function_gallery($params, &$smarty)
 {
-	public function init()
-	{
-		parent::init();
+	$model = new Model_Page_Galleries;
+	$fmodel = new Model_Files;
 
-		$this->addElement('Hidden', 'pictures');
-		$this->addElement('Checkbox', 'use_folder');
-		$this->addElement('Select', 'folder_id');
+	if (!empty($params['id']))
+		$paginator = $model->getGalleryImages($params['id']);
+	elseif (isset($params['folder_id']))
+		$paginator = $model->getFolderImages($params['folder_id']);
+	else
+		return;
 
-		$model = new Model_Folders;
-		$folders = $model->getFlatAssocList('name');
-		$this->folder_id->setMultiOptions(array('/'));
-		$this->folder_id->addMultiOptions($folders);
+	if (isset($params['limit']))
+		$paginator->setItemCountPerPage($params['limit']);
 
-		$this->resetDecorators();
-	}
-
-	public function populate(array $values)
-	{
-		parent::populate($values);
-		if (!empty($values['folder_id']))
-			$this->use_folder->setValue(true);
-	}
+	$smarty->assign($params['assign'], $paginator);
 }

@@ -395,3 +395,45 @@ legend
 	float: right;
 	width: 20em;
 }
+
+.picture-drop .ui-sortable
+{
+	float: left;
+}
+
+.picture-chooser div
+{
+	padding: 0;
+}
+
+.picture-chooser ul li
+{
+	float: left;
+	list-style: none;
+	margin: 1em;
+}
+
+.picture-chooser ul li img
+{
+	border: 1px solid black;
+}
+
+.picture-chooser ul
+{
+	list-style: none;
+	border: 3px dashed #edefff;
+	margin: 0;
+	padding: 0;
+	min-height: 120px;
+}
+
+.picture-chooser .ui-sortable-placeholder
+{
+	visibility: visible !important;
+	border: 3px dashed #a5a5b5;
+	background: #edefff;
+	/*
+	height: 94px;
+	width: 94px;
+	*/
+}
