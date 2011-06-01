@@ -306,7 +306,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 				return $id;
 			}
 		}
-		catch (Zend_Db_Exception $e)
+		catch (Exception $e)
 		{
 			$this->addError('object_failed_save_db', array($e->getMessage()));
 			return false;

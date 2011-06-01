@@ -51,7 +51,9 @@ class Luna_Config
 				self::$_configs[$name] = new Zend_Config_Ini($global);
 				if (file_exists($local))
 				{
+					self::$_configs[$name] = new Zend_Config(self::$_configs[$name]->toArray(), true);
 					self::$_configs[$name]->merge(new Zend_Config_Ini($local));
+					self::$_configs[$name]->setReadonly(true);
 				}
 			}
 			else
