@@ -56,20 +56,22 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		if (!empty($this->_form))
 			return $this->_form;
 
-		$this->object = new Luna_Object_Page($this->model, $this->object->id);
 		$this->object->load();
-		$this->object->loadRelation();
 
-		$formname = $this->getRequest()->getParam('nodetype', $this->object->nodetype);
-		if (!empty($formname))
+		$modelname = $this->getRequest()->getParam('nodetype', $this->object->nodetype);
+		if (!empty($modelname))
 		{
-			$formname[0] = strtoupper($formname[0]);
-			$formname = 'Form_Page_' . $formname;
-			if (class_exists($formname))
-			{
+			$modelname = strtoupper($modelname[0]) . strtolower(substr($modelname, 1));
+			$formname = 'Form_Page_' . $modelname;
+			if (@class_exists($formname))
 				$this->_formName = $formname;
-			}
+
+			$modelname = 'Model_Page_' . $modelname;
+			if (@class_exists($modelname))
+				$this->object = Luna_Object::factory(new $modelname, $this->object->toArray());
 		}
+
+		$this->object->loadRelation();
 
 		$this->_form = new $this->_formName;
 		$this->_form->setRequest($this->getRequest());

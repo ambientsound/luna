@@ -32,9 +32,11 @@
 
 class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 {
-	public $db;
+	public $db = null;
 
 	protected $_primary = 'id';
+
+	protected $_objectName = null;
 
 	public function init()
 	{
@@ -73,6 +75,11 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 		return $this->_name;
 	}
 
+	public function getObjectName()
+	{
+		return empty($this->_objectName) ? $this->_name : $this->_objectName;
+	}
+
 	public function getPrimaryKey()
 	{
 		$this->_setupPrimaryKey();
@@ -85,8 +92,8 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 			return null;
 
 		$tablename = $this->_name;
-		if ($this instanceof Luna_Admin_Model_Nodes)
-			$tablename = 'nodes';
+		if ($this instanceof Luna_Model_Page_Abstract)
+			$tablename = 'pages';
 
 		$key = $this->db->quoteIdentifier($tablename) . '.' . $this->db->quoteIdentifier($this->getPrimaryKey());
 		$select = $this->select()

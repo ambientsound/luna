@@ -38,14 +38,28 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 
 	protected $_loaded = false;
 
+	protected $_tblname = null;
+
 	protected $_pk = null;
 
 	protected $_acl = null;
+
+	public static function factory(&$model, $row = null)
+	{
+		$clsname = $model->getObjectName();
+		$clsname = 'Luna_Object_' . strtoupper($clsname[0]) . strtolower(substr($clsname, 1));
+		if (@class_exists($clsname))
+			return new $clsname($model, $row);
+		else
+			return new self($model, $row);
+	}
 
 	public function __construct(Luna_Db_Table &$model, $row)
 	{
 		$this->_model =& $model;
 		$this->_pk = $this->_model->getPrimaryKey();
+		if (empty($this->_tblname))
+			$this->_tblname = $this->_model->getTableName();
 		$this->set($row);
 	}
 
@@ -126,7 +140,7 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 		if (empty($this->_data[$this->_pk]))
 			$this->_resId = $this->_model->getResourceId();
 		else
-			$this->_resId = $this->_model->getTableName() . '-' . $this->_data[$this->_pk];
+			$this->_resId = $this->_tblname . '-' . $this->_data[$this->_pk];
 
 		return true;
 	}

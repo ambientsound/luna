@@ -84,7 +84,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		{
 			$this->model = new $this->_modelName;
 			/* Set up any object that might be edited */
-			$this->object = new Luna_Object($this->model, $this->getRequest()->getParam($this->model->getPrimaryKey()));
+			$this->object = Luna_Object::factory($this->model, $this->getRequest()->getParam($this->model->getPrimaryKey()));
 		}
 		else
 		{

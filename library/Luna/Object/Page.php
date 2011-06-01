@@ -32,6 +32,8 @@
 
 class Luna_Object_Page extends Luna_Object_Preorder
 {
+	protected $_tblname = 'pages';
+
 	public function loadRelation()
 	{
 		if (!$this->load() || empty($this->nodetype))

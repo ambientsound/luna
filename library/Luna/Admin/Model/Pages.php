@@ -32,6 +32,8 @@
 
 abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 {
+	protected $_objectName = 'Page';
+
 	public function getXmlList()
 	{
 		$select = $this->select()

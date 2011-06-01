@@ -3,12 +3,12 @@
 		<h2>{t}form_pages_heading_pictures_connected{/t}</h2>
 		<div>
 			<ul>
-				{$ids=null}
-				{gallery id=$form->getValue('id') limit=0 assign='gallery'}
-				{foreach $gallery as $picture}
-					<li><img id="{$picture.id}" src="{$picture.thumbnail.small.pub}" title="{$picture.title}" alt="{$picture.alt}" /></li>
-					{$ids[]=$picture.id}
-				{/foreach}
+				{if $object->loadImages()}
+					{foreach $object->pictures as $picture}
+						<li><img id="{$picture.id}" src="{$picture.thumbnail.small.pub}" title="{$picture.title}" alt="{$picture.alt}" /></li>
+						{$ids[]=$picture.id}
+					{/foreach}
+				{/if}
 			</ul>
 			<br style="clear:left" />
 			{if $ids}{$ids=join(',', $ids)}{/if}

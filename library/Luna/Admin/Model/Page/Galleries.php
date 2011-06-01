@@ -30,9 +30,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Page_Galleries extends Luna_Db_Table
+class Luna_Admin_Model_Page_Galleries extends Luna_Model_Page_Abstract
 {
 	protected $_name = 'galleries';
+
+	protected $_objectName = 'Gallery';
 
 	public function inject($data)
 	{
