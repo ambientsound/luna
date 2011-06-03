@@ -33,12 +33,11 @@
 function smarty_function_gallery($params, &$smarty)
 {
 	$model = new Model_Page_Galleries;
-	$fmodel = new Model_Files;
 
 	if (!empty($params['id']))
 		$paginator = $model->getGalleryImages($params['id']);
-	elseif (isset($params['folder_id']))
-		$paginator = $model->getFolderImages($params['folder_id']);
+	elseif (array_key_exists('folder_id', $params))
+		$paginator = $model->getFolderImages(intval($params['folder_id']));
 	else
 		return;
 

@@ -32,12 +32,13 @@
 
 class Luna_Object_Gallery extends Luna_Object_Page
 {
-	public function loadImages()
+	public function loadImages($num = 0)
 	{
 		if (!$this->load())
 			return false;
 
 		$this->_data['pictures'] = $this->_model->getGalleryImages($this->id);
+		$this->_data['pictures']->setItemCountPerPage($num);
 
 		return true;
 	}

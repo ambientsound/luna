@@ -34,21 +34,27 @@ class Luna_Model_Folder extends Luna_Model_Preorder
 {
 	public function getFiles($folder_id)
 	{
-		if (empty($folder_id))
-			return null;
-
 		$model = new Luna_Model_File;
-
-		if (!is_array($folder_id))
-			$folder_id = array($folder_id);
-
-		foreach ($folder_id as &$folder)
-			$folder = $this->db->quote(intval($folder));
 
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from('files')
-			->where('folder_id IN (' . join(',', $folder_id) . ')');
+			->order('id DESC');
+
+		if (!empty($folder_id))
+		{
+			if (!is_array($folder_id))
+				$folder_id = array($folder_id);
+
+			foreach ($folder_id as &$folder)
+				$folder = $this->db->quote(intval($folder));
+
+			$select->where('folder_id IN (' . join(',', $folder_id) . ')');
+		}
+		else
+		{
+			$select->where('folder_id IS NULL');
+		}
 
 		return $model->appendMeta($this->db->fetchAll($select));
 	}

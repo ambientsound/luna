@@ -86,6 +86,11 @@ $(document).ready(function()
 		});
 	});
 
+	$('.picture-source #use_folder').change(function()
+	{
+		$(this).parents('.picture-source').siblings('.picture-drop').toggle();
+	});
+
 	$('#folder_id').change(function()
 	{
 		$.getJSON('/admin/util/files', { folder : $(this).val() }, function(data)

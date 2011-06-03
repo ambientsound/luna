@@ -1,5 +1,5 @@
 <div class="picture-chooser">
-	<div class="picture-drop">
+	<div class="picture-drop" {if $form->getValue('use_folder')}style="display: none"{/if}>
 		<h2>{t}form_pages_heading_pictures_connected{/t}</h2>
 		<div>
 			<ul>

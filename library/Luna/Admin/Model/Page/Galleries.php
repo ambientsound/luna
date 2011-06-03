@@ -91,8 +91,12 @@ class Luna_Admin_Model_Page_Galleries extends Luna_Model_Page_Abstract
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from('files')
-			->where('folder_id = ' . intval($folder_id))
 			->order('id DESC');
+
+		if (empty($folder_id))
+			$select->where('folder_id IS NULL');
+		else
+			$select->where('folder_id = ' . intval($folder_id));
 
 		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}
