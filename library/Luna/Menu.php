@@ -102,6 +102,17 @@ class Luna_Menu extends Luna_Stdclass
 			if ($request->getActionName() == $m['action'] || (empty($m['action'])))
 			{
 				$m['active'] = true;
+				if (!empty($m['params']))
+				{
+					foreach ($m['params'] as $key => $val)
+					{
+						if ($request->getParam($key) != $val)
+						{
+							$m['active'] = false;
+							break;
+						}
+					}
+				}
 			}
 		}
 
