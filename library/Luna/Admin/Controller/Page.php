@@ -40,7 +40,10 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 	{
 		$available = $this->model->getFormTreeList();
 		$this->_menu->addsub('index');
-		$this->_menu->addsub('create');
+
+		$nodetypes = Luna_Config::get('site')->formats->pagetypes;
+		foreach ($nodetypes as $type)
+			$this->_menu->addsub('create', array('nodetype' => $type), $this->translate('menu_page_create_' . $type));
 	}
 
 	public function indexAction()
@@ -66,9 +69,9 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 			if (@class_exists($formname))
 				$this->_formName = $formname;
 
-			$modelname = 'Model_Page_' . $modelname;
-			if (@class_exists($modelname))
-				$this->object = Luna_Object::factory(new $modelname, $this->object->toArray());
+			$formname = 'Model_Page_' . $modelname;
+			if (@class_exists($formname))
+				$this->object = Luna_Object::factory(new $formname, $this->object->toArray());
 		}
 
 		$this->object->loadRelation();
@@ -87,6 +90,8 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		$nodetypes = Luna_Config::get('site')->formats->pagetypes;
 		foreach ($nodetypes as $type)
 			$this->_form->nodetype->addMultiOption($type, 'form_pages_nodetype_' . $type);
+
+		$this->_form->nodetype->setValue($nodetype);
 
 		if (empty($this->object->id))
 			return $this->_form;
