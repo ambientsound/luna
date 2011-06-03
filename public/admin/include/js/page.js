@@ -31,6 +31,14 @@
 
 var page_slug_manually_changed = false;
 var sortable_inside = 0;
+var picture_source_params =
+{
+	connectToSortable : '.picture-drop ul',
+	cursor : 'move',
+	opacity : 0.8,
+	helper : 'clone',
+	revert : 'invalid'
+};
 
 function page_update_url()
 {
@@ -78,14 +86,28 @@ $(document).ready(function()
 		});
 	});
 
-	$('.picture-source ul li').draggable(
+	$('#folder_id').change(function()
 	{
-		connectToSortable : '.picture-drop ul',
-		cursor : 'move',
-		opacity : 0.8,
-		helper : 'clone',
-		revert : 'invalid'
+		$.getJSON('/admin/util/files', { folder : $(this).val() }, function(data)
+		{
+			var list = $('#folder_id').parents('.picture-source').find('ul');
+			list.children().remove();
+			$.each(data, function(key, val)
+			{
+				var element = $('<img/>')
+					.attr('id', val.id)
+					.attr('src', val.thumbnail.small.pub)
+					.attr('title', val.title)
+					.attr('alt', val.alt);
+				var container = $('<li/>');
+				container.append(element);
+				list.append(container);
+			});
+			list.children().draggable(picture_source_params);
+		});
 	});
+
+	$('.picture-source ul li').draggable(picture_source_params);
 
 	$('.picture-drop ul').sortable(
 	{

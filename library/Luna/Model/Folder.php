@@ -30,6 +30,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Folders extends Luna_Model_Folder
+class Luna_Model_Folder extends Luna_Model_Preorder
 {
+	public function getFiles($folder_id)
+	{
+		if (empty($folder_id))
+			return null;
+
+		$model = new Luna_Model_File;
+
+		if (!is_array($folder_id))
+			$folder_id = array($folder_id);
+
+		foreach ($folder_id as &$folder)
+			$folder = $this->db->quote(intval($folder));
+
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('files')
+			->where('folder_id IN (' . join(',', $folder_id) . ')');
+
+		return $model->appendMeta($this->db->fetchAll($select));
+	}
 }
