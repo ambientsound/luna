@@ -44,7 +44,7 @@ class Luna_Object extends Luna_Stdclass implements Zend_Acl_Resource_Interface
 
 	protected $_acl = null;
 
-	public static function factory(&$model, $row = null)
+	public static function factory(Luna_Db_Table &$model, $row = null)
 	{
 		$clsname = $model->getObjectName();
 		$clsname = 'Luna_Object_' . strtoupper($clsname[0]) . strtolower(substr($clsname, 1));

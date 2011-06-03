@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Model_Page_Galleries extends Luna_Model_Page_Abstract
+class Luna_Admin_Model_Page_Galleries extends Luna_Model_Gallery
 {
 	protected $_name = 'galleries';
 
@@ -74,30 +74,8 @@ class Luna_Admin_Model_Page_Galleries extends Luna_Model_Page_Abstract
 
 		return true;
 	}
-	public function getGalleryImages($gallery_id)
+
+	public function getThumbSizes($gallery_id)
 	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('files')
-			->join('galleries_files', 'galleries_files.file_id = files.id', null)
-			->where('galleries_files.gallery_id = ' . intval($gallery_id))
-			->order('galleries_files.position ASC');
-
-		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
-	}
-
-	public function getFolderImages($folder_id)
-	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('files')
-			->order('id DESC');
-
-		if (empty($folder_id))
-			$select->where('folder_id IS NULL');
-		else
-			$select->where('folder_id = ' . intval($folder_id));
-
-		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}
 }

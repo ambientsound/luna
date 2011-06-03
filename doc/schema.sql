@@ -114,7 +114,12 @@ CREATE TABLE pages_files (
 
 CREATE TABLE galleries (
     id serial PRIMARY KEY NOT NULL,
-    folder_id integer references folders on delete restrict
+    folder_id integer references folders on delete restrict,
+    page_limit integer not null default 1,
+    viewmode character varying(64) not null default 'thumbnails',
+    size_thumbnails character varying(64) not null default 'small',
+    size_flow character varying(64) not null default 'original'
+
 );
 
 CREATE TABLE galleries_files (

@@ -30,36 +30,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Page_Galleries extends Luna_Admin_Form_Pages
+class Luna_Model_Gallery extends Luna_Model_Page_Abstract
 {
-	public function init()
+	protected $_objectName = 'Gallery';
+
+	public function getGalleryImages($gallery_id)
 	{
-		parent::init();
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('files')
+			->join('galleries_files', 'galleries_files.file_id = files.id', null)
+			->where('galleries_files.gallery_id = ' . intval($gallery_id))
+			->order('galleries_files.position ASC');
 
-		$this->addElement('Select', 'viewmode');
-		$this->addElement('Select', 'size_thumbnails');
-		$this->addElement('Select', 'size_flow');
-		$this->addElement('Text', 'page_limit');
-
-		$this->addElement('Hidden', 'pictures');
-		$this->addElement('Checkbox', 'use_folder');
-		$this->addElement('Select', 'folder_id');
-
-		$model = new Model_Folders;
-		$folders = $model->getFlatAssocList('name');
-		$this->folder_id->setMultiOptions(array('/'));
-		$this->folder_id->addMultiOptions($folders);
-		$this->page_limit->addFilter('Digits');
-
-		$model = new Luna_Admin_Model_Page_Galleries;
-
-		$this->resetDecorators();
+		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}
 
-	public function populate(array $values)
+	public function getFolderImages($folder_id)
 	{
-		parent::populate($values);
-		if (!empty($values['folder_id']))
-			$this->use_folder->setValue(true);
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('files')
+			->order('id DESC');
+
+		if (empty($folder_id))
+			$select->where('folder_id IS NULL');
+		else
+			$select->where('folder_id = ' . intval($folder_id));
+
+		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}
 }

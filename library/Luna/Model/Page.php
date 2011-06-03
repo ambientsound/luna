@@ -90,7 +90,12 @@ class Luna_Model_Page extends Luna_Model_Preorder
 		$node['path'] = $build;
 		$node['url'] = '/' . join('/', $url);
 
-		$node = new Luna_Object_Page($this, $node);
+		$modelname = 'Model_' . strtoupper($node['nodetype'][0]) . strtolower(substr($node['nodetype'], 1));
+		if (@class_exists($modelname))
+			$node = Luna_Object::factory(new $modelname, $node);
+		else
+			$node = new Luna_Object_Page($this, $node);
+
 		$node->loadRelation();
 
 		return $node;
