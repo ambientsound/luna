@@ -1,3 +1,5 @@
+<script type="text/javascript" src="/admin/include/js/page.js"></script>
+
 {$form->prepareRender()}
 <form id="form_page" method="{$form->getMethod()}" action="{$form->getAction()}">
 	{$form->id}
