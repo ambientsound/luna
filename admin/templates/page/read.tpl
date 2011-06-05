@@ -15,6 +15,13 @@
 		{$form->nodetype}
 		{$form->template}
 		{$form->metadesc}
+		{if $object->stickers}
+			<div id="stickers">
+			{foreach $object->stickers as $key => $value}
+				{$key}={$value}<br />
+			{/foreach}
+			</div>
+		{/if}
 	</div>
 	<div class="left">
 		{$form->title}

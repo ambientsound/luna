@@ -135,3 +135,13 @@ CREATE TABLE options (
     value character varying(1024)
 );
 
+CREATE TABLE stickers (
+    id serial PRIMARY KEY NOT NULL,
+    page_id integer references pages on delete cascade,
+    createdby integer references users on delete restrict,
+    modifiedby integer references users on delete restrict,
+    created timestamp with time zone,
+    modified timestamp with time zone,
+    key character varying(64) NOT NULL,
+    value character varying(512)
+);

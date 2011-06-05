@@ -75,6 +75,7 @@ class Luna_Admin_Controller_Page extends Luna_Admin_Controller_Action
 		}
 
 		$this->object->loadRelation();
+		$this->object->loadStickers();
 
 		$this->_form = new $this->_formName;
 		$this->_form->setRequest($this->getRequest());

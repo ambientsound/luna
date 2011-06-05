@@ -30,38 +30,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Object_Page extends Luna_Object_Preorder
+class Luna_Model_Sticker extends Luna_Db_Table
 {
-	protected $_tblname = 'pages';
+	protected $_name = 'stickers';
 
-	public function loadRelation()
+	public function getStickers($page_id)
 	{
-		if (!$this->load() || empty($this->nodetype))
-			return false;
+		$select = $this->select()
+			->from($this->_name, array('key', 'value'))
+			->where($this->db->quoteInto('page_id = ?', $page_id));
 
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from($this->nodetype)
-			->where($this->_model->db->quoteInto('id = ?', $this->id))
-			->limit(1);
-
-		$meta = $this->_model->db->fetchRow($select);
-		if (empty($meta))
-			return false;
-
-		$this->_data = array_merge($this->_data, $meta);
-
-		return true;
-	}
-
-	public function loadStickers()
-	{
-		if (!$this->load())
-			return false;
-
-		$model = new Luna_Model_Sticker;
-		$this->_data['stickers'] = $model->getStickers($this->id);
-
-		return true;
+		return $this->db->fetchPairs($select);
 	}
 }
