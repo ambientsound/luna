@@ -14,6 +14,9 @@
 		{/if}
 		{$form->nodetype}
 		{$form->template}
+		{$form->spider_sitemap}
+		{$form->spider_index}
+		{$form->spider_follow}
 		{$form->metadesc}
 		{if $object->stickers}
 			<div id="stickers">

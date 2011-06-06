@@ -2,7 +2,9 @@
 <html>
 <head>
 	<title>{$path->getTitle('condensed', ' &raquo; ', 'ltr')}</title>
-	<meta name="robots" content="{if $options->main->searchable}index, follow{else}noindex, nofollow{/if}" />
+	{foreach $meta as $name => $content}
+		<meta name="{$name}" content="{$content}" />
+	{/foreach}
 	<meta charset="utf-8" />
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 	<link rel="stylesheet" type="text/css" href="/style.css" />

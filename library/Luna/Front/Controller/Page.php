@@ -68,6 +68,10 @@ class Luna_Front_Controller_Page extends Luna_Front_Controller_Action
 		if (!empty($this->page->metadesc))
 			$this->setMeta('description', $this->article['metadesc']);
 
+		$robots = $this->page->spider_index ? 'index' : 'noindex';
+		$robots .= ', ' . ($this->page->spider_follow ? 'follow' : 'nofollow');
+		$this->setMeta('robots', $robots);
+
 		$this->view->page = $this->page;
 	}
 }

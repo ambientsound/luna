@@ -55,6 +55,9 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 		/* Breadpath/title setup */
 		$this->path = new Luna_View_Helper_Title;
+
+		/* Search engine indexing */
+		$this->setMeta('robots', 'index, follow');
 	}
 
 	public function setMeta($name, $content, $params = null)
@@ -73,6 +76,9 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 	public function postDispatch()
 	{
 		parent::postDispatch();
+
+		if (!$this->options->main->searchable)
+			$this->setMeta('robots', 'noindex, nofollow');
 
 		$this->view->request = $this->getRequest();
 		$this->view->params = $this->getRequest()->getParams();

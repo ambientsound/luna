@@ -1,4 +1,3 @@
-<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -30,36 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Pages extends Luna_Form
+$(document).ready(function()
 {
-	public function init()
-	{
-		parent::init();
-
-		$this->addElement('Hidden', 'id');
-		$this->addElement('Text', 'title', array('required' => true));
-		$this->addElement('Tinymce', 'body');
-		$this->addElement('Text', 'slug', array('required' => true));
-		$this->addElement('Select', 'parent');
-		//$this->addElement('Picture', 'picture');
-		$this->addElement('Select', 'nodetype');
-		$this->addElement('Select', 'template');
-		$this->addElement('Checkbox', 'spider_sitemap');
-		$this->addElement('Checkbox', 'spider_index');
-		$this->addElement('Checkbox', 'spider_follow');
-		$this->addElement('Text', 'modified', array('ignore' => true, 'readonly' => true));
-		$this->addElement('Textarea', 'metadesc');
-
-		$this->addElement('Submit', 'submit');
-
-		$this->id->addValidator('Digits');
-		$this->slug->addFilter(new Luna_Filter_Slug);
-		$this->modified->addFilter(new Luna_Filter_Humantime);
-		$this->nodetype->setValue('pages');
-		$this->spider_sitemap->setValue(true);
-		$this->spider_index->setValue(true);
-		$this->spider_follow->setValue(true);
-
-		$this->resetDecorators();
-	}
-}
+	if ($('#form_login').size() > 0)
+		$('#username').focus();
+});
