@@ -32,6 +32,8 @@
 
 class Luna_Model_Page extends Luna_Model_Preorder
 {
+	protected $_objectName = 'Page';
+
 	public function getFromUrl($url)
 	{
 		$url = explode('/', trim($url, '/'));
