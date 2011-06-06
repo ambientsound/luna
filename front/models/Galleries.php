@@ -30,36 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Form_Page_Galleries extends Luna_Admin_Form_Pages
+class Model_Galleries extends Luna_Model_Gallery
 {
-	public function init()
-	{
-		parent::init();
-
-		$this->addElement('Select', 'viewmode');
-		$this->addElement('Select', 'size_thumbnails');
-		$this->addElement('Select', 'size_flow');
-		$this->addElement('Text', 'page_limit');
-
-		$this->addElement('Hidden', 'pictures');
-		$this->addElement('Checkbox', 'use_folder');
-		$this->addElement('Select', 'folder_id');
-
-		$model = new Model_Folders;
-		$folders = $model->getFlatAssocList('name');
-		$this->folder_id->setMultiOptions(array('/'));
-		$this->folder_id->addMultiOptions($folders);
-		$this->page_limit->addFilter('Digits');
-
-		$model = new Luna_Admin_Model_Page_Galleries;
-
-		$this->resetDecorators();
-	}
-
-	public function populate(array $values)
-	{
-		parent::populate($values);
-		if (!empty($values['folder_id']))
-			$this->use_folder->setValue(true);
-	}
 }
