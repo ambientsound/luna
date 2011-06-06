@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="/admin/include/lib/jquery-ui-1.8.13.custom.min.js"></script>
 		<script type="text/javascript" src="/admin/include/lib/tinymce/jquery.tinymce.js"></script>
 		<script type="text/javascript" src="/admin/include/js/tinymce.js"></script>
+		<script type="text/javascript" src="/admin/include/js/luna.js"></script>
 		<link rel="stylesheet" type="text/css" href="/admin/include/style.css" />
 		<link rel="stylesheet" type="text/css" href="/admin/include/forms.css" />
 	</head>
