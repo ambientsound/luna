@@ -51,6 +51,7 @@ class Luna_Model_Gallery extends Luna_Model_Page_Abstract
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from('files')
+			->where('size IS NOT NULL')
 			->order('id DESC');
 
 		if (empty($folder_id))
