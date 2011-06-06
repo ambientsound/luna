@@ -132,9 +132,9 @@ class Luna_Model_File extends Luna_Db_Table
 		{
 			$size = getimagesize($dest);
 			return array(
-				'path'	=> $dest,
-				'name'	=> $name,
-				'size'	=> $size[0] . 'x' . $size[1]
+				'path'		=> $dest,
+				'name'		=> $name,
+				'size'		=> (empty($size) ? null : $size[0] . 'x' . $size[1]),
 			);
 		}
 		else
@@ -162,6 +162,21 @@ class Luna_Model_File extends Luna_Db_Table
 			'filename'	=> $file['name'],
 			'size'		=> $file['size']
 		);
+
+		$code = null;
+		$output = null;
+		$mimetype = exec('file -bi ' . escapeshellarg($file['path']), $output, $code);
+		if ($code == 0)
+		{
+			if (($pos = strpos($mimetype, ' ')) !== false)
+				$mimetype = substr($mimetype, 0, $pos);
+
+			$values['mimetype'] = $mimetype;
+		}
+		else
+		{
+			$values['mimetype'] = new Zend_Db_Expr('NULL');
+		}
 
 		$values['id'] = $this->inject($values);
 
