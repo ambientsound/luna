@@ -396,6 +396,11 @@ legend
 	width: 20em;
 }
 
+#content .right div
+{
+	margin-top: 0.5em;
+}
+
 .picture-drop .ui-sortable
 {
 	float: left;
