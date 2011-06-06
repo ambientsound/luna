@@ -41,6 +41,7 @@ class Luna_Model_Gallery extends Luna_Model_Page_Abstract
 			->from('files')
 			->join('galleries_files', 'galleries_files.file_id = files.id', null)
 			->where('galleries_files.gallery_id = ' . intval($gallery_id))
+			->where('files.size IS NOT NULL')
 			->order('galleries_files.position ASC');
 
 		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));

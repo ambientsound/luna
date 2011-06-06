@@ -3,7 +3,7 @@
 		<h2>{t}form_pages_heading_pictures_connected{/t}</h2>
 		<div>
 			<ul>
-				{if $object->loadImages()}
+				{if $object->loadRealGalleryImages()}
 					{foreach $object->pictures as $picture}
 						<li><img id="{$picture.id}" src="{$picture.thumbnail.small.pub}" title="{$picture.title}" alt="{$picture.alt}" /></li>
 						{$ids[]=$picture.id}

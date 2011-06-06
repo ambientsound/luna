@@ -37,6 +37,21 @@ class Luna_Object_Gallery extends Luna_Object_Page
 		if (!$this->load())
 			return false;
 
+		if ($this->_data['folder_id'])
+			$this->_data['pictures'] = $this->_model->getFolderImages($this->_data['folder_id']);
+		else
+			$this->_data['pictures'] = $this->_model->getGalleryImages($this->id);
+
+		$this->_data['pictures']->setItemCountPerPage($num);
+
+		return true;
+	}
+
+	public function loadRealGalleryImages($num = 0)
+	{
+		if (!$this->load())
+			return false;
+
 		$this->_data['pictures'] = $this->_model->getGalleryImages($this->id);
 		$this->_data['pictures']->setItemCountPerPage($num);
 
