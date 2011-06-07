@@ -30,11 +30,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Menu extends Luna_Stdclass
+class Luna_Menu extends Luna_Object
 {
 	public function __construct($params = null)
 	{
-		$this->_data = (array)$params;
+		parent::__construct(new Model_Menus, (array)$params);
 		$this->init();
 	}
 

@@ -56,6 +56,17 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		/* Breadpath/title setup */
 		$this->path = new Luna_View_Helper_Title;
 
+		/* Menu object */
+		$this->menu = new Luna_Front_Menu;
+
+		$this->menu->load(1);
+		/*
+		foreach ($this->menu as $item)
+			debug($item);
+			die;
+		diebug($this->menu);
+		*/
+
 		/* Search engine indexing */
 		$this->setMeta('robots', 'index, follow');
 	}
@@ -84,6 +95,7 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		$this->view->params = $this->getRequest()->getParams();
 		$this->view->path = $this->path;
 		$this->view->meta = $this->_meta;
+		$this->view->menu = $this->menu;
 		$this->view->options = $this->options;
 
 		$session = new Zend_Session_Namespace('template');

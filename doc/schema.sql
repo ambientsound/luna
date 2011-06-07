@@ -142,11 +142,37 @@ CREATE TABLE options (
 
 CREATE TABLE stickers (
     id serial PRIMARY KEY NOT NULL,
-    page_id integer references pages on delete cascade,
+    page_id integer NOT NULL references pages on delete cascade,
     createdby integer references users on delete restrict,
     modifiedby integer references users on delete restrict,
     created timestamp with time zone,
     modified timestamp with time zone,
     key character varying(64) NOT NULL,
     value character varying(512)
+);
+
+CREATE TABLE menus (
+    id serial PRIMARY KEY NOT NULL,
+    mode character varying(16) NOT NULL,
+    structure character varying(16) NOT NULL,
+    page_id integer references pages on delete restrict,
+    createdby integer references users on delete restrict,
+    modifiedby integer references users on delete restrict,
+    created timestamp with time zone,
+    modified timestamp with time zone,
+    title character varying(128)
+);
+
+CREATE TABLE menuitems (
+    id serial PRIMARY KEY NOT NULL,
+    menu_id integer references pages on delete cascade,
+    page_id integer references pages on delete cascade,
+    lft integer NOT NULL,
+    rgt integer NOT NULL,
+    createdby integer references users on delete restrict,
+    modifiedby integer references users on delete restrict,
+    created timestamp with time zone,
+    modified timestamp with time zone,
+    title character varying(128),
+    url character varying(1024)
 );

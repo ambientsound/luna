@@ -30,72 +30,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Object_Preorder extends Luna_Object
+function smarty_function_menu($params, &$smarty)
 {
-	protected $_parentId = null;
-
-	public function clear()
+	if (empty($params['object']))
 	{
-		parent::clear();
-		$this->_parentId = null;
+		$model = new Luna_Front_Menu;
+
+		if (!$model->load($params['id']))
+			return;
+
+		$params['object'] =& $model;
 	}
+	
+	if (empty($params['template']))
+		$params['template'] = 'default';
 
-	public function isLeaf()
-	{
-		if (!$this->load())
-			return true;
-
-		return ($this->lft + 1 == $this->rgt);
-	}
-
-	public function getAncestors()
-	{
-		if (!$this->load())
-			return false;
-
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from($this->_tblname, array('id', 'lft', 'rgt', 'slug', 'title'))
-			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
-			->order('lft ASC');
-
-		return $this->_model->db->fetchAll($select);
-	}
-
-	public function getDescendants()
-	{
-		if (!$this->load())
-			return false;
-
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from($this->_tblname, array('id', 'lft', 'rgt', 'slug', 'title'))
-			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
-			->order('lft ASC');
-
-		return $this->_model->db->fetchAll($select);
-	}
-
-	public function getParentId()
-	{
-		if (!$this->load())
-			return null;
-
-		if (empty($this->_parentId))
-		{
-			$select = $this->_model->select()
-				->setIntegrityCheck(false)
-				->from($this->_tblname, 'id')
-				->where($this->_model->db->quoteInto('lft < ?', $this->lft))
-				->where($this->_model->db->quoteInto('rgt > ?', $this->rgt))
-				->order('lft DESC')
-				->limit(1);
-
-			$this->_parentId = $this->_model->db->fetchOne($select);
-		}
-
-		return $this->_parentId;
-	}
+	$tpl = $smarty->createTemplate('menu/' . $params['template'] . '.tpl');
+	$tpl->assign('menu', $params['object']);
+	echo $tpl->fetch();
 }

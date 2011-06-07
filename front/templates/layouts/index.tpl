@@ -11,6 +11,9 @@
 </head>
 <body>
 	<h1>Luna 3.0 test lab</h1>
+	<ul id="mainmenu">
+		{menu id=1}
+	</ul>
 	<p><a href="/admin">Control panel is this way</a>.</p>
 	{if $path->count() > 1}
 		<p>You are here:
