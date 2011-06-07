@@ -358,6 +358,19 @@ input, textarea
 .checkbox-element input
 {
 	width: auto;
+	float: left;
+	position: absolute;
+	top: -0.15em;
+}
+
+.full-checkbox-element
+{
+	position: relative;
+}
+
+.full-checkbox-element label
+{
+	margin-left: 2em;
 }
 
 .submit-element input
