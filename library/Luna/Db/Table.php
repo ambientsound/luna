@@ -134,7 +134,7 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 		{
 			$record = $this->db->fetchOne($this->select()
 				->from($this->_name, $primary)
-				->where($primary . ' = ' . $this->db->quote($data[$primary]))
+				->where($this->db->quoteIdentifier($primary) . ' = ' . $this->db->quote($data[$primary]))
 				->limit(1));
 		}
 
