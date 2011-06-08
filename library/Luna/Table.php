@@ -53,7 +53,13 @@ class Luna_Table implements Iterator
 		elseif (is_array($config))
 			$this->_config = $config;
 		else
-			$this->_config = Luna_Config::get('table')->$config->toArray();
+		{
+			$this->_config = Luna_Config::get('table')->$config;
+			if (empty($this->_config))
+				throw new Zend_Exception('Table "' . $config . '" does not have an entry in table.ini.');
+
+			$this->_config = $this->_config->toArray();
+		}
 
 		if (empty($this->_config))
 			throw new Zend_Exception('Luna_Table needs a table configuration index, configuration array or Zend_Config object');

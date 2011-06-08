@@ -30,15 +30,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Model_Menu extends Luna_Db_Table
+class Luna_Admin_Form_Menus extends Luna_Form
 {
-	protected $_name = 'menus';
-
-	public function inject($values)
+	public function init()
 	{
-		if (empty($values['page_id']))
-			$values['page_id'] = new Zend_Db_Expr('NULL');
+		parent::init();
 
-		return parent::inject($values);
+		$this->addElement('Hidden', 'id');
+		$this->addElement('Text', 'title');
+		$this->addElement('Select', 'mode');
+		$this->addElement('Select', 'structure');
+		$this->addElement('Select', 'page_id');
+		$this->addElement('Submit', 'submit');
+
+		$this->structure->setMultiOptions(array(
+			'flat'	=> 'form_menus_structure_flat',
+			'tree'	=> 'form_menus_structure_tree'
+		));
+
+		$this->mode->setMultiOptions(array(
+			'dynamic'	=> 'form_menus_mode_dynamic',
+			'static'	=> 'form_menus_mode_static'
+		));
+
+		$this->resetDecorators();
 	}
 }

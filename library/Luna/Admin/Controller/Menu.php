@@ -30,15 +30,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Model_Menu extends Luna_Db_Table
+class Luna_Admin_Controller_Menu extends Luna_Admin_Controller_Action
 {
-	protected $_name = 'menus';
+	protected $_modelName = 'Model_Menus';
 
-	public function inject($values)
+	protected $_formName = 'Form_Menus';
+
+	public function setupMenu()
 	{
-		if (empty($values['page_id']))
-			$values['page_id'] = new Zend_Db_Expr('NULL');
+		$this->_menu->addsub('index');
+		$this->_menu->addsub('create');
+	}
 
-		return parent::inject($values);
+	public function getForm()
+	{
+		if (!parent::getForm())
+			return false;
+
+		$model = new Model_Pages;
+		$this->_form->page_id->setMultiOptions($model->getFormTreeList());
+
+		return $this->_form;
 	}
 }
