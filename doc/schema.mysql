@@ -1,0 +1,164 @@
+--
+-- MySQL database schema
+--
+
+SET CHARACTER SET 'UTF8';
+
+CREATE TABLE users (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	username varchar(128) NOT NULL UNIQUE,
+	email varchar(128) UNIQUE,
+	password varchar(34),
+	enabled boolean,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	lastlogin timestamp,
+	activity timestamp,
+	logincount integer DEFAULT 0
+) ENGINE=INNODB;
+
+CREATE TABLE roles (
+	role varchar(32) PRIMARY KEY NOT NULL,
+	inherit varchar(32) references roles on delete cascade
+) ENGINE=INNODB;
+
+CREATE TABLE users_roles (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	user_id integer references users on delete cascade,
+	role varchar(32) references roles on delete cascade
+) ENGINE=INNODB;
+
+CREATE TABLE privileges (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	user_id integer references users on delete cascade,
+	role varchar(32) references roles on delete cascade,
+	resource_type varchar(32) NOT NULL,
+	resource_id integer NOT NULL,
+	created timestamp,
+	modified timestamp,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	privilege varchar(32)
+) ENGINE=INNODB;
+
+CREATE TABLE pages (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	lft integer NOT NULL,
+	rgt integer NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	publish_from timestamp,
+	publish_to timestamp,
+	published boolean default false,
+	nodetype varchar(32),
+	template varchar(64) NOT NULL,
+	slug varchar(128) NOT NULL,
+	title varchar(128) NOT NULL,
+	metadesc varchar(512),
+	spider_sitemap boolean default true,
+	spider_index boolean default true,
+	spider_follow boolean default true,
+	body text
+) ENGINE=INNODB;
+
+CREATE TABLE folders (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	lft integer NOT NULL,
+	rgt integer NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	name varchar(128) NOT NULL
+) ENGINE=INNODB;
+
+CREATE TABLE files (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	folder_id integer references folders on delete set null,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	filename varchar(255) NOT NULL UNIQUE,
+	mimetype varchar(64),
+	size varchar(16),
+	title varchar(255) NOT NULL,
+	alt varchar(512)
+) ENGINE=INNODB;
+
+CREATE TABLE pages_files (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	page_id integer not null references pages on delete cascade,
+	file_id integer not null references files on delete cascade,
+	createdby integer references users on delete restrict,
+	created timestamp
+) ENGINE=INNODB;
+
+CREATE TABLE galleries (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	folder_id integer references folders on delete restrict,
+	page_limit integer not null default 1,
+	viewmode varchar(64) not null default 'thumbnails',
+	size_thumbnails varchar(64) not null default 'small',
+	size_flow varchar(64) not null default 'original'
+
+) ENGINE=INNODB;
+
+CREATE TABLE galleries_files (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	gallery_id integer not null references galleries on delete cascade,
+	file_id integer not null references files on delete cascade,
+	position integer not null default 0,
+	createdby integer references users on delete restrict,
+	created timestamp
+) ENGINE=INNODB;
+
+CREATE TABLE options (
+	`key` varchar(128) PRIMARY KEY NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	value varchar(1024)
+) ENGINE=INNODB;
+
+CREATE TABLE stickers (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	page_id integer NOT NULL references pages on delete cascade,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	`key` varchar(64) NOT NULL,
+	value varchar(512)
+) ENGINE=INNODB;
+
+CREATE TABLE menus (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	mode varchar(16) NOT NULL,
+	structure varchar(16) NOT NULL,
+	page_id integer references pages on delete restrict,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	title varchar(128)
+) ENGINE=INNODB;
+
+CREATE TABLE menuitems (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	menu_id integer references pages on delete cascade,
+	page_id integer references pages on delete cascade,
+	lft integer NOT NULL,
+	rgt integer NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	title varchar(128),
+	url varchar(1024)
+) ENGINE=INNODB;

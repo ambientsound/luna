@@ -99,7 +99,7 @@ class Luna_Db_Table extends Zend_Db_Table implements Zend_Acl_Resource_Interface
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from($tablename, array('createdby'))
-			->joinFull('privileges', $this->db->quoteIdentifier('privileges') . '.' . $this->db->quoteIdentifier('resource_id') . ' = ' . $key . ' AND ' .
+			->joinLeft('privileges', $this->db->quoteIdentifier('privileges') . '.' . $this->db->quoteIdentifier('resource_id') . ' = ' . $key . ' AND ' .
 				$this->db->quoteInto('privileges.resource_type = ?', $tablename),
 				array('user_id', 'role', 'privilege'))
 			->where($this->db->quoteInto($key . ' = ?', $id));
