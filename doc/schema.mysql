@@ -3,6 +3,7 @@
 --
 
 SET CHARACTER SET 'UTF8';
+SET NAMES 'UTF8';
 
 CREATE TABLE users (
 	id integer PRIMARY KEY NOT NULL auto_increment,
