@@ -53,22 +53,34 @@ class Luna_Front_Menu extends Luna_Object
 		/* Dynamic mode fetches all children of the referenced page. */
 		if ($this->_data['mode'] == 'dynamic')
 		{
-			if (empty($this->_data['page_id']))
-				return false;
-
-			
-			$parent = new Luna_Object_Page(new Model_Pages, $this->_data['page_id']);
-			$ancestors = $parent->getAncestors();
-			$descendants = $parent->getDescendants();
-
 			$base = '/';
-			array_pop($ancestors);
-			if (!empty($ancestors))
+
+			if (!empty($this->_data['page_id']))
 			{
-				foreach ($ancestors as $a)
-					$base .= $a['slug'] . '/';
+				$parent = new Luna_Object_Page(new Model_Pages, $this->_data['page_id']);
+				$ancestors = $parent->getAncestors();
+				$descendants = $parent->getDescendants();
+
+				array_pop($ancestors);
+				if (!empty($ancestors))
+				{
+					foreach ($ancestors as $a)
+						$base .= $a['slug'] . '/';
+				}
+
+				$root = array_shift($descendants);
+				$base .= $root['slug'] . '/';
 			}
-			$this->_data = $this->buildMenu($base, 0, null, $this->_data['structure'], $descendants);
+			else
+			{
+				$model = new Model_Pages;
+				$descendants = $model->getAll();
+				$root = array(
+					'rgt'	=> 999999
+				);
+			}
+
+			$this->_data = $this->buildMenu($base, 0, $root['rgt'], $this->_data['structure'], $descendants);
 		}
 		/* Static mode works with menu items. */
 		elseif ($this->_data['mode'] == 'static')
@@ -86,14 +98,6 @@ class Luna_Front_Menu extends Luna_Object
 		{
 			$page['url'] = $base . $page['slug'];
 			$page['level'] = $level;
-
-			/* First/root node */
-			if ($level == 1 && empty($ret) && $rgt == null)
-			{
-				$ret = $this->buildMenu($page['url'] . '/', --$level, $page['rgt'], $mode, $descendants);
-				return $ret;
-			}
-
 			$ret[] = $page;
 
 			/* Leaf node */

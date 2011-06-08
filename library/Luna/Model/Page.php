@@ -102,4 +102,13 @@ class Luna_Model_Page extends Luna_Model_Preorder
 
 		return $node;
 	}
+
+	public function getAll()
+	{
+		$select = $this->select()
+			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->order('lft ASC');
+
+		return $this->db->fetchAll($select);
+	}
 }
