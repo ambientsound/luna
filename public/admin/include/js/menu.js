@@ -57,15 +57,36 @@ $(document).ready(function()
 		var li = $('<li />');
 		var ele = $('<input />');
 		var div = $('<div />');
-		var object = {
+		var tit = $('<span />');
+		var url = $('<span />');
+		var obj = {
 			page_id	: par.find('#add_page_link').val(),
 			url	: par.find('#add_url_link').val(),
 			title	: par.find('#add_title').val()
 		};
-		div.text(JSON.stringify(object));
+
+		if (obj.title == '')
+		{
+			if (obj.url.length > 0)
+			{
+				obj.title = obj.url;
+			}
+			else
+			{
+				obj.title = $('#add_page_link').find('[value=' + obj.page_id + ']').text();
+				obj.url = obj.title;
+			}
+		}
+
+		tit.text(obj.title);
+		url.text(obj.url);
+		tit.addClass('title');
+		tit.addClass('url');
+		div.append(tit);
+		div.append(url);
 		ele.attr('name', 'menuitem[]');
 		ele.attr('type', 'hidden');
-		ele.attr('value', JSON.stringify(object));
+		ele.attr('value', JSON.stringify(obj));
 		li.append(ele);
 		li.append(div);
 		dest.append(li);
@@ -76,15 +97,6 @@ $(document).ready(function()
 	{
 		tolerance : 'pointer',
 
-		stop : function(e, ui)
-		{
-			var id = [];
-			$(this).children('li').each(function(index)
-			{
-				id.push($(this).children('img').attr('id'));
-			});
-			$('#pictures').attr('value', id);
-		},
 		receive : function(e, ui)
 		{
 			sortable_inside = 1;

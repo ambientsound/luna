@@ -16,7 +16,8 @@
 				<li>
 					<input type="hidden" name="menuitem[]" value="{json_encode($item)|htmlentities}" />
 					<div>
-						<strong>{$item.title}</strong> &raquo; {$item.url}
+						<span class="title">{$item.title}</span>
+						<span class="url">{$item.url}</span>
 					</div>
 				</li>
 			{/foreach}

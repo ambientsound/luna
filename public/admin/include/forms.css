@@ -160,3 +160,43 @@
 {
 	float: right;
 }
+
+#form_menus #menu-items
+{
+	list-style: none;
+	margin: 1em 0;
+	padding: 0;
+}
+
+#form_menus #menu-items li
+{
+	background: white;
+	margin: 0 0 1em;
+	padding: 0.5em;
+	border: 3px solid #edefff;
+	height: 2.5em;
+}
+
+#form_menus #menu-items .ui-sortable-placeholder
+{
+	visibility: visible !important;
+	border: 3px dashed #a5a5b5;
+	background: #edefff;
+	height: 2.5em;
+}
+
+#form_menus #menu-items .ui-sortable-helper
+{
+	border: 3px solid #a5a5b5;
+	background: #edefff;
+}
+
+#form_menus #menu-items .title
+{
+	font-weight: bold;
+	display: block;
+}
+
+#form_menus #menu-items .url
+{
+}

@@ -86,38 +86,32 @@ class Luna_Model_Menu extends Luna_Db_Table
 		$iter = 0;
 		$page = new Luna_Object_Page(new Model_Pages, null);
 
-		foreach ($items as $key => &$item)
+		foreach ($items as $key => $item)
 		{
-			if (empty($item['page_id']) && empty($item['url']))
-			{
-				$item['url'] = '/';
-			}
+			$insert = array(
+				'menu_id'	=> $menu_id,
+				'title'		=> $item['title'],
+				'page_id'	=> (empty($item['page_id']) ? new Zend_Db_Expr('NULL') : $item['page_id']),
+				'url'		=> (!empty($item['page_id']) ? new Zend_Db_Expr('NULL') : $item['url']),
+				'lft'		=> ++$iter,
+				'rgt'		=> ++$iter
+			);
 
-			if (empty($item['title']))
+			if (empty($item['page_id']) && empty($item['url']))
+				$insert['url'] = '/';
+
+			if (!empty($item['page_id']))
 			{
-				if (empty($item['page_id']))
-					$item['title'] = $item['url'];
-				else
+				if ($item['url'] == $item['title'])
 				{
-					if (!$page->load($item['page_id']))
+					if ($page->load($item['page_id']))
 					{
-						unset($items[$key]);
-						continue;
+						$insert['title'] = $page->title;
 					}
-					$item['title'] = $page->title;
 				}
 			}
 
-			if (empty($item['page_id']))
-				$item['page_id'] = new Zend_Db_Expr('NULL');
-			if (empty($item['url']))
-				$item['url'] = new Zend_Db_Expr('NULL');
-
-			$item['menu_id'] = $menu_id;
-			$item['lft'] = ++$iter;
-			$item['rgt'] = ++$iter;
-
-			if (!$model->inject($item))
+			if (!$model->inject($insert))
 				return false;
 		}
 
