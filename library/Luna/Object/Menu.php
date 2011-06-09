@@ -30,13 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Front_Menu extends Luna_Object
+class Luna_Object_Menu extends Luna_Object
 {
-	public function __construct()
-	{
-		parent::__construct(new Model_Menus, null);
-	}
-
 	public function set($row)
 	{
 		if (!parent::set($row))
@@ -45,6 +40,12 @@ class Luna_Front_Menu extends Luna_Object
 		$this->loadChildren();
 	}
 
+	/*
+	 * FIXME: this function does a lot of database lookups and might be a performance hit.
+	 * Dynamic menus will get slow if the site has a lot of pages.
+	 * Static menus slow down if they have a lot of menu items.
+	 * DO SOME CACHING!
+	 */
 	public function loadChildren()
 	{
 		if (!$this->load())
@@ -80,16 +81,33 @@ class Luna_Front_Menu extends Luna_Object
 				);
 			}
 
-			$this->_data = $this->buildMenu($base, 0, $root['rgt'], $this->_data['structure'], $descendants);
+			$this->_data['children'] = $this->buildDynamicMenu($base, 0, $root['rgt'], $this->_data['structure'], $descendants);
 		}
 		/* Static mode works with menu items. */
 		elseif ($this->_data['mode'] == 'static')
 		{
-			throw new Zend_Exception('Not implemented.');
+			$page = new Luna_Object_Page(new Model_Pages, null);
+			$this->_data['children'] = $this->_model->getStaticMenuItems($this->_data['id']);
+
+			foreach ($this->_data['children'] as $key => &$item)
+			{
+				if (!empty($item['page_id']))
+				{
+					if (!$page->load($item['page_id']) && empty($item['url']))
+					{
+						unset($this->_data['children'][$key]);
+						continue;
+					}
+					$item['url'] = $page->getCanonicalUrl();
+				}
+			}
+			reset($this->_data['children']);
 		}
+
+		return true;
 	}
 
-	public function buildMenu($base, $level, $rgt, $mode, &$descendants)
+	public function buildDynamicMenu($base, $level, $rgt, $mode, &$descendants)
 	{
 		++$level;
 		$ret = array();
@@ -104,7 +122,7 @@ class Luna_Front_Menu extends Luna_Object
 			if ($page['lft'] + 1 == $page['rgt'])
 				continue;
 
-			$children = $this->buildMenu($page['url'] . '/', $level, $page['rgt'], $mode, $descendants);
+			$children = $this->buildDynamicMenu($page['url'] . '/', $level, $page['rgt'], $mode, $descendants);
 			if (empty($children))
 				continue;
 

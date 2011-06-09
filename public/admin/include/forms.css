@@ -150,3 +150,13 @@
 {
 	height: 4em;
 }
+
+
+/*
+ * Menus
+ */
+
+#form_menus #fieldset-add_link_group
+{
+	float: right;
+}

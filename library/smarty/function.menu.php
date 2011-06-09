@@ -34,12 +34,12 @@ function smarty_function_menu($params, &$smarty)
 {
 	if (empty($params['object']))
 	{
-		$model = new Luna_Front_Menu;
+		$model = new Luna_Object_Menu(new Model_Menus, null);
 
 		if (!$model->load($params['id']))
 			return;
 
-		$params['object'] =& $model;
+		$params['object'] =& $model->children;
 	}
 	
 	if (empty($params['template']))

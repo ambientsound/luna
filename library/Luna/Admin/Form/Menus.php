@@ -41,7 +41,13 @@ class Luna_Admin_Form_Menus extends Luna_Form
 		$this->addElement('Select', 'mode');
 		$this->addElement('Select', 'structure');
 		$this->addElement('Select', 'page_id');
+		$this->addElement('Hidden', 'menuitem');
 		$this->addElement('Submit', 'submit');
+
+		$this->addElement('Select', 'add_page_link');
+		$this->addElement('Text', 'add_url_link');
+		$this->addElement('Text', 'add_title');
+		$this->addElement('Button', 'add_link');
 
 		$this->structure->setMultiOptions(array(
 			'flat'	=> 'form_menus_structure_flat',
@@ -52,6 +58,14 @@ class Luna_Admin_Form_Menus extends Luna_Form
 			'dynamic'	=> 'form_menus_mode_dynamic',
 			'static'	=> 'form_menus_mode_static'
 		));
+
+		$this->add_page_link->setIgnore(true);
+		$this->add_url_link->setIgnore(true);
+		$this->add_title->setIgnore(true);
+		$this->add_link->setIgnore(true);
+
+		$this->addDisplayGroup(array('add_page_link', 'add_url_link', 'add_title', 'add_link'),
+			'add_link_group');
 
 		$this->resetDecorators();
 	}

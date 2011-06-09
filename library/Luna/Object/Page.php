@@ -54,6 +54,18 @@ class Luna_Object_Page extends Luna_Object_Preorder
 		return true;
 	}
 
+	public function getCanonicalUrl()
+	{
+		if (($ancestors = $this->getAncestors()) == false)
+			return false;
+
+		$base = '';
+		foreach ($ancestors as $a)
+			$base .= '/' . $a['slug'];
+
+		return $base;
+	}
+
 	public function loadStickers()
 	{
 		if (!$this->load())

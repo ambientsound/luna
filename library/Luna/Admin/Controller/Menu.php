@@ -48,7 +48,11 @@ class Luna_Admin_Controller_Menu extends Luna_Admin_Controller_Action
 			return false;
 
 		$model = new Model_Pages;
-		$this->_form->page_id->setMultiOptions($model->getFormTreeList());
+		$tree = $model->getFormTreeList();
+
+		$this->_form->add_page_link->setMultiOptions(array('' => 'form_menus_add_page_link_url'));
+		$this->_form->add_page_link->addMultiOptions(array('form_menus_add_page_link_page' => $tree));
+		$this->_form->page_id->setMultiOptions($tree);
 
 		return $this->_form;
 	}
