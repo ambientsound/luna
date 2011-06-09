@@ -56,9 +56,19 @@ class Luna_Model_Gallery extends Luna_Model_Page_Abstract
 			->order('id DESC');
 
 		if (empty($folder_id))
+		{
 			$select->where('folder_id IS NULL');
+		}
+		elseif (is_array($folder_id))
+		{
+			foreach ($folder_id as &$id)
+				$id = intval($id);
+			$select->where('folder_id IN (' . join(',', $folder_id) . ')');
+		}
 		else
+		{
 			$select->where('folder_id = ' . intval($folder_id));
+		}
 
 		return new Zend_Paginator(new Luna_Paginator_Adapter_Images($select));
 	}

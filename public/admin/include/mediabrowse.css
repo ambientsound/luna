@@ -1,4 +1,3 @@
-<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -30,45 +29,68 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+#mediabrowse
 {
-	protected $_row = null;
-	
-	protected $_config = null;
+	padding: 1em;
+}
 
-	public function __construct($config, $row)
-	{
-		$this->_config = $config;
-		$this->_row = $row;
+#folderselect
+{
+	width: 290px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	top: 51px;
+	padding: 0 0 0 1em;
+	background: #EDEFFF;
+}
 
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				$celltype = $this->_config['f'][$field]['type'];
-				$celltype = 'Luna_Table_Cell_' . strtoupper($celltype[0]) . strtolower(substr($celltype, 1));
-			}
-			if (empty($celltype) || !@class_exists($celltype))
-				$celltype = 'Luna_Table_Cell';
+#form_folder
+{
+	width: auto;
+}
 
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
-	}
+#folderselect ul
+{
+	margin: 0;
+	padding: 1em 0;
+	list-style: none;
+	overflow: scroll;
+	overflow-x: hidden;
+	position: absolute;
+	top: 7em;
+	left: 1em;
+	bottom: 0;
+	right: 0;
+}
 
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
+#folderselect ul li
+{
+	margin: 0 0 1em;
+}
 
-		return null;
-	}
+#folderselect ul li img.active
+{
+	border: 4px solid red;
+}
 
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
+h1
+{
+	padding-left: 0;
+}
 
-		return $this->_config['fields'][$this->_iter];
-	}
+#manager
+{
+	line-height: 1.5em;
+}
+
+#manager h2
+{
+	margin: 1em 0;
+}
+
+#manager img
+{
+	float: left;
+	margin: 0 2em 2em 0;
 }

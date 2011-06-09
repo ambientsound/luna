@@ -34,6 +34,8 @@ class Luna_Object_Preorder extends Luna_Object
 {
 	protected $_parentId = null;
 
+	protected $_preorderFields = array('id', 'lft', 'rgt');
+
 	public function clear()
 	{
 		parent::clear();
@@ -55,7 +57,7 @@ class Luna_Object_Preorder extends Luna_Object
 
 		$select = $this->_model->select()
 			->setIntegrityCheck(false)
-			->from($this->_tblname, array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from($this->_tblname, $this->_preorderFields)
 			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
 			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
 			->order('lft ASC');
@@ -70,7 +72,7 @@ class Luna_Object_Preorder extends Luna_Object
 
 		$select = $this->_model->select()
 			->setIntegrityCheck(false)
-			->from($this->_tblname, array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from($this->_tblname, $this->_preorderFields)
 			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
 			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
 			->order('lft ASC');

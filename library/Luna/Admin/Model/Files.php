@@ -46,6 +46,11 @@ class Luna_Admin_Model_Files extends Luna_Model_File
 		return $select->where('folder_id IN (' . join(',', $this->_folderFilter) . ')');
 	}
 
+	public function selectImages()
+	{
+		return $this->selectFiles()->where('size IS NOT NULL');
+	}
+
 	public function setFolderFilter($folder_id, $recurse = false)
 	{
 		if (!$recurse)

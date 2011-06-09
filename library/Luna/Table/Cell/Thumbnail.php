@@ -30,45 +30,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+class Luna_Table_Cell_Thumbnail extends Luna_Table_Cell_Abstract
 {
-	protected $_row = null;
-	
-	protected $_config = null;
+	protected static $_filenameField = 'filename';
 
-	public function __construct($config, $row)
+	protected static $_size = 'small';
+
+	public static function setOrigin($field, $size)
 	{
-		$this->_config = $config;
-		$this->_row = $row;
-
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				$celltype = $this->_config['f'][$field]['type'];
-				$celltype = 'Luna_Table_Cell_' . strtoupper($celltype[0]) . strtolower(substr($celltype, 1));
-			}
-			if (empty($celltype) || !@class_exists($celltype))
-				$celltype = 'Luna_Table_Cell';
-
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
+		self::$_filenameField = $field;
+		self::$_size = $size;
 	}
 
-	public function __get($key)
+	public function __toString()
 	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
-
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
+		$path = Luna_Config::get('site')->media->path;
+		return '<img src="' . $path . '/' . self::$_size . '/' . $this->_row[self::$_filenameField] . '" alt="" />';
 	}
 }

@@ -1,4 +1,3 @@
-<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -30,45 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Table_Row extends Luna_Stdclass
+$(document).ready(function()
 {
-	protected $_row = null;
-	
-	protected $_config = null;
-
-	public function __construct($config, $row)
+	$('#folderselect img').click(function()
 	{
-		$this->_config = $config;
-		$this->_row = $row;
-
-		foreach ($this->_config['fields'] as $field)
-		{
-			$celltype = null;
-			if (!empty($this->_config['f'][$field]['type']))
-			{
-				$celltype = $this->_config['f'][$field]['type'];
-				$celltype = 'Luna_Table_Cell_' . strtoupper($celltype[0]) . strtolower(substr($celltype, 1));
-			}
-			if (empty($celltype) || !@class_exists($celltype))
-				$celltype = 'Luna_Table_Cell';
-
-			$this->_data[] = new $celltype($this->_config, $row, $field);
-		}
-	}
-
-	public function __get($key)
-	{
-		if (($pos = array_search($key, $this->_config['fields'])) !== false)
-			return $this->_data[$pos];
-
-		return null;
-	}
-
-	public function key()
-	{
-		if (!$this->valid())
-			return null;
-
-		return $this->_config['fields'][$this->_iter];
-	}
-}
+		$(this).parents('ul').find('img').removeClass('active');
+		$(this).addClass('active');
+		$('#uploader').hide();
+		$('#manager').show().load('/admin/util/mediabrowser', { id : $(this).attr('id') });
+	});
+});

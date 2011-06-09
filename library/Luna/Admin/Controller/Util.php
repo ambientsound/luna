@@ -54,4 +54,13 @@ class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
 		$folders = $model->getFiles($this->_getParam('folder', 0));
 		echo json_encode($folders);
 	}
+
+	public function mediabrowserAction()
+	{
+		$this->_helper->viewRenderer->setNoRender(false);
+		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
+		$file->load();
+		$this->view->setMaster('media/browse/select');
+		$this->view->picture = $file;
+	}
 }
