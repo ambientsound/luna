@@ -1,4 +1,3 @@
-<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -30,37 +29,68 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
+#mediabrowse
 {
-	public function preDispatch()
-	{
-		$this->_helper->viewRenderer->setNoRender(true);
-	}
+	padding: 1em;
+}
 
-	public function slugAction()
-	{
-		$filter = new Luna_Filter_Slug();
-		echo $filter->filter($this->_getParam('source'));
-	}
+#folderselect
+{
+	width: 290px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	top: 51px;
+	padding: 0 0 0 1em;
+	background: #EDEFFF;
+}
 
-	public function templatesAction()
-	{
-		echo json_encode(Luna_Template::scanFront($this->_getParam('type', 'pages')));
-	}
+#form_folder
+{
+	width: auto;
+}
 
-	public function filesAction()
-	{
-		$model = new Luna_Admin_Model_Folders;
-		$folders = $model->getFiles($this->_getParam('folder', 0));
-		echo json_encode($folders);
-	}
+#folderselect ul
+{
+	margin: 0;
+	padding: 1em 0;
+	list-style: none;
+	overflow: scroll;
+	overflow-x: hidden;
+	position: absolute;
+	top: 7em;
+	left: 1em;
+	bottom: 0;
+	right: 0;
+}
 
-	public function mediabrowserAction()
-	{
-		$this->_helper->viewRenderer->setNoRender(false);
-		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
-		$file->load();
-		$this->view->setMaster('media/browse/select');
-		$this->view->picture = $file;
-	}
+#folderselect ul li
+{
+	margin: 0 0 1em;
+}
+
+#folderselect ul li img.active
+{
+	border: 4px solid red;
+}
+
+h1
+{
+	padding-left: 0;
+}
+
+#manager
+{
+	line-height: 1.5em;
+}
+
+#manager h2
+{
+	margin: 1em 0;
+}
+
+#manager img
+{
+	float: left;
+	margin: 0 2em 2em 0;
 }

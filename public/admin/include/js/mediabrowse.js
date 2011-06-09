@@ -1,4 +1,3 @@
-<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -30,37 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
+$(document).ready(function()
 {
-	public function preDispatch()
+	$('#folderselect img').click(function()
 	{
-		$this->_helper->viewRenderer->setNoRender(true);
-	}
-
-	public function slugAction()
-	{
-		$filter = new Luna_Filter_Slug();
-		echo $filter->filter($this->_getParam('source'));
-	}
-
-	public function templatesAction()
-	{
-		echo json_encode(Luna_Template::scanFront($this->_getParam('type', 'pages')));
-	}
-
-	public function filesAction()
-	{
-		$model = new Luna_Admin_Model_Folders;
-		$folders = $model->getFiles($this->_getParam('folder', 0));
-		echo json_encode($folders);
-	}
-
-	public function mediabrowserAction()
-	{
-		$this->_helper->viewRenderer->setNoRender(false);
-		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
-		$file->load();
-		$this->view->setMaster('media/browse/select');
-		$this->view->picture = $file;
-	}
-}
+		$(this).parents('ul').find('img').removeClass('active');
+		$(this).addClass('active');
+		$('#uploader').hide();
+		$('#manager').show().load('/admin/util/mediabrowser', { id : $(this).attr('id') });
+	});
+});

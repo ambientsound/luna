@@ -42,6 +42,36 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$this->_menu->addsub('create');
 	}
 
+	public function browseAction()
+	{
+		$this->view->setMaster('media/browse');
+
+		$model = new Model_Folders;
+		$folders = $model->getFlatAssocList('name');
+
+		$foldform = new Form_Folder;
+		$foldform->removeElement('newfolder');
+		$foldform->removeElement('submit');
+		$foldform->folder->setMultiOptions(array('/'));
+		$foldform->folder->addMultiOptions($folders);
+		$foldform->folder->setValue($this->_getParam('folder', 0));
+
+		$this->model->setFolderFilter($foldform->getValue('folder'), $foldform->getValue('recurse'));
+		$pictures = new Zend_Paginator(new Luna_Paginator_Adapter_Images($this->model->selectImages()));
+
+		$form = new Form_File;
+		$form->folder_id->setMultiOptions(array('/'));
+		$form->folder_id->addMultiOptions($folders);
+
+		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
+		$file->load();
+
+		$this->view->picture = $file;
+		$this->view->upform = $form;
+		$this->view->folders = $foldform;
+		$this->view->pictures = $pictures;
+	}
+
 	public function indexAction()
 	{
 		$model = new Model_Folders;
