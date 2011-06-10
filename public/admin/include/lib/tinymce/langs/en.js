@@ -196,8 +196,7 @@ langs:"Languages",
 wait:"Please wait...",
 sug:"Suggestions",
 no_sug:"No suggestions",
-no_mpell:"No misspellings found.",
-learn_word:"Learn word" 
+no_mpell:"No misspellings found."
 },
 pagebreak:{
 desc:"Insert page break."
@@ -216,8 +215,4 @@ square:"Square"
 },
 aria:{
 rich_text_area:"Rich Text Area"
-},
-wordcount:{
-words: 'Words: '
-}
-}});
+}}});

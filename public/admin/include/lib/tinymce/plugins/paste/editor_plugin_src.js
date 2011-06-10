@@ -10,6 +10,7 @@
 
 (function() {
 	var each = tinymce.each,
+		entities = null,
 		defs = {
 			paste_auto_cleanup_on_paste : true,
 			paste_enable_default_filters : true,
@@ -38,7 +39,6 @@
 	function getParam(ed, name) {
 		return ed.getParam(name, defs[name]);
 	}
-
 	tinymce.create('tinymce.plugins.PastePlugin', {
 		init : function(ed, url) {
 			var t = this;
@@ -111,6 +111,9 @@
 						ed.pasteAsPlainText = false;
 						ed.controlManager.setActive("pastetext", false);
 					}
+				} else if (/<(p|h[1-6]|ul|ol)/.test(o.content)) {
+					// Handle insertion of contents containing block elements separately
+					t._insertBlockContent(ed, dom, o.content);
 				} else {
 					t._insert(o.content);
 				}
@@ -166,7 +169,7 @@
 					return;
 
 				// Create container to paste into
-				n = dom.add(body, 'div', {id : '_mcePaste', 'class' : 'mcePaste', 'data-mce-bogus' : '1'}, '\uFEFF\uFEFF');
+				n = dom.add(body, 'div', {id : '_mcePaste', 'class' : 'mcePaste'}, '\uFEFF<br _mce_bogus="1">');
 
 				// If contentEditable mode we need to find out the position of the closest element
 				if (body != ed.getDoc().body)
@@ -198,7 +201,7 @@
 
 					// Check if the contents was changed, if it wasn't then clipboard extraction failed probably due
 					// to IE security settings so we pass the junk though better than nothing right
-					if (n.innerHTML === '\uFEFF\uFEFF') {
+					if (n.innerHTML === '\uFEFF') {
 						ed.execCommand('mcePasteWord');
 						e.preventDefault();
 						return;
@@ -212,7 +215,7 @@
 					// It's like IE has a reference to the parent element that you paste in and the selection gets messed up
 					// when it tries to restore the selection
 					setTimeout(function() {
-						// Process contents
+					// Process contents
 						process({content : n.innerHTML});
 					}, 0);
 
@@ -229,11 +232,11 @@
 
 					or = ed.selection.getRng();
 
-					// Move select contents inside DIV
+					// Move caret into hidden div
 					n = n.firstChild;
 					rng = ed.getDoc().createRange();
 					rng.setStart(n, 0);
-					rng.setEnd(n, 2);
+					rng.setEnd(n, 1);
 					sel.setRng(rng);
 
 					// Wait a while and grab the pasted contents
@@ -259,7 +262,7 @@
 								});
 
 								// Remove bogus br elements
-								each(dom.select('br[data-mce-bogus]', n), function(n) {
+								each(dom.select('br[_mce_bogus]', n), function(n) {
 									dom.remove(n);
 								});
 
@@ -306,19 +309,17 @@
 				}
 			}
 
-			ed.onInit.add(function() {
-				ed.controlManager.setActive("pastetext", ed.pasteAsPlainText);
-
-				// Block all drag/drop events
-				if (getParam(ed, "paste_block_drop")) {
+			// Block all drag/drop events
+			if (getParam(ed, "paste_block_drop")) {
+				ed.onInit.add(function() {
 					ed.dom.bind(ed.getBody(), ['dragend', 'dragover', 'draggesture', 'dragdrop', 'drop', 'drag'], function(e) {
 						e.preventDefault();
 						e.stopPropagation();
 
 						return false;
 					});
-				}
-			});
+				});
+			}
 
 			// Add legacy support
 			t._legacySupport();
@@ -335,14 +336,14 @@
 		},
 
 		_preProcess : function(pl, o) {
+			//console.log('Before preprocess:' + o.content);
+
 			var ed = this.editor,
 				h = o.content,
 				grep = tinymce.grep,
 				explode = tinymce.explode,
 				trim = tinymce.trim,
 				len, stripClass;
-
-			//console.log('Before preprocess:' + o.content);
 
 			function process(items) {
 				each(items, function(v) {
@@ -557,7 +558,7 @@
 				};
 
 				h = h.replace(/ class="([^"]+)"/gi, removeClasses);
-				h = h.replace(/ class=([\-\w]+)/gi, removeClasses);
+				h = h.replace(/ class=(\w+)/gi, removeClasses);
 			}
 
 			// Remove spans option
@@ -631,15 +632,39 @@
 			if (getParam(ed, "paste_remove_styles") || (getParam(ed, "paste_remove_styles_if_webkit") && tinymce.isWebKit)) {
 				each(dom.select('*[style]', o.node), function(el) {
 					el.removeAttribute('style');
-					el.removeAttribute('data-mce-style');
+					el.removeAttribute('_mce_style');
 				});
 			} else {
 				if (tinymce.isWebKit) {
 					// We need to compress the styles on WebKit since if you paste <img border="0" /> it will become <img border="0" style="... lots of junk ..." />
 					// Removing the mce_style that contains the real value will force the Serializer engine to compress the styles
 					each(dom.select('*', o.node), function(el) {
-						el.removeAttribute('data-mce-style');
+						el.removeAttribute('_mce_style');
 					});
+				}
+			}
+
+			t._fixListItems(pl, o);
+		},
+
+		/**
+		 * Detects any LI elements pasted outside of a UL or OL and fixes the nesting. This happens when copying part of a list in IE.
+		 */
+		_fixListItems : function(pl, o) {
+			var ul, i, n, dom = this.editor.dom;
+			for (i = 0; i < o.node.childNodes.length; i++) {
+				n = o.node.childNodes[i];
+
+				if (n.tagName === 'LI') {
+					if (!ul) {
+						ul = dom.create('UL');
+						n.parentNode.insertBefore(ul, n);
+						i++;
+					}
+					ul.appendChild(n);
+					i--;
+				} else {
+					ul = null;
 				}
 			}
 		},
@@ -665,7 +690,7 @@
 					type = 'ul';
 
 				// Detect ordered lists 1., a. or ixv.
-				if (/^__MCE_ITEM__\s*\w+\.\s*\u00a0+/.test(val))
+				if (/^__MCE_ITEM__\s*\w+\.\s*\u00a0{2,}/.test(val))
 					type = 'ol';
 
 				// Check if node value matches the list pattern: o&nbsp;&nbsp;
@@ -726,6 +751,65 @@
 		},
 
 		/**
+		 * This method will split the current block parent and insert the contents inside the split position.
+		 * This logic can be improved so text nodes at the start/end remain in the start/end block elements
+		 */
+		_insertBlockContent : function(ed, dom, content) {
+			var parentBlock, marker, sel = ed.selection, last, elm, vp, y, elmHeight, markerId = 'mce_marker';
+
+			function select(n) {
+				var r;
+
+				if (tinymce.isIE) {
+					r = ed.getDoc().body.createTextRange();
+					r.moveToElementText(n);
+					r.collapse(false);
+					r.select();
+				} else {
+					sel.select(n, 1);
+					sel.collapse(false);
+				}
+			}
+
+			// Insert a marker for the caret position
+			this._insert('<span id="' + markerId + '"></span>', 1);
+			marker = dom.get(markerId);
+			parentBlock = dom.getParent(marker, 'p,h1,h2,h3,h4,h5,h6,ul,ol,th,td');
+
+			// If it's a parent block but not a table cell
+			if (parentBlock && !/TD|TH/.test(parentBlock.nodeName)) {
+				// Split parent block
+				marker = dom.split(parentBlock, marker);
+
+				// Insert nodes before the marker
+				each(dom.create('div', 0, content).childNodes, function(n) {
+					last = marker.parentNode.insertBefore(n.cloneNode(true), marker);
+				});
+
+				// Move caret after marker
+				select(last);
+			} else {
+				dom.setOuterHTML(marker, content);
+				sel.select(ed.getBody(), 1);
+				sel.collapse(0);
+			}
+
+			// Remove marker if it's left
+			while (elm = dom.get(markerId))
+				dom.remove(elm);
+
+			// Get element, position and height
+			elm = sel.getStart();
+			vp = dom.getViewPort(ed.getWin());
+			y = ed.dom.getPos(elm).y;
+			elmHeight = elm.clientHeight;
+
+			// Is element within viewport if not then scroll it into view
+			if (y < vp.y || y + elmHeight > vp.y + vp.h)
+				ed.getDoc().body.scrollTop = y < vp.y ? y : y - vp.h + 25;
+		},
+
+		/**
 		 * Inserts the specified contents at the caret position.
 		 */
 		_insert : function(h, skip_undo) {
@@ -735,7 +819,8 @@
 			if (!ed.selection.isCollapsed() && r.startContainer != r.endContainer)
 				ed.getDoc().execCommand('Delete', false, null);
 
-			ed.execCommand('mceInsertContent', false, h, {skip_undo : skip_undo});
+			// It's better to use the insertHTML method on Gecko since it will combine paragraphs correctly before inserting the contents
+			ed.execCommand(tinymce.isGecko ? 'insertHTML' : 'mceInsertContent', false, h, {skip_undo : skip_undo});
 		},
 
 		/**
@@ -767,6 +852,9 @@
 			};
 
 			if ((typeof(h) === "string") && (h.length > 0)) {
+				if (!entities)
+					entities = ("34,quot,38,amp,39,apos,60,lt,62,gt," + ed.serializer.settings.entities).split(",");
+
 				// If HTML content with line-breaking tags, then remove all cr/lf chars because only tags will break a line
 				if (/<(?:p|br|h[1-6]|ul|ol|dl|table|t[rdh]|div|blockquote|fieldset|pre|address|center)[^>]*>/i.test(h)) {
 					process([
@@ -785,12 +873,26 @@
 					[/<\/t[dh]>\s*<t[dh][^>]*>/gi, "\t"],		// Table cells get tabs betweem them
 					/<[a-z!\/?][^>]*>/gi,						// Delete all remaining tags
 					[/&nbsp;/gi, " "],							// Convert non-break spaces to regular spaces (remember, *plain text*)
+					[
+						// HTML entity
+						/&(#\d+|[a-z0-9]{1,10});/gi,
+
+						// Replace with actual character
+						function(e, s) {
+							if (s.charAt(0) === "#") {
+								return String.fromCharCode(s.slice(1));
+							}
+							else {
+								return ((e = inArray(entities, s)) > 0)? String.fromCharCode(entities[e-1]) : " ";
+							}
+						}
+					],
 					[/(?:(?!\n)\s)*(\n+)(?:(?!\n)\s)*/gi, "$1"],	// Cool little RegExp deletes whitespace around linebreak chars.
 					[/\n{3,}/g, "\n\n"],							// Max. 2 consecutive linebreaks
 					/^\s+|\s+$/g									// Trim the front & back
 				]);
 
-				h = dom.decode(tinymce.html.Entities.encodeRaw(h));
+				h = dom.encode(h);
 
 				// Delete any highlighted text before pasting
 				if (!sel.isCollapsed()) {
