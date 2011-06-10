@@ -29,12 +29,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function() {
-	tinymce.create('tinymce.plugins.MediaBrowser', {
-		init : function(ed, url) {
-			// Register commands
-			ed.addCommand('mceMediaBrowser', function() {
-				// Internal image object like a flash placeholder
+(function()
+{
+	tinymce.create('tinymce.plugins.MediaBrowser',
+	{
+		init : function(ed, url)
+		{
+			ed.addCommand('mceMediaBrowser', function()
+			{
+
 				if (ed.dom.getAttrib(ed.selection.getNode(), 'class').indexOf('mceItem') != -1)
 					return;
 
@@ -44,41 +47,32 @@
 				{
 					if (typeof node.src != 'undefined')
 					{
-						script = '/admin/media/browse?src=' + node.src;
-						script = script + '&class=' + node.className;
+						script = script + '?src=' + node.src + '&class=' + node.className;
 					}
 				}
 
-				ed.windowManager.open({
+				ed.windowManager.open(
+				{
 					file : script,
 					width : 800,
 					height : 600,
 					popup_css : false,
-					inline : 1
-				}, {
+					inline : 0
+				},
+				{
 					plugin_url : url
 				});
 			});
 
-			// Register buttons
-			ed.addButton('image', {
+			ed.addButton('image',
+			{
 				title : 'Media',
 				cmd : 'mceMediaBrowser'
 			});
 		},
 
-		getInfo : function() {
-			return {
-				longname : 'Media browser',
-				author : 'Incendio',
-				authorurl : 'http://www.incendio.no',
-				version : '3.0'
-			};
-		},
-
 		popup_css : false
 	});
 
-	// Register plugin
 	tinymce.PluginManager.add('mediabrowser', tinymce.plugins.MediaBrowser);
 })();
