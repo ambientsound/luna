@@ -47,6 +47,16 @@ $(document).ready(function()
 		$.post($(this).attr('action'), $(this).serialize(), picture_insert_callback);
 	});
 
+	$('#folderselect #folder').change(function()
+	{
+		$('#folderselect #selector').load('/admin/util/getfolder', $('#form_folder').serialize());
+	});
+
+	$('#folderselect #recurse').change(function()
+	{
+		$('#folderselect #selector').load('/admin/util/getfolder', $('#form_folder').serialize());
+	});
+
 	$('#folderselect img').live('click', function()
 	{
 		$(this).parents('ul').find('img').removeClass('active');

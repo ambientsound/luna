@@ -21,7 +21,9 @@
 
 			<div id="folderselect">
 				{$folders}
-				{include file='media/browse/list.tpl'}
+				<div id="selector">
+					{include file='media/browse/list.tpl'}
+				</div>
 			</div>
 
 			<div id="manager">
