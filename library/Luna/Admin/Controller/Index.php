@@ -34,5 +34,25 @@ class Luna_Admin_Controller_Index extends Luna_Admin_Controller_Action
 {
 	public function indexAction()
 	{
+		$pagemodel = new Model_Pages;
+		$filemodel = new Model_Files;
+
+		$this->getRequest()->setParam('sort', 'modified');
+		$this->getRequest()->setParam('order', 'desc');
+
+		if ($this->acl->can($pagemodel, 'list'))
+		{
+			Luna_Table_Cell_Slug::setMap($pagemodel->getFormTreeList());
+			$pagetable = new Luna_Table($pagemodel->getTableName(), $pagemodel, $this->getRequest());
+			$pagetable->getPaginator()->setItemCountPerPage(5);
+			$this->view->pagetable = $pagetable;
+		}
+
+		if ($this->acl->can($filemodel, 'list'))
+		{
+			$filetable = new Luna_Table($filemodel->getTableName(), $filemodel, $this->getRequest());
+			$filetable->getPaginator()->setItemCountPerPage(5);
+			$this->view->filetable = $filetable;
+		}
 	}
 }

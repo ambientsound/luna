@@ -32,7 +32,4 @@
 
 class IndexController extends Luna_Admin_Controller_Index
 {
-	public function indexAction()
-	{
-	}
 }

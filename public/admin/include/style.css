@@ -263,7 +263,7 @@ h3
 table
 {
 	width: 100%;
-	margin: 0;
+	margin: 0 0 1em;
 	border: 1px solid #4663a2;
 }
 
@@ -357,7 +357,8 @@ input, textarea
 
 .checkbox-element input
 {
-	width: auto;
+	width: auto !important;
+	text-align: left;
 	float: left;
 	position: absolute;
 	top: -0.15em;

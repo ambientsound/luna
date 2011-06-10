@@ -37,10 +37,10 @@ class Luna_Admin_Form_File extends Luna_Form
 		parent::init();
 
 		$this->addElement('Hidden', 'id');
+		$this->addElement('File', 'upload');
+		$this->addElement('Select', 'folder_id');
 		$this->addElement('Text', 'title');
 		$this->addElement('Text', 'alt');
-		$this->addElement('Select', 'folder_id');
-		$this->addElement('File', 'upload');
 		$this->addElement('Submit', 'submit');
 
 		$this->resetDecorators();
