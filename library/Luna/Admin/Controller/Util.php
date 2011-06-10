@@ -66,4 +66,43 @@ class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
 		$this->view->insertform = $inserter;
 		$this->view->picture = $file;
 	}
+
+	public function getimageAction()
+	{
+		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
+		if ($file->load())
+		{
+			$inserter = new Form_Mediabrowser;
+			$inserter->setImage($file);
+
+			if ($inserter->isValid($_POST))
+			{
+				if ($inserter->getValue('size') == 'custom')
+				{
+					$filemodel = new Model_Files;
+					$size = $inserter->getValue('customsize');
+					if ($filemodel->createThumbs($file->filename, array($size => $size)))
+					{
+						$file->reload();
+						$inserter->setImage($file);
+						$inserter->size->setValue($size);
+					}
+					else
+					{
+						header('HTTP/1.1 400 Thumbnail creation failed');
+						header('Status: 400 Thumbnail creation failed');
+						return;
+					}
+				}
+				$this->_helper->viewRenderer->setNoRender(false);
+				$this->view->opts = $inserter->getValues();
+				$this->view->picture = $file;
+				$this->view->setMaster('media/templates/' . $inserter->getValue('template'));
+				return;
+			}
+		}
+
+		header('HTTP/1.1 400 Missing picture id');
+		header('Status: 400 Missing picture id');
+	}
 }

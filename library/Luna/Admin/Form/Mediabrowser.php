@@ -62,6 +62,8 @@ class Luna_Admin_Form_Mediabrowser extends Luna_Form
 
 		$this->template->setMultiOptions(Luna_Template::scanAdmin('media/templates'));
 
+		$this->setAction('/admin/util/getimage');
+
 		$this->resetDecorators();
 	}
 

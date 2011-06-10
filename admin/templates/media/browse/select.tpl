@@ -7,6 +7,7 @@
 	<h2>{$picture->title}</h2>
 	<div class="left">
 		<a target="_blank" href="{$picture->pub}"><img src="{$picture->thumbnail.medium.pub}" alt="{$picture->alt}" title="{$picture->title}" /></a>
+		{$insertform->id}
 		{$insertform->template}
 		{$insertform->submit}
 	</div>

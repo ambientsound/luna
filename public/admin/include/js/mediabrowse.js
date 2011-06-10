@@ -29,17 +29,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+function picture_insert_callback(data, st)
+{
+	if (st != 'success')
+		return false;
+
+	tinyMCEPopup.execCommand('mceReplaceContent', false, data);
+	tinyMCEPopup.close();
+}
+
+
 $(document).ready(function()
 {
-	$('#folderselect img').click(function()
+	$('#form_mediabrowser').live('submit', function(e)
+	{
+		e.preventDefault();
+		$.post($(this).attr('action'), $(this).serialize(), picture_insert_callback);
+	});
+
+	$('#folderselect img').live('click', function()
 	{
 		$(this).parents('ul').find('img').removeClass('active');
 		$(this).addClass('active');
 		$('#uploader').hide();
-		$('#manager').show().load('/admin/util/mediabrowser', { id : $(this).attr('id') });
+		$('#manager').show().load('/admin/util/mediabrowser', { id : $(this).attr('id') }, function()
+		{
+			$('#size').trigger('change');
+			$('#link').trigger('change');
+		});
 	});
 
-	$('#size').change(function()
+	$('#size').live('change', function()
 	{
 		if ($(this).val() == 'custom')
 		{
@@ -52,7 +72,7 @@ $(document).ready(function()
 		}
 	});
 
-	$('#link').change(function()
+	$('#link').live('change', function()
 	{
 		if ($(this).val() == 'custom')
 		{
