@@ -38,4 +38,33 @@ $(document).ready(function()
 		$('#uploader').hide();
 		$('#manager').show().load('/admin/util/mediabrowser', { id : $(this).attr('id') });
 	});
+
+	$('#size').change(function()
+	{
+		if ($(this).val() == 'custom')
+		{
+			$('#customsize-div').show();
+			$('#customsize').focus();
+		}
+		else
+		{
+			$('#customsize-div').hide();
+		}
+	});
+
+	$('#link').change(function()
+	{
+		if ($(this).val() == 'custom')
+		{
+			$('#customlink-div').show();
+			$('#customlink').focus();
+		}
+		else
+		{
+			$('#customlink-div').hide();
+		}
+	});
+
+	$('#size').trigger('change');
+	$('#link').trigger('change');
 });

@@ -89,8 +89,29 @@ h1
 	margin: 1em 0;
 }
 
-#manager img
+#manager .left
 {
+	width: 250px;
 	float: left;
-	margin: 0 2em 2em 0;
+}
+
+#manager .left input,
+#manager .left select
+{
+	width: 100%;
+}
+
+#manager .left .submit-element input
+{
+	padding: 0.2em 0.5em;
+	font-size: 1.2em;
+	font-weight: bold;
+	margin: 1em 0;
+	background: -moz-linear-gradient(top, #4663a2, #0b2971);
+	color: #F2F2CC;
+}
+
+#finfo
+{
+	margin-left: 280px;
 }
