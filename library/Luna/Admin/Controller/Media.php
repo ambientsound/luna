@@ -63,6 +63,15 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$form->folder_id->setMultiOptions(array('/'));
 		$form->folder_id->addMultiOptions($folders);
 
+		if ($this->getRequest()->isPost() && $form->isValid($_POST))
+		{
+			$this->acl->assert($this->model, 'create');
+			if (($id = $this->saveToDb($form)) !== false)
+				return $this->_redirect('/media/browse?id='. $id);
+			else
+				$form->addError('form_incomplete');
+		}
+
 		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
 		if (($src = $this->_getParam('src')) != null)
 		{
