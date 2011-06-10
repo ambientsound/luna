@@ -64,10 +64,28 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$form->folder_id->addMultiOptions($folders);
 
 		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
+		if (($src = $this->_getParam('src')) != null)
+		{
+			/* Determine image id, alignment and size from URL */
+			if (($pos = strrpos($src, '/')) !== false)
+			{
+				$filename = substr($src, $pos + 1);
+				if (($size = strrpos($src, '/', -strlen($filename) - 2)) !== false)
+				{
+					$size = substr($src, $size + 1, $pos - $size - 1);
+				}
+				$file->load($this->model->getIdByFilename($filename));
+			}
+		}
+
 		$file->load();
 
 		$inserter = new Form_Mediabrowser;
 		$inserter->setImage($file);
+		if (!empty($size))
+			$inserter->size->setValue($size);
+		if (($class = $this->_getParam('class')) != null)
+			$inserter->align->setValue($class);
 
 		$this->view->insertform = $inserter;
 		$this->view->picture = $file;

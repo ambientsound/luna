@@ -74,7 +74,9 @@
 				authorurl : 'http://www.incendio.no',
 				version : '3.0'
 			};
-		}
+		},
+
+		popup_css : false
 	});
 
 	// Register plugin

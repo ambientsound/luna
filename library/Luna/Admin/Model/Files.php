@@ -51,6 +51,16 @@ class Luna_Admin_Model_Files extends Luna_Model_File
 		return $this->selectFiles()->where('size IS NOT NULL');
 	}
 
+	public function getIdByFilename($filename)
+	{
+		$select = $this->select()
+			->from($this->_name, 'id')
+			->where($this->db->quoteInto('filename = ?', $filename))
+			->limit(1);
+
+		return $this->db->fetchOne($select);
+	}
+
 	public function setFolderFilter($folder_id, $recurse = false)
 	{
 		if (!$recurse)
