@@ -30,40 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
+class Form_Mediabrowser extends Luna_Admin_Form_Mediabrowser
 {
-	public function preDispatch()
-	{
-		$this->_helper->viewRenderer->setNoRender(true);
-	}
-
-	public function slugAction()
-	{
-		$filter = new Luna_Filter_Slug();
-		echo $filter->filter($this->_getParam('source'));
-	}
-
-	public function templatesAction()
-	{
-		echo json_encode(Luna_Template::scanFront($this->_getParam('type', 'pages')));
-	}
-
-	public function filesAction()
-	{
-		$model = new Luna_Admin_Model_Folders;
-		$folders = $model->getFiles($this->_getParam('folder', 0));
-		echo json_encode($folders);
-	}
-
-	public function mediabrowserAction()
-	{
-		$this->_helper->viewRenderer->setNoRender(false);
-		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
-		$file->load();
-		$inserter = new Form_Mediabrowser;
-		$inserter->setImage($file);
-		$this->view->setMaster('media/browse/select');
-		$this->view->insertform = $inserter;
-		$this->view->picture = $file;
-	}
 }

@@ -30,40 +30,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
+class Luna_Admin_Form_Mediabrowser extends Luna_Form
 {
-	public function preDispatch()
+	public function init()
 	{
-		$this->_helper->viewRenderer->setNoRender(true);
+		parent::init();
+
+		$this->addElement('Hidden', 'id');
+		$this->addElement('Select', 'template');
+		$this->addElement('Select', 'size');
+		$this->addElement('Text', 'customsize');
+		$this->addElement('Select', 'align');
+		$this->addElement('Select', 'link');
+		$this->addElement('Text', 'customlink');
+		$this->addElement('Text', 'title');
+		$this->addElement('Text', 'alt');
+		$this->addElement('Submit', 'submit');
+
+		$this->link->setMultiOptions(array(
+			''		=> 'form_mediabrowser_link_no',
+			'big'		=> 'form_mediabrowser_link_big',
+			'custom'	=> 'form_mediabrowser_link_custom',
+		));
+
+		$this->align->setMultiOptions(array(
+			''		=> 'form_mediabrowser_align_none',
+			'alignleft'	=> 'form_mediabrowser_align_left',
+			'center'	=> 'form_mediabrowser_align_center',
+			'alignright'	=> 'form_mediabrowser_align_right'
+		));
+
+		$this->template->setMultiOptions(Luna_Template::scanAdmin('media/templates'));
+
+		$this->resetDecorators();
 	}
 
-	public function slugAction()
+	public function setImage(Luna_Object $image)
 	{
-		$filter = new Luna_Filter_Slug();
-		echo $filter->filter($this->_getParam('source'));
-	}
+		if (!$image->load())
+			return false;
 
-	public function templatesAction()
-	{
-		echo json_encode(Luna_Template::scanFront($this->_getParam('type', 'pages')));
-	}
+		$this->populate($image->toArray());
 
-	public function filesAction()
-	{
-		$model = new Luna_Admin_Model_Folders;
-		$folders = $model->getFiles($this->_getParam('folder', 0));
-		echo json_encode($folders);
-	}
+		$this->size->setMultiOptions(array('' => $image->size . ' (' . Zend_Registry::get('Zend_Translate')->_('file_original_size') . ')'));
+		foreach ($image->thumbnail as $key => $size)
+			$this->size->addMultiOptions(array($key => $size['size']));
+		$this->size->addMultiOptions(array('custom' => Zend_Registry::get('Zend_Translate')->_('form_mediabrowser_size_custom')));
 
-	public function mediabrowserAction()
-	{
-		$this->_helper->viewRenderer->setNoRender(false);
-		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
-		$file->load();
-		$inserter = new Form_Mediabrowser;
-		$inserter->setImage($file);
-		$this->view->setMaster('media/browse/select');
-		$this->view->insertform = $inserter;
-		$this->view->picture = $file;
+		if ($this->getValue('alt') == null)
+			$this->alt->setValue($image->title);
+
+		return true;
 	}
 }

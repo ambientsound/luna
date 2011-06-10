@@ -66,6 +66,10 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$file = new Luna_Object(new Model_Files, $this->_getParam('id'));
 		$file->load();
 
+		$inserter = new Form_Mediabrowser;
+		$inserter->setImage($file);
+
+		$this->view->insertform = $inserter;
 		$this->view->picture = $file;
 		$this->view->upform = $form;
 		$this->view->folders = $foldform;
