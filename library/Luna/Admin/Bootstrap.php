@@ -33,4 +33,16 @@
 
 class Luna_Admin_Bootstrap extends Luna_Bootstrap
 {
+	public function run()
+	{
+		/*
+		 * This is really just a hack for the flash uploader.
+		 * The flash cannot be instructed to send the PHP session id
+		 * in the headers, so we grab it from the $_POST variable.
+		 */
+		if (isset($_POST[session_name()]))
+			session_id($_POST[session_name()]);
+
+		parent::run();
+	}
 }

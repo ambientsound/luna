@@ -42,6 +42,25 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$this->_menu->addsub('create');
 	}
 
+	public function uploadifyAction()
+	{
+		$this->_helper->viewRenderer->setNoRender(true);
+
+		$this->getForm();
+		$this->acl->assert($this->model, 'create');
+		if ($this->getRequest()->isPost() && $this->isValidPost())
+		{
+			if (($this->object->id = $this->saveToDb($this->_form)) !== false)
+			{
+				echo $this->object->id;
+				return;
+			}
+		}
+		header('HTTP/1.1 500 Upload failed');
+		header('Status: 500 Upload failed');
+		echo 'FAIL';
+	}
+
 	public function browseAction()
 	{
 		$this->view->setMaster('media/browse');

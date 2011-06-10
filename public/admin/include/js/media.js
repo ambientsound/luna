@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var uploadify_id = null;
+
 $(document).ready(function()
 {
 	$('#folder').change(function()
@@ -41,5 +43,67 @@ $(document).ready(function()
 	{
 		$(this).parents('form').find('#newfolder').attr('value', '');
 		$(this).parents('form').submit();
+	});
+
+	$('#upload').uploadify(
+	{
+		script : '/admin/media/uploadify',
+		uploader : '/admin/include/lib/uploadify/uploadify.swf',
+		cancelImg : '/admin/include/lib/uploadify/cancel.png',
+		auto : false,
+		removeCompleted : false,
+		fileDataName : 'upload',
+		multi : true,
+
+		onComplete : function(e, id, file, response, data)
+		{
+			uploadify_id = response;
+			return true;
+		},
+
+		onAllComplete : function(e, data)
+		{
+			if (data.errors == 0)
+			{
+				if (data.filesUploaded == 1)
+				{
+					if (uploadify_id != null)
+					{
+						document.location = '/admin/media/read/id/' + uploadify_id;
+						return;
+					}
+				}
+				document.location = '/admin/media?sort=modified&order=desc';
+			}
+		}
+	});
+
+	$('#form_file').submit(function(e)
+	{
+		e.preventDefault();
+
+		var o = {};
+		var a = $('#form_file').serializeArray();
+
+		$.each(a, function()
+		{
+			if (o[this.name] !== undefined)
+			{
+				if (!o[this.name].push)
+				{
+					o[this.name] = [o[this.name]];
+				}
+				o[this.name].push(this.value || '');
+			}
+			else
+			{
+				o[this.name] = this.value || '';
+			}
+		});
+
+		for (attrname in uploadify_scriptdata) { o[attrname] = uploadify_scriptdata[attrname]; }
+
+		$('#upload').uploadifySettings('scriptData', o);
+		$('#upload').uploadifyUpload();
 	});
 });
