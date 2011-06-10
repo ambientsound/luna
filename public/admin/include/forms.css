@@ -59,6 +59,11 @@
 	background: #dfe2ff;
 }
 
+#form_page #body-div textarea
+{
+	width: 100%;
+}
+
 #form_page .selector
 {
 	height: 6em;

@@ -40,6 +40,8 @@ $(document).ready(function()
 		plugins : "paste,mediabrowser",
 		convert_urls : false,
 		relative_urls : false,
+		theme_advanced_resizing : true,
+		theme_advanced_statusbar_location : 'bottom',
 
 		// Theme options
 		theme_advanced_buttons1 : "bold,italic,underline,strikethrough,sub,sup,|,undo,redo,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontselect,fontsizeselect",
