@@ -29,27 +29,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$(document).ready(function()
-{
-	$('.tinymce-element textarea').tinymce({
+(function() {
+	tinymce.create('tinymce.plugins.MediaBrowser', {
+		init : function(ed, url) {
+			// Register commands
+			ed.addCommand('mceMediaBrowser', function() {
+				// Internal image object like a flash placeholder
+				if (ed.dom.getAttrib(ed.selection.getNode(), 'class').indexOf('mceItem') != -1)
+					return;
 
-		script_url : "/admin/include/lib/tinymce/tiny_mce.js",
+				node = ed.selection.getNode();
+				script = '/admin/media/browse';
+				if (typeof node != 'undefined')
+				{
+					if (typeof node.src != 'undefined')
+					{
+						script = '/admin/media/browse?src=' + node.src;
+						script = script + '&class=' + node.className;
+					}
+				}
 
-		// General options
-		theme : "advanced",
-		plugins : "paste,mediabrowser",
-		convert_urls : false,
-		relative_urls : false,
+				ed.windowManager.open({
+					file : script,
+					width : 800,
+					height : 600,
+					popup_css : false,
+					inline : 1
+				}, {
+					plugin_url : url
+				});
+			});
 
-		// Theme options
-		theme_advanced_buttons1 : "bold,italic,underline,strikethrough,sub,sup,|,undo,redo,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontselect,fontsizeselect",
-		theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,bullist,numlist,|,image,link,unlink,forecolor,|,code,cleanup,removeformat",
-		theme_advanced_buttons3 : "",
-		theme_advanced_buttons4 : "",
-		theme_advanced_toolbar_location : "top",
-		theme_advanced_toolbar_align : "left",
+			// Register buttons
+			ed.addButton('image', {
+				title : 'Media',
+				cmd : 'mceMediaBrowser'
+			});
+		},
 
-		// Example content CSS (should be your site CSS)
-		content_css : "/style.css"
+		getInfo : function() {
+			return {
+				longname : 'Media browser',
+				author : 'Incendio',
+				authorurl : 'http://www.incendio.no',
+				version : '3.0'
+			};
+		}
 	});
-});
+
+	// Register plugin
+	tinymce.PluginManager.add('mediabrowser', tinymce.plugins.MediaBrowser);
+})();
