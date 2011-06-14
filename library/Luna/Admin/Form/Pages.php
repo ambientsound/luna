@@ -47,6 +47,9 @@ class Luna_Admin_Form_Pages extends Luna_Form
 		$this->addElement('Checkbox', 'spider_sitemap');
 		$this->addElement('Checkbox', 'spider_index');
 		$this->addElement('Checkbox', 'spider_follow');
+		$this->addElement('Checkbox', 'published');
+		$this->addElement('Text', 'published_from');
+		$this->addElement('Text', 'published_to');
 		$this->addElement('Text', 'modified', array('ignore' => true, 'readonly' => true));
 		$this->addElement('Textarea', 'metadesc');
 

@@ -41,12 +41,15 @@ class Luna_Front_Controller_Error extends Luna_Front_Controller_Action
 			case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
 			case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
 			case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
-				$this->getResponse()->setHttpResponseCode(404);
+				$code = 404;
 				break;
 
 			default:
+				if (($code = $errors->exception->getCode()) == 0)
+					$code = 500;
 		}
 
+		$this->getResponse()->setHttpResponseCode($code);
 		$this->path->add(null, 'error');
 	}
 
@@ -60,10 +63,14 @@ class Luna_Front_Controller_Error extends Luna_Front_Controller_Action
 		{
 			$this->view->exception = $params['error_handler']->exception;
 			$this->view->stacktrace = explode("\n", $params['error_handler']->exception->getTraceAsString());
+			$this->view->setTemplate('error/error');
+		}
+		else
+		{
+			$this->view->setTemplate('error/' . $this->getResponse()->getHttpResponseCode());
 		}
 
 		unset($params['error_handler']);
-		$this->view->setTemplate('error/error');
 		$this->view->params = $params;
 	}
 }
