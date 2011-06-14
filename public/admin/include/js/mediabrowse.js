@@ -44,6 +44,16 @@ $(document).ready(function()
 	$('#form_mediabrowser').live('submit', function(e)
 	{
 		e.preventDefault();
+		if ($('body').hasClass('simple'))
+		{
+			pic = $('.left img').slice(0, 1);
+			window.opener.update_picture_chooser({
+				'id'		: pic.attr('rel'),
+				'thumbnail'	: pic.attr('src')
+			});
+			window.close();
+			return false;
+		}
 		$.post($(this).attr('action'), $(this).serialize(), picture_insert_callback);
 	});
 

@@ -1,3 +1,4 @@
+<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -29,104 +30,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#mediabrowse
+class Luna_View_Helper_FormPicture extends Zend_View_Helper_FormElement
 {
-	padding: 1em;
-}
+	public function formPicture($name, $value = null, array $attribs = null)
+	{
+		$info = $this->_getInfo($name, $value, $attribs);
+		extract($info); // name, value, attribs, options, listsep, disable
 
-#folderselect
-{
-	width: 290px;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	top: 51px;
-	padding: 0 0 0 1em;
-	background: #EDEFFF;
-}
+		if (isset($id))
+		{
+			if (isset($attribs) && is_array($attribs))
+				$attribs['id'] = $id;
+			else
+				$attribs = array('id' => $id);
+		}
 
-#form_folder
-{
-	width: auto;
-}
+		$t =& Zend_Registry::get('Zend_Translate');
 
-#folderselect ul
-{
-	margin: 0;
-	padding: 1em 0;
-	list-style: none;
-	overflow: scroll;
-	overflow-x: hidden;
-	position: absolute;
-	top: 7em;
-	left: 1em;
-	bottom: 0;
-	right: 0;
-}
+		$html = $this->_hidden($name, $value, $attribs);
+		$html .= '<div class="picture-placeholder" id="' . $name . '-picture' . '">';
+		if (!empty($value))
+		{
+			$pic = new Luna_Object(new Model_Files, $value);
+			if ($pic->load())
+			{
+				$html .= '<img src="' . $pic->thumbnail['medium']['pub'] . '" />';
+			}
+		}
+		$html .= '</div>';
+		$html .= $this->formButton($attribs);
 
-#folderselect ul li
-{
-	margin: 0 0 1em;
-}
+		return $html;
+	}
 
-#folderselect ul li img.active
-{
-	border: 4px solid red;
-}
+	public function formButton($attribs)
+	{
+		$info = $this->_getInfo($attribs);
+		if (empty($attribs['button']))
+			$attribs['button'] = 'choose_' . $info['id'];
 
-h1
-{
-	padding-left: 0;
-}
+		$t =& Zend_Registry::get('Zend_Translate');
 
-#manager
-{
-	line-height: 1.5em;
-}
-
-#manager h2
-{
-	margin: 1em 0;
-}
-
-#manager .left
-{
-	width: 250px;
-	float: left;
-}
-
-#manager .left input,
-#manager .left select
-{
-	width: 100%;
-}
-
-#manager .submit-element input
-{
-	padding: 0.2em 0.5em;
-	font-size: 1.2em;
-	font-weight: bold;
-	margin: 1em 0;
-	background: -moz-linear-gradient(top, #4663a2, #0b2971);
-	color: #F2F2CC;
-}
-
-#finfo
-{
-	margin-left: 280px;
-}
-
-#finfo .submit-element
-{
-	display: none;
-}
-
-body.simple #finfo .submit-element
-{
-	display: block;
-}
-
-body.simple .form-elements
-{
-	display: none;
+		return '<button type="button"' . $this->_htmlAttribs($info['attribs']) . '>' . $t->_($attribs['button']) . '</button>';
+	}
 }

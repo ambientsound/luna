@@ -66,6 +66,7 @@ CREATE TABLE pages (
 	slug character varying(128) NOT NULL,
 	title character varying(128) NOT NULL,
 	metadesc character varying(512),
+	picture integer references pictures on delete restrict,
 	spider_sitemap boolean default true,
 	spider_index boolean default true,
 	spider_follow boolean default true,

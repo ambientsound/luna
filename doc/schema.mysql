@@ -60,6 +60,7 @@ CREATE TABLE pages (
 	slug varchar(128) NOT NULL,
 	title varchar(128) NOT NULL,
 	metadesc varchar(512),
+	picture integer references pictures on delete restrict,
 	spider_sitemap boolean default true,
 	spider_index boolean default true,
 	spider_follow boolean default true,

@@ -1,3 +1,4 @@
+<?php
 /*
  * LUNA content management system
  * Copyright (c) 2011, Kim Tore Jensen
@@ -29,104 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#mediabrowse
+class Luna_Form_Element_Picture extends Zend_Form_Element_Hidden
 {
-	padding: 1em;
-}
-
-#folderselect
-{
-	width: 290px;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	top: 51px;
-	padding: 0 0 0 1em;
-	background: #EDEFFF;
-}
-
-#form_folder
-{
-	width: auto;
-}
-
-#folderselect ul
-{
-	margin: 0;
-	padding: 1em 0;
-	list-style: none;
-	overflow: scroll;
-	overflow-x: hidden;
-	position: absolute;
-	top: 7em;
-	left: 1em;
-	bottom: 0;
-	right: 0;
-}
-
-#folderselect ul li
-{
-	margin: 0 0 1em;
-}
-
-#folderselect ul li img.active
-{
-	border: 4px solid red;
-}
-
-h1
-{
-	padding-left: 0;
-}
-
-#manager
-{
-	line-height: 1.5em;
-}
-
-#manager h2
-{
-	margin: 1em 0;
-}
-
-#manager .left
-{
-	width: 250px;
-	float: left;
-}
-
-#manager .left input,
-#manager .left select
-{
-	width: 100%;
-}
-
-#manager .submit-element input
-{
-	padding: 0.2em 0.5em;
-	font-size: 1.2em;
-	font-weight: bold;
-	margin: 1em 0;
-	background: -moz-linear-gradient(top, #4663a2, #0b2971);
-	color: #F2F2CC;
-}
-
-#finfo
-{
-	margin-left: 280px;
-}
-
-#finfo .submit-element
-{
-	display: none;
-}
-
-body.simple #finfo .submit-element
-{
-	display: block;
-}
-
-body.simple .form-elements
-{
-	display: none;
+	public $helper = 'formPicture';
 }

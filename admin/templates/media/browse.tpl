@@ -12,7 +12,7 @@
 		<link rel="stylesheet" type="text/css" href="/admin/include/style.css" />
 		<link rel="stylesheet" type="text/css" href="/admin/include/mediabrowse.css" />
 	</head>
-	<body>
+	<body class="{if $params.simple}simple{/if}">
 		<div id="header">
 			<a href="/admin"><img src="/admin/include/images/logo.png" /></a>
 		</div>

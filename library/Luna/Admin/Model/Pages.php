@@ -121,6 +121,9 @@ abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 				$local[$key] = $value;
 		}
 
+		if (empty($nodedata['picture']))
+			$nodedata['picture'] = new Zend_Db_Expr('NULL');
+
 		$local['id'] = parent::inject($nodedata);
 		if ($local['id'] == false)
 		{

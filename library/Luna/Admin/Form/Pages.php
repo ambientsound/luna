@@ -41,7 +41,7 @@ class Luna_Admin_Form_Pages extends Luna_Form
 		$this->addElement('Tinymce', 'body');
 		$this->addElement('Text', 'slug', array('required' => true));
 		$this->addElement('Select', 'parent');
-		//$this->addElement('Picture', 'picture');
+		$this->addElement('Picture', 'picture');
 		$this->addElement('Select', 'nodetype');
 		$this->addElement('Select', 'template');
 		$this->addElement('Checkbox', 'spider_sitemap');

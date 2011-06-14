@@ -14,6 +14,7 @@
 		{/if}
 		{$form->nodetype}
 		{$form->template}
+		{$form->picture}
 		{$form->published}
 		{$form->spider_sitemap}
 		{$form->spider_index}
