@@ -53,30 +53,34 @@ class Luna_Admin_Controller_User extends Luna_Admin_Controller_Action
 		return parent::deleteAction();
 	}
 
-	public function saveToDb($values)
+	public function saveToDb($source)
 	{
-		if (!($values instanceof Luna_Object))
-		{
-			$object = new Luna_Object($this->model, $values);
-		}
+		if ($source instanceof Luna_Object)
+			$values = $source->toArray();
+		elseif ($source instanceof Zend_Form)
+			$values = $source->getValues();
+		elseif (is_array($source))
+			$values = $source;
 		else
+			return false;
+
+		if (!($source instanceof Luna_Object))
 		{
-			$object = $values;
-			$values = $object->toArray();
+			$source = new Luna_Object($this->model, $values['id']);
+			$source->load();
 		}
 
-		if ($object->id == $this->user->id && array_search('superuser', $this->user->roles) !== false && array_search('superuser', $object->roles) === false)
+		if ($source->id == $this->user->id && array_search('superuser', $this->user->roles) !== false && array_search('superuser', $source->roles) === false)
 			$values['roles'][] = 'superuser';
 
-		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
+		if (is_array($source->roles) && array_search('superuser', $source->roles) !== false)
 		{
-			$this->acl->assert($object, 'superuser');
-			return parent::saveToDb($object);
+			$this->acl->assert($source, 'superuser');
+			return parent::saveToDb($values);
 		}
 
-		$object->reload();
-		if (is_array($object->roles) && array_search('superuser', $object->roles) !== false)
-			$this->acl->assert($object, 'superuser');
+		if (is_array($source->roles) && array_search('superuser', $source->roles) !== false)
+			$this->acl->assert($source, 'superuser');
 
 		return parent::saveToDb($values);
 	}
