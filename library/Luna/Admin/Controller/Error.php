@@ -62,8 +62,17 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 			$this->view->stacktrace = explode("\n", $params['error_handler']->exception->getTraceAsString());
 		}
 
+		if ($params['error_handler']->exception instanceof Luna_Acl_Exception)
+		{
+			$this->view->setTemplate('error/accessdenied');
+			$this->path->add(null, 'error_access_denied');
+		}
+		else
+		{
+			$this->view->setTemplate('error/error');
+		}
+
 		unset($params['error_handler']);
-		$this->view->setTemplate('error/error');
 		$this->view->params = $params;
 	}
 }

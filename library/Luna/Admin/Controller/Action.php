@@ -121,27 +121,17 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 			return false;
 		}
 
-		try
+		if (!$this->acl->can($this, $this->getRequest()->getActionName()))
 		{
-			if (!$this->acl->can($this, $this->getRequest()->getActionName()))
+			$front = Zend_Controller_Front::getInstance();
+			if ($this->getRequest()->getControllerName() == $front->getDefaultControllerName() &&
+				$this->getRequest()->getActionName() == $front->getDefaultAction())
 			{
-				$front = Zend_Controller_Front::getInstance();
-				if ($this->getRequest()->getControllerName() == $front->getDefaultControllerName() &&
-					$this->getRequest()->getActionName() == $front->getDefaultAction())
-				{
-					$front->setBaseUrl('/');
-					return $this->_redirect('/');
-				}
-
-				$this->addError('insufficient_privileges');
-				$this->_forward('index', 'index');
-
-				return false;
+				$front->setBaseUrl('/');
+				return $this->_redirect('/');
 			}
-		}
-		catch (Luna_Acl_Exception $e)
-		{
-			trigger_error($this->getResourceId() . '->' . $this->getRequest()->getActionName() . ' is not governed by ACL, allowing access by default.', E_USER_WARNING);
+
+			throw new Luna_Acl_Exception('Insufficient privileges to access ' . $this->getResourceId() . '->' . $this->getRequest()->getActionName());
 		}
 	}
 
@@ -307,6 +297,11 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 			}
 		}
 		catch (Exception $e)
+		{
+			$this->addError('object_failed_save_db', array($e->getMessage()));
+			return false;
+		}
+		catch (PDOException $e)
 		{
 			$this->addError('object_failed_save_db', array($e->getMessage()));
 			return false;
