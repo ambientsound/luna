@@ -56,6 +56,20 @@ class Luna_Object_Page extends Luna_Object_Preorder
 		return true;
 	}
 
+	public function loadPicture()
+	{
+		if (!$this->load() || empty($this->_data['picture']))
+			return false;
+
+		if ($this->_data['picture'] instanceof Luna_Object)
+			return true;
+
+		$fmodel = new Model_Files;
+		$this->_data['picture'] = $fmodel->get($this->_data['picture']);
+
+		return ($this->_data['picture'] instanceof Luna_Object);
+	}
+
 	public function getCanonicalUrl()
 	{
 		if (($ancestors = $this->getAncestors()) == false)
