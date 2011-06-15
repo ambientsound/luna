@@ -7,6 +7,7 @@
 		{/foreach}
 		<meta charset="utf-8" />
 		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" href="/include/style.css" />
 	</head>
 	<body>
 		<h1>{$options->main->title}</h1>

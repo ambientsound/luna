@@ -31,7 +31,25 @@
 
 body, .mceContentBody
 {
-	font: 0.9em Helvetica,Arial,sans-serif;
+	font: 0.9em Verdana,Helvetica,Arial,sans-serif;
 	margin: 0;
-	padding: 1em;
+	padding: 2em;
+}
+
+.alignleft
+{
+	float: left;
+	margin: 0 2em 2em 0;
+}
+
+.alignright
+{
+	float: right;
+	margin: 0 0 2em 2em;
+}
+
+.aligncenter
+{
+	margin: 0 auto;
+	text-align: center;
 }
