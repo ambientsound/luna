@@ -170,3 +170,5 @@ CREATE TABLE menuitems (
 	title character varying(128),
 	url character varying(1024)
 );
+
+INSERT INTO roles VALUES ('guest'), ('user'), ('writer'), ('editor'), ('admin'), ('superuser');

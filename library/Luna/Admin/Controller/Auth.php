@@ -120,8 +120,6 @@ class Luna_Admin_Controller_Auth extends Luna_Admin_Controller_Action
 
 			try
 			{
-				$roleModel->createRole('superuser');
-
 				if ($userid = $this->model->inject($values))
 				{
 					$this->addMessage('luna_initial_setup_succeeded');
