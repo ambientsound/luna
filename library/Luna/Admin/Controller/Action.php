@@ -146,6 +146,7 @@ abstract class Luna_Admin_Controller_Action extends Zend_Controller_Action imple
 		$this->view->form = $this->_form;
 		$this->view->options = $this->options;
 		$this->view->object = $this->object;
+		$this->view->acl = $this->acl;
 
 		$session = new Zend_Session_Namespace('template');
 		$this->view->errors = $session->errors;

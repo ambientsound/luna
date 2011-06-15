@@ -82,10 +82,7 @@ class Luna_Model_File extends Luna_Db_Table
 	{
 		$config = Luna_Config::get('site')->media;
 		$dirs = glob(PUBLIC_PATH . $config->path. '/*', GLOB_ONLYDIR);
-		$ret = array();
-
-		foreach ($config->thumbnail as $dir => $size)
-			$ret[$dir] = $size;
+		$ret = $this->getGlobalThumbSizes();
 
 		foreach ($dirs as $dir)
 		{
@@ -95,6 +92,33 @@ class Luna_Model_File extends Luna_Db_Table
 
 			$ret[$size] = $size;
 		}
+
+		return $ret;
+	}
+
+	/*
+	 * Retrieve global thumbnail sizes, i.e. defined by config and database
+	 */
+	public function getGlobalThumbSizes()
+	{
+		$config = Luna_Config::get('site')->media;
+		$ret = array();
+
+		foreach ($config->thumbnail as $dir => $size)
+			$ret[$dir] = $size;
+
+		$dbdirs = $this->db->fetchPairs($this->select()
+			->setIntegrityCheck(false)
+			->from('thumbnails', array('size', 'slug')));
+
+		if (empty($dbdirs))
+			return $ret;
+
+		foreach ($dbdirs as $key => &$dir)
+			if (empty($dir))
+				$dir = $key;
+
+		$ret = array_merge(array_flip($dbdirs), $ret);
 
 		return $ret;
 	}
@@ -236,7 +260,7 @@ class Luna_Model_File extends Luna_Db_Table
 		$height = imagesy($gd);
 
 		if (empty($sizes))
-			$sizes = $config->thumbnail->toArray();
+			$sizes = $this->getGlobalThumbSizes();
 
 		foreach ($sizes as $tdest => $size)
 		{

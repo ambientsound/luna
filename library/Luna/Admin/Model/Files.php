@@ -61,6 +61,110 @@ class Luna_Admin_Model_Files extends Luna_Model_File
 		return $this->db->fetchOne($select);
 	}
 
+	public function createThumbnailSize($size)
+	{
+		$table = new Model_Thumbnails;
+		if (!$table->inject($size))
+			return false;
+
+		$filenames = $this->db->fetchCol($this->select()
+			->from($this->_name, 'filename')
+			->where('size IS NOT NULL'));
+
+		if (empty($filenames))
+			return true;
+
+		if (empty($size['slug']))
+			$size = array($size['size'] => $size['size']);
+		else
+			$size = array($size['slug'] => $size['size']);
+
+		set_time_limit(0);
+
+		foreach ($filenames as $file)
+			$this->createThumbs($file, $size);
+
+		return true;
+	}
+
+	public function deleteThumbnailSize($size)
+	{
+		$table = $this->getThumbnailTable();
+		if (empty($table) || empty($table[$size]) || !empty($table[$size]['permanent']))
+			return false;
+
+		$model = new Model_Thumbnails;
+		if (!$model->deleteId($size))
+			return false;
+
+		$config = Luna_Config::get('site')->media;
+		$basedir = realpath(PUBLIC_PATH . $config->path) . '/';
+		if (empty($table[$size]['slug']))
+			$basedir .= $size;
+		else
+			$basedir .= $table[$size]['slug'];
+
+		$this->delTree($basedir);
+
+		return true;
+	}
+
+	public function delTree($path)
+	{
+		if (!is_dir($path))
+		{
+			chmod($path, 0666);
+			return unlink($path);
+		}
+		else
+		{
+			$files = glob($path . '/*');
+			foreach ($files as $f)
+				$this->delTree($f);
+			chmod($path, 0777);
+			return rmdir($path);
+		}
+	}
+
+	public function getThumbnailTable()
+	{
+		$config = Luna_Config::get('site')->media;
+		$ret = array();
+
+		foreach ($config->thumbnail as $dir => $size)
+		{
+			$ret[$size] = array(
+				'size'		=> $size,
+				'slug'		=> $dir,
+				'permanent'	=> true,
+				'description'	=> null
+			);
+		}
+
+		$dbdirs = $this->db->fetchAssoc($this->select()
+			->setIntegrityCheck(false)
+			->from('thumbnails', array('size', 'slug', 'description')));
+
+		if (empty($dbdirs))
+			return $ret;
+
+		$ret = array_merge($dbdirs, $ret);
+		uksort($ret, 'strnatcmp');
+
+		return $ret;
+
+	}
+
+	public function getMostRecentPictureId()
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from($this->_name, 'MAX(id)')
+			->where('size IS NOT NULL');
+
+		return $this->db->fetchOne($select);
+	}
+
 	public function setFolderFilter($folder_id, $recurse = false)
 	{
 		if (!$recurse)

@@ -73,6 +73,7 @@ class Luna_Admin_Controller_Util extends Luna_Admin_Controller_Action
 		$model = new Model_Files;
 		$model->setFolderFilter($this->_getParam('folder'), $this->_getParam('recurse'));
 		$pictures = new Zend_Paginator(new Luna_Paginator_Adapter_Images($model->selectImages()));
+		$pictures->setItemCountPerPage(1000);
 		$this->view->setMaster('media/browse/list');
 		$this->view->pictures = $pictures;
 	}

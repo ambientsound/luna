@@ -92,6 +92,16 @@ CREATE TABLE files (
 	alt varchar(512)
 ) ENGINE=INNODB;
 
+CREATE TABLE thumbnails (
+	size varchar(16) PRIMARY KEY NOT NULL,
+	slug varchar(32),
+	description varchar(128),
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp
+);
+
 CREATE TABLE pages_files (
 	id integer PRIMARY KEY NOT NULL auto_increment,
 	page_id integer not null references pages on delete cascade,

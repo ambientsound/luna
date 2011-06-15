@@ -40,6 +40,55 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 	{
 		$this->_menu->addsub('index');
 		$this->_menu->addsub('create');
+		$this->_menu->addsub('thumbnail');
+	}
+
+	public function thumbnailAction()
+	{
+		$this->_form = null;
+
+		if ($this->acl->can($this->model, 'create-thumbnail'))
+		{
+			$this->_form = new Form_Thumbnails(array(
+				'method'	=> 'post',
+				'action'	=> '/admin/media/thumbnail'
+			));
+
+			if ($this->getRequest()->isPost() && $this->_form->isValid($_POST))
+			{
+				$values = $this->_form->getValues();
+				if ($this->model->createThumbnailSize($values))
+				{
+					$this->addMessage('thumbnail_created', $values['size']);
+					return $this->_redirect('/media/thumbnail');
+				}
+				$this->addError('thumbnail_creation_failed');
+			}
+		}
+
+		$globalsizes = $this->model->getThumbnailTable();
+
+		if ($this->acl->can($this->model, 'delete-thumbnail'))
+		{
+			if (($del = $this->_getParam('delete')) != null)
+			{
+				if (isset($globalsizes[$del]) && empty($globalsizes[$del]['permanent']))
+				{
+					if ($this->model->deleteThumbnailSize($del))
+					{
+						$this->addMessage('thumbnail_deleted');
+						return $this->_redirect('/media/thumbnail');
+					}
+				}
+				$this->addError('thumbnail_delete_failed');
+			}
+		}
+
+		$picture = new Luna_Object($this->model, $this->model->getMostRecentPictureId());
+		$picture->load();
+
+		$this->view->globalsizes = $globalsizes;
+		$this->view->picture = $picture;
 	}
 
 	public function uploadifyAction()
@@ -77,6 +126,7 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 
 		$this->model->setFolderFilter($foldform->getValue('folder'), $foldform->getValue('recurse'));
 		$pictures = new Zend_Paginator(new Luna_Paginator_Adapter_Images($this->model->selectImages()));
+		$pictures->setItemCountPerPage(1000);
 
 		$form = new Form_File;
 		$form->folder_id->setMultiOptions(array('/'));

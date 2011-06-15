@@ -98,6 +98,16 @@ CREATE TABLE files (
 	alt character varying(512)
 );
 
+CREATE TABLE thumbnails (
+	"size" character varying(16) PRIMARY KEY NOT NULL,
+	slug character varying(32),
+	description character varying(128),
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp
+);
+
 CREATE TABLE pages_files (
 	id serial PRIMARY KEY NOT NULL,
 	page_id integer not null references pages on delete cascade,
