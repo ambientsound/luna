@@ -67,11 +67,15 @@ a:hover
 
 #header
 {
-	background: -moz-linear-gradient(top, #0b2971, #0a3871);
 	height: 50px;
 	color: #f2f2cc;
 	border-bottom: 1px solid #0A193A;
 	position: relative;
+	background: #0a3871;
+	background: -moz-linear-gradient(top, #0b2971, #0a3871);
+	background: -webkit-gradient(linear, left top, left bottom, from(#0a3871), to(#0b2971));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0a3871, endColorStr=#0b2971);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0a3871, endColorStr=#0b2971);
 }
 
 #header a
@@ -166,8 +170,12 @@ form ul.errors
 	text-decoration: none;
 	color: black;
 	padding: 0 1em;
-	background: -moz-linear-gradient(top, #edefff, #dfe2ff);
 	display: block;
+	background: #dfe2ff;
+	background: -moz-linear-gradient(top, #edefff, #dfe2ff);
+	background: -webkit-gradient(linear, left top, left bottom, from(#dfe2ff), to(#edefff));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#dfe2ff, endColorStr=#edefff);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#dfe2ff, endColorStr=#edefff);
 }
 
 #leftmenu ul li a img
@@ -178,15 +186,22 @@ form ul.errors
 
 #leftmenu ul li a:hover
 {
-	background: -moz-linear-gradient(top, #915437, #663b26);
+	background: #dd9762;
 	background: -moz-linear-gradient(top, #f5c78d, #dd9762);
+	background: -webkit-gradient(linear, left top, left bottom, from(#dd9762), to(#f5c78d));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#dd9762, endColorStr=#f5c78d);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#dd9762, endColorStr=#f5c78d);
 }
 
 #leftmenu ul li.active a
 {
-	background: -moz-linear-gradient(top, #4663a2, #0b2971);
 	color: #F2F2CC;
 	font-weight: bold;
+	background: #0b2971;
+	background: -moz-linear-gradient(top, #4663a2, #0b2971);
+	background: -webkit-gradient(linear, left top, left bottom, from(#0b2971), to(#4663a2));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0b2971, endColorStr=#4663a2);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0b2971, endColorStr=#4663a2);
 }
 
 #leftmenu ul ul
@@ -265,6 +280,7 @@ table
 	width: 100%;
 	margin: 0 0 1em;
 	border: 1px solid #4663a2;
+	border-radius: 6px;
 }
 
 tbody tbody
@@ -280,12 +296,16 @@ table td
 
 table th
 {
-	background: -moz-linear-gradient(top, #4663a2, #0b2971);
 	padding: 0.65em 0 0.65em 0.5em;
 	color: white;
 	text-align: left;
 	font-weight: normal;
 	text-shadow: 1px 1px 3px black;
+	background: #0b2971;
+	background: -moz-linear-gradient(top, #4663a2, #0b2971);
+	background: -webkit-gradient(linear, left top, left bottom, from(#0b2971), to(#4663a2));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0b2971, endColorStr=#4663a2);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#0b2971, endColorStr=#4663a2);
 }
 
 table th a
@@ -392,6 +412,7 @@ fieldset
 	background: #dfe2ff;
 	margin: 1em 0;
 	padding: 0.5em 1em;
+	border-radius: 6px;
 }
 
 legend
