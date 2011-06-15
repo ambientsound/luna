@@ -46,7 +46,15 @@ class Luna_Front_Controller_Error extends Luna_Front_Controller_Action
 
 			default:
 				if (($code = $errors->exception->getCode()) == 0)
+				{
 					$code = 500;
+					break;
+				}
+				$code = $errors->exception->getCode();
+				if ($code >= 400 && $code <= 507)
+					break;
+
+				$code = 500;
 		}
 
 		$this->getResponse()->setHttpResponseCode($code);
