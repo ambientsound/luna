@@ -11,10 +11,12 @@
 	</head>
 	<body>
 		<h1>{$options->main->title}</h1>
-		<ul id="mainmenu">
-			{menu id=1}
-			<li><a href="/admin">{t}luna_admin_login{/t}</a></li>
-		</ul>
+		<nav id="mainmenu">
+			<ul>
+				{menu id=1}
+				<li><a href="/admin">{t}luna_admin_login{/t}</a></li>
+			</ul>
+		</nav>
 		{if $path->count() > 1}
 			<div id="breadcrumbs">
 				{foreach $path as $key => $crumb}
