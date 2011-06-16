@@ -53,6 +53,9 @@ $(document).ready(function()
 		if (id == null)
 			return false;
 
+		if (id == current_folder)
+			$('#treeview').jstree('rename');
+
 		switch_folder(id, $('#recurse').is(':checked'));
 	});
 
@@ -63,19 +66,32 @@ $(document).ready(function()
 
 	$('#treeview').bind('loaded.jstree', function()
 	{
-		//$.jstree._fn.open_node($('#treeview ul'), false, true);
-		//$.jstree._fn.open_all();
+		$('#treeview').jstree('open_all');
+
+	}).bind('rename.jstree', function(ev, data)
+	{
+		var params =
+		{
+			context : 'rename',
+			id : data.rslt.obj.context.rel,
+			name : data.rslt.new_name
+		};
+		$.post('/admin/media/folder', params);
 
 	}).jstree(
 	{
 		core : {},
+		ui : {
+			initially_select : 'rootnode'
+		},
 		themeroller : {
 			item : 'item',
 			item_h : 'item-hover',
 			item_leaf : 'ui-icon-folder-collapsed'
 		},
-		plugins : [ 'ui', 'html_data', 'themeroller' ]
+		plugins : [ 'ui', 'html_data', 'crrm', 'themeroller' ]
 	});
+
 
 	/*
 	*/

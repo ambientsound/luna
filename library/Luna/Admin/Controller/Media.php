@@ -172,6 +172,26 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$this->view->pictures = $pictures;
 	}
 
+	public function folderAction()
+	{
+		$this->_helper->viewRenderer->setNoRender(true);
+		if (!$this->getRequest()->isPost())
+			return;
+
+		$action = $this->_getParam('context');
+		$model = new Model_Folders;
+		$folder = new Luna_Object($model, $this->_getParam('id'));
+		$folder->load();
+		$this->acl->assert($folder, $action);
+
+		switch($action)
+		{
+			case 'rename':
+				$model->rename($folder->id, $this->_getParam('name'));
+				break;
+		}
+	}
+
 	public function indexAction()
 	{
 		$model = new Model_Folders;

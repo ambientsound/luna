@@ -32,4 +32,8 @@
 
 class Luna_Admin_Model_Folders extends Luna_Model_Folder
 {
+	public function rename($id, $name)
+	{
+		return $this->updateId(array('name' => $name), $id);
+	}
 }

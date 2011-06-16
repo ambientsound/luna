@@ -74,5 +74,9 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 
 		unset($params['error_handler']);
 		$this->view->params = $params;
+
+		if ($this->getRequest()->isXmlHttpRequest())
+			$this->_helper->viewRenderer->setNoRender(true);
+
 	}
 }

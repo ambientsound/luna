@@ -11,7 +11,7 @@
 	</div>
 	<div id="treeview">
 		<ul>
-			<li><a rel="0" href="javascript:;">{t}media_root_folder{/t}</a>
+			<li><a rel="0" id="rootnode" href="javascript:;">{t}media_root_folder{/t}</a>
 			{include file='foldertree.tpl'}
 			</li>
 		</ul>
