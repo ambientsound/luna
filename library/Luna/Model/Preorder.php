@@ -227,4 +227,32 @@ abstract class Luna_Model_Preorder extends Luna_Db_Table
 
 		return $rows;
 	}
+
+	public function getNestedList($field)
+	{
+		$rows = $this->getOrderedList(array('id', 'lft', 'rgt', $field));
+		return $this->buildNestList($rows);
+	}
+
+	private function buildNestList($rows)
+	{
+		$ret = array();
+		$depth = null;
+
+		while (($row = array_shift($rows)) != null)
+		{
+			if ($depth === null)
+				$depth = $row['depth'];
+
+			if ($row['depth'] != $depth)
+				continue;
+
+			if ($row['lft'] + 1 < $row['rgt'])
+				$row['children'] = $this->buildNestList($rows);
+
+			$ret[] = $row;
+		}
+
+		return $ret;
+	}
 }

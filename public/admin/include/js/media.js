@@ -30,20 +30,46 @@
  */
 
 var uploadify_id = null;
+var current_folder = 0;
+
+function switch_folder(folder, recurse)
+{
+	current_folder = folder;
+	var params =
+	{
+		'folder' : folder,
+		'recurse' : recurse == true ? 1 : 0
+	};
+
+	$('.treeview-margin div').load('/admin/media', params);
+}
+
 
 $(document).ready(function()
 {
-	$('#folder').change(function()
+	$('#treeview a').click(function()
 	{
-		$(this).parents('form').find('#newfolder').attr('value', '');
-		$(this).parents('form').submit();
+		var id = $(this).attr('rel');
+		if (id == null)
+			return false;
+
+		switch_folder(id, $('#recurse').is(':checked'));
 	});
 
 	$('#recurse').change(function()
 	{
-		$(this).parents('form').find('#newfolder').attr('value', '');
-		$(this).parents('form').submit();
+		switch_folder(current_folder, $(this).is(':checked'));
 	});
+
+	$('#treeview').jstree(
+	{
+		core : {},
+		plugins : [ 'themes', 'ui', 'html_data' ]
+	});
+	/*
+	$.jstree._fn.open_all(-1, false);
+	$.jstree._fn.open_node($('#treeview ul'), false, true);
+	*/
 
 	$('#upload').uploadify(
 	{

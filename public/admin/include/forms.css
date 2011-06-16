@@ -202,3 +202,15 @@
 #form_menus #menu-items .url
 {
 }
+
+.treeview-container
+{
+	float: right;
+	width: 15em;
+	margin: 0 0 1em 1em;
+}
+
+.treeview-margin
+{
+	margin-right: 16em;
+}

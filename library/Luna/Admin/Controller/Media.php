@@ -175,12 +175,16 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 	public function indexAction()
 	{
 		$model = new Model_Folders;
+		$folders = $model->getNestedList('name');
+		/*
 		$folders = $model->getFlatAssocList('name');
 		$foldform = new Form_Folder;
 		$foldform->folder->setMultiOptions(array('/'));
 		$foldform->folder->addMultiOptions($folders);
 		$foldform->folder->setValue($this->_getParam('folder', 0));
+		*/
 
+		/*
 		if ($this->getRequest()->isPost() && $foldform->isValid($_POST))
 		{
 			if (($name = $foldform->getValue('newfolder')) != null)
@@ -201,11 +205,24 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 			}
 		}
 
-		$this->model->setFolderFilter($foldform->getValue('folder'), $foldform->getValue('recurse'));
+		*/
+
+		$folder = $this->_getParam('folder', 0);
+		$recurse = $this->_getParam('recurse', true);
+		$this->model->setFolderFilter($folder, $recurse);
 
 		parent::indexAction();
 
-		$this->view->folders = $foldform;
+		if ($this->getRequest()->isXmlHttpRequest())
+		{
+			$this->_helper->viewRenderer->setNoRender(true);
+			echo $this->view->table;
+			return;
+		}
+
+		$this->view->folders = $folders;
+
+		//$this->view->folders = $foldform;
 	}
 
 	public function saveToDb($source)
