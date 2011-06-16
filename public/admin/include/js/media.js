@@ -61,14 +61,23 @@ $(document).ready(function()
 		switch_folder(current_folder, $(this).is(':checked'));
 	});
 
-	$('#treeview').jstree(
+	$('#treeview').bind('loaded.jstree', function()
+	{
+		//$.jstree._fn.open_node($('#treeview ul'), false, true);
+		//$.jstree._fn.open_all();
+
+	}).jstree(
 	{
 		core : {},
-		plugins : [ 'themes', 'ui', 'html_data' ]
+		themeroller : {
+			item : 'item',
+			item_h : 'item-hover',
+			item_leaf : 'ui-icon-folder-collapsed'
+		},
+		plugins : [ 'ui', 'html_data', 'themeroller' ]
 	});
+
 	/*
-	$.jstree._fn.open_all(-1, false);
-	$.jstree._fn.open_node($('#treeview ul'), false, true);
 	*/
 
 	$('#upload').uploadify(
