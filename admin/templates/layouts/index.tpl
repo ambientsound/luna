@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="/admin/include/js/luna.js"></script>
 		<link rel="stylesheet" type="text/css" href="/admin/include/style.css" />
 		<link rel="stylesheet" type="text/css" href="/admin/include/forms.css" />
+		<link rel="stylesheet" type="text/css" href="/admin/include/lib/ui/css/custom-theme/jquery-ui-1.8.13.custom.css" />
 	</head>
 	<body>
 		<div id="header">

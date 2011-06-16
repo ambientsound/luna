@@ -205,12 +205,17 @@
 
 .treeview-container
 {
-	float: right;
+	float: left;
 	width: 15em;
-	margin: 0 0 1em 1em;
+	margin: 0 1em 1em 0;
+}
+
+.treeview-container h2
+{
+	margin-top: 0;
 }
 
 .treeview-margin
 {
-	margin-right: 16em;
+	margin-left: 16em;
 }
