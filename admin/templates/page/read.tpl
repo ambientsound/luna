@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/admin/include/js/picturechooser.js"></script>
 <script type="text/javascript" src="/admin/include/js/page.js"></script>
 
 {$form->prepareRender()}
