@@ -16,6 +16,9 @@
 			</li>
 		</ul>
 	</div>
+
+	<button type="button" class="create-folder">{t}media_create_folder{/t}</button>
+	<button type="button" class="delete-folder">{t}media_delete_folder{/t}</button>
 </div>
 
 <div class="treeview-margin">

@@ -36,4 +36,13 @@ class Luna_Admin_Model_Folders extends Luna_Model_Folder
 	{
 		return $this->updateId(array('name' => $name), $id);
 	}
+
+	public function create($parent_id, $name)
+	{
+		$values = array(
+			'parent'	=> $parent_id,
+			'name'		=> $name
+		);
+		return $this->inject($values);
+	}
 }

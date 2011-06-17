@@ -181,14 +181,25 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 		$action = $this->_getParam('context');
 		$model = new Model_Folders;
 		$folder = new Luna_Object($model, $this->_getParam('id'));
-		$folder->load();
-		$this->acl->assert($folder, $action);
+		if ($folder->load())
+			$this->acl->assert($folder, $action);
+		else
+			$this->acl->assert($model, $action);
 
 		switch($action)
 		{
+			case 'delete':
+				$model->deleteId($folder->id);
+				break;
 			case 'rename':
 				$model->rename($folder->id, $this->_getParam('name'));
 				break;
+			case 'create':
+				$id = $model->create($this->_getParam('parent'), $this->_getParam('name'));
+				if (!empty($id))
+					echo $id;
+				break;
+			default:
 		}
 	}
 

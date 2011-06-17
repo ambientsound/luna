@@ -59,14 +59,40 @@ $(document).ready(function()
 		switch_folder(id, $('#recurse').is(':checked'));
 	});
 
-	$('#recurse').change(function()
+	$('.treeview-container #recurse').change(function()
 	{
 		switch_folder(current_folder, $(this).is(':checked'));
 	});
 
+	$('.treeview-container .create-folder').click(function()
+	{
+		$('#treeview').jstree('create');
+	});
+
+	$('.treeview-container .delete-folder').click(function()
+	{
+		$('#treeview').jstree('remove');
+	});
+
+	/* FIXME:
+	 * none of these events have any error handling and may cause unexpected results
+	 */
 	$('#treeview').bind('loaded.jstree', function()
 	{
 		$('#treeview').jstree('open_all');
+
+	}).bind('create.jstree', function(ev, data)
+	{
+		var params =
+		{
+			context : 'create',
+			'parent' : data.rslt.parent.find('a').attr('rel'),
+			name : data.rslt.name
+		};
+		$.post('/admin/media/folder', params, function(newid, result)
+		{
+			data.rslt.obj.find('a').attr('rel', newid);
+		});
 
 	}).bind('rename.jstree', function(ev, data)
 	{
@@ -75,6 +101,15 @@ $(document).ready(function()
 			context : 'rename',
 			id : data.rslt.obj.context.rel,
 			name : data.rslt.new_name
+		};
+		$.post('/admin/media/folder', params);
+
+	}).bind('remove.jstree', function(ev, data)
+	{
+		var params =
+		{
+			context : 'delete',
+			id : data.rslt.obj.find('a').attr('rel')
 		};
 		$.post('/admin/media/folder', params);
 
@@ -91,10 +126,6 @@ $(document).ready(function()
 		},
 		plugins : [ 'ui', 'html_data', 'crrm', 'themeroller' ]
 	});
-
-
-	/*
-	*/
 
 	$('#upload').uploadify(
 	{

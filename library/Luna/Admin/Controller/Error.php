@@ -45,6 +45,7 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 				break;
 
 			default:
+				$this->getResponse()->setHttpResponseCode(500);
 		}
 
 		$this->path->add(null, 'error');
@@ -64,6 +65,7 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 
 		if ($params['error_handler']->exception instanceof Luna_Acl_Exception)
 		{
+			$this->getResponse()->setHttpResponseCode(403);
 			$this->view->setTemplate('error/accessdenied');
 			$this->path->add(null, 'error_access_denied');
 		}
@@ -77,6 +79,5 @@ class Luna_Admin_Controller_Error extends Luna_Admin_Controller_Action
 
 		if ($this->getRequest()->isXmlHttpRequest())
 			$this->_helper->viewRenderer->setNoRender(true);
-
 	}
 }

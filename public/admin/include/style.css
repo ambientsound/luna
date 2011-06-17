@@ -410,6 +410,22 @@ input, textarea
 	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#4663a2, endColorStr=#0b2971);
 }
 
+button
+{
+	padding: 0.2em 1.5em;
+	font-size: 1;
+	font-weight: normal;
+	width: auto;
+	margin: 0.25em 0;
+	border-radius: 2.5em;
+	color: #F2F2CC;
+	background: #3e3e3e;
+	background: -moz-linear-gradient(top, #747474, #3e3e3e);
+	background: -webkit-gradient(linear, left top, left bottom, from(#747474), to(#3e3e3e));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#747474, endColorStr=#3e3e3e);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#747474, endColorStr=#3e3e3e);
+}
+
 label
 {
 	display: block;
