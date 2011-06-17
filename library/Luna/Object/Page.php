@@ -36,6 +36,15 @@ class Luna_Object_Page extends Luna_Object_Preorder
 
 	protected $_preorderFields = array('id', 'lft', 'rgt', 'slug', 'title');
 
+	public function __get($key)
+	{
+		if ($key != 'url' || isset($this->_data['url']))
+			return parent::__get($key);
+
+		$this->_data['url'] = $this->getCanonicalUrl();
+		return $this->_data['url'];
+	}
+
 	public function loadRelation()
 	{
 		if (!$this->load() || empty($this->nodetype))
@@ -80,6 +89,26 @@ class Luna_Object_Page extends Luna_Object_Preorder
 			$base .= '/' . $a['slug'];
 
 		return $base;
+	}
+
+	public function loadChildren()
+	{
+		if (!empty($this->_data['children']))
+			return true;
+
+		$descendants = $this->getDescendants();
+		array_shift($descendants);
+		if (empty($descendants))
+			return false;
+
+		$this->_data['children'] = array();
+
+		foreach ($descendants as $descendant)
+		{
+			$this->_data['children'][] = new $this($this->_model, $descendant['id']);
+		}
+
+		return true;
 	}
 
 	public function loadStickers()
