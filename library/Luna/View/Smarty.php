@@ -64,9 +64,8 @@ class Luna_View_Smarty extends Zend_View_Abstract
 		);
 
 		$view = new Luna_View_Smarty($paths, $params);
-		$view->addPluginPath(LOCAL_PATH . '/smarty/');
-		$view->addPluginPath(APPLICATION_PATH . '/smarty/');
 		$view->addPluginPath(LUNA_PATH . '/library/smarty/');
+		$view->addPluginPath(LOCAL_BASE_PATH . '/library/smarty/');
 		$view->doctype('HTML5');
 
 		return $view;
