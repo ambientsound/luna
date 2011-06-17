@@ -39,8 +39,15 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 	public function setupMenu()
 	{
 		$this->_menu->addsub('index');
-		$this->_menu->addsub('create');
 		$this->_menu->addsub('thumbnail');
+	}
+
+	public function createAction()
+	{
+		if (!$this->getRequest()->isPost())
+			return $this->_redirect('/media');
+
+		return parent::createAction();
 	}
 
 	public function thumbnailAction()
@@ -207,36 +214,6 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 	{
 		$model = new Model_Folders;
 		$folders = $model->getNestedList('name');
-		/*
-		$folders = $model->getFlatAssocList('name');
-		$foldform = new Form_Folder;
-		$foldform->folder->setMultiOptions(array('/'));
-		$foldform->folder->addMultiOptions($folders);
-		$foldform->folder->setValue($this->_getParam('folder', 0));
-		*/
-
-		/*
-		if ($this->getRequest()->isPost() && $foldform->isValid($_POST))
-		{
-			if (($name = $foldform->getValue('newfolder')) != null)
-			{
-				try
-				{
-					$id = $model->inject(array(
-						'parent'	=> $foldform->getValue('folder'),
-						'name'		=> $name
-					));
-				}
-				catch (PDOException $e)
-				{
-					$this->addError('object_failed_save_db', $e->getMessage());
-				}
-				if (!empty($id))
-					return $this->_redirect('/media?folder=' . $id);
-			}
-		}
-
-		*/
 
 		$folder = $this->_getParam('folder', 0);
 		$recurse = $this->_getParam('recurse', true);
@@ -251,9 +228,10 @@ class Luna_Admin_Controller_Media extends Luna_Admin_Controller_Action
 			return;
 		}
 
-		$this->view->folders = $folders;
+		$form = new Form_Upload();
 
-		//$this->view->folders = $foldform;
+		$this->view->uploadform = $form;
+		$this->view->folders = $folders;
 	}
 
 	public function saveToDb($source)

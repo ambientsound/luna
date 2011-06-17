@@ -203,6 +203,11 @@
 {
 }
 
+#form_upload
+{
+	width: auto;
+}
+
 .treeview-container
 {
 	float: left;

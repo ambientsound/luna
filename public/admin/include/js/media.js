@@ -41,7 +41,10 @@ function switch_folder(folder, recurse)
 		'recurse' : recurse == true ? 1 : 0
 	};
 
-	$('.treeview-margin div').load('/admin/media', params);
+	$('.treeview-margin div').load('/admin/media', params, function(data)
+	{
+		$('#form_upload #folder_id').attr('value', folder);
+	});
 }
 
 
@@ -160,12 +163,12 @@ $(document).ready(function()
 		}
 	});
 
-	$('#form_file').submit(function(e)
+	$('#form_upload').submit(function(e)
 	{
 		e.preventDefault();
 
 		var o = {};
-		var a = $('#form_file').serializeArray();
+		var a = $('#form_upload').serializeArray();
 
 		$.each(a, function()
 		{
