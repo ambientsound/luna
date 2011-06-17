@@ -38,7 +38,8 @@ class Luna_Admin_Controller_Option extends Luna_Admin_Controller_Action
 
 	public function indexAction()
 	{
-		$opts = $this->model->getModuleOptions($this->_getParam('section', 'main'));
+		$section = $this->_getParam('section', 'main');
+		$opts = $this->model->getModuleOptions($section);
 		if (empty($opts))
 			return $this->_redirect('/option');
 
@@ -48,6 +49,7 @@ class Luna_Admin_Controller_Option extends Luna_Admin_Controller_Action
 
 		$this->getForm();
 		$this->_form->setup($opts);
+		$this->_form->setAction('/admin/option/index/section/' . $section);
 
 		if ($this->getRequest()->isPost() && $this->_form->isValid($_POST))
 		{
@@ -58,7 +60,7 @@ class Luna_Admin_Controller_Option extends Luna_Admin_Controller_Action
 			if ($this->model->setOptions($values))
 			{
 				$this->addMessage('options_saved');
-				return $this->_redirect('/option/index/section/' . $this->_getParam('section', 'main'));
+				return $this->_redirect('/option/index/section/' . $section);
 			}
 			$this->addError('options_not_saved');
 		}
