@@ -111,7 +111,7 @@ CREATE TABLE pages_files (
 ) ENGINE=INNODB;
 
 CREATE TABLE galleries (
-	id integer PRIMARY KEY NOT NULL auto_increment,
+	id integer PRIMARY KEY NOT NULL references pages on delete cascade,
 	folder_id integer references folders on delete restrict,
 	page_limit integer not null default 1,
 	viewmode varchar(64) not null default 'thumbnails',

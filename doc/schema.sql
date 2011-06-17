@@ -117,7 +117,7 @@ CREATE TABLE pages_files (
 );
 
 CREATE TABLE galleries (
-	id serial PRIMARY KEY NOT NULL,
+	id serial PRIMARY KEY NOT NULL references pages on delete cascade,
 	folder_id integer references folders on delete restrict,
 	page_limit integer not null default 1,
 	viewmode character varying(64) not null default 'thumbnails',
