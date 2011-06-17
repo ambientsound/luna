@@ -3,6 +3,23 @@
 
 class Luna_Translate extends Zend_Translate
 {
+	public function __construct($locale)
+	{
+		$locale = preg_replace('/[^\w\d-_]/', null, $locale);
+
+		$global = APPLICATION_PATH . '/i18n/' . $locale . '.ini';
+		$local = LOCAL_PATH . '/i18n/' . $locale . '.ini';
+
+		parent::__construct(array(
+			'adapter'	=> 'ini',
+			'content'	=> APPLICATION_PATH . '/i18n/' . $locale . '.ini',
+			'locale'	=> $locale,
+		));
+
+		if (file_exists($local))
+			$this->addTranslation($local, $locale);
+	}
+
 	public function t($text, $params = null)
 	{
 		return $this->_($text, $params);

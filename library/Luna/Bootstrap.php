@@ -35,11 +35,7 @@ class Luna_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
 	public function run()
 	{
-		$translator = new Luna_Translate(array(
-			'adapter'	=> 'ini',
-			'content'	=> APPLICATION_PATH . '/i18n/en.ini',
-			'locale'	=> 'en',
-		));
+		$translator = new Luna_Translate('en');
 
 		Zend_Registry::set('Zend_Translate', $translator);
 
