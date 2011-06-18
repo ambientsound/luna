@@ -34,34 +34,6 @@ abstract class Luna_Admin_Model_Pages extends Luna_Model_Page
 {
 	protected $_objectName = 'Page';
 
-	public function getXmlList()
-	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
-			->joinCross(array('parent' => 'pages'), array('depth' => 'COUNT(parent.title) - 1'))
-			->where('pages.lft BETWEEN parent.lft AND parent.rgt')
-			->group('pages.id')
-			->group('pages.lft')
-			->group('pages.rgt')
-			->group('pages.slug')
-			->group('pages.title')
-			->order('pages.lft ASC');
-
-		$allPages = $this->db->fetchAll($select);
-		$urls = array();
-
-		foreach ($allPages as &$node)
-		{
-			$urls[$node['depth']] = $node['slug'];
-			$urls = array_slice($urls, 0, $node['depth'] + 1);
-			$node['url'] = '/' . join('/', $urls);
-		}
-		reset($allPages);
-
-		return $allPages;
-	}
-
 	public function getFormTreeList()
 	{
 		$pages = $this->getXmlList();

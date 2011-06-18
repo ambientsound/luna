@@ -103,6 +103,36 @@ class Luna_Model_Page extends Luna_Model_Preorder
 		return $node;
 	}
 
+	public function getXmlList($fields = null)
+	{
+		$f = array('id', 'lft', 'rgt', 'slug', 'title');
+		if (!empty($fields))
+			$f = array_merge($f, $fields);
+
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from('pages', $f)
+			->joinCross(array('parent' => 'pages'), array('depth' => 'COUNT(parent.title) - 1'))
+			->where('pages.lft BETWEEN parent.lft AND parent.rgt')
+			->order('pages.lft ASC');
+
+		foreach ($f as $field)
+			$select->group('pages.' . $field);
+
+		$allPages = $this->db->fetchAll($select);
+		$urls = array();
+
+		foreach ($allPages as &$node)
+		{
+			$urls[$node['depth']] = $node['slug'];
+			$urls = array_slice($urls, 0, $node['depth'] + 1);
+			$node['url'] = '/' . join('/', $urls);
+		}
+		reset($allPages);
+
+		return $allPages;
+	}
+
 	public function getAll()
 	{
 		$select = $this->select()
