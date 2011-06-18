@@ -38,40 +38,9 @@ class Luna_Front_Controller_Page extends Luna_Front_Controller_Action
 	 * Fetches articles from database based on URL information.
 	 * This controller is always the route destination if no other static routes match.
 	 */
-	public function indexAction()
+	protected function indexAction()
 	{
-		$model = new Model_Pages;
 		$uri = $this->_getParam(1);
-		$this->page = $model->getFromUrl($uri);
-
-		if (empty($this->page))
-			throw new Zend_Exception('Path /' . $uri . ' does not exist in the database.', 404);
-
-		if (empty($this->page->nodetype))
-			$this->page->nodetype = 'pages';
-
-		$template = Luna_Template::getFrontTemplatePath($this->page->nodetype, $this->page->template);
-		if (!file_exists($template))
-			throw new Zend_Exception("Page {$this->article['id']} points to template '{$template}' which does not exist on file system.", 503);
-
-		$this->view->setTemplate($this->page->nodetype . '/' . $this->page->template);
-
-		$baseurl = null;
-
-		if (!empty($this->page->path))
-		foreach ($this->page->path as $sub)
-		{
-			$baseurl .= '/' . $sub['slug'];
-			$this->path->add($baseurl, $sub['title']);
-		}
-
-		if (!empty($this->page->metadesc))
-			$this->setMeta('description', $this->article['metadesc']);
-
-		$robots = $this->page->spider_index ? 'index' : 'noindex';
-		$robots .= ', ' . ($this->page->spider_follow ? 'follow' : 'nofollow');
-		$this->setMeta('robots', $robots);
-
-		$this->view->page = $this->page;
+		$this->gotoPage($uri);
 	}
 }
