@@ -44,29 +44,6 @@ CREATE TABLE privileges (
 	privilege varchar(32)
 ) ENGINE=INNODB;
 
-CREATE TABLE pages (
-	id integer PRIMARY KEY NOT NULL auto_increment,
-	lft integer NOT NULL,
-	rgt integer NOT NULL,
-	createdby integer references users on delete restrict,
-	modifiedby integer references users on delete restrict,
-	created timestamp,
-	modified timestamp,
-	publish_from timestamp,
-	publish_to timestamp,
-	published boolean default false,
-	nodetype varchar(32),
-	template varchar(64) NOT NULL,
-	slug varchar(128) NOT NULL,
-	title varchar(128) NOT NULL,
-	metadesc varchar(512),
-	picture integer references pictures on delete restrict,
-	spider_sitemap boolean default true,
-	spider_index boolean default true,
-	spider_follow boolean default true,
-	body text
-) ENGINE=INNODB;
-
 CREATE TABLE folders (
 	id integer PRIMARY KEY NOT NULL auto_increment,
 	lft integer NOT NULL,
@@ -101,6 +78,29 @@ CREATE TABLE thumbnails (
 	created timestamp,
 	modified timestamp
 );
+
+CREATE TABLE pages (
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	lft integer NOT NULL,
+	rgt integer NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp,
+	modified timestamp,
+	publish_from timestamp,
+	publish_to timestamp,
+	published boolean default false,
+	nodetype varchar(32),
+	template varchar(64) NOT NULL,
+	slug varchar(128) NOT NULL,
+	title varchar(128) NOT NULL,
+	metadesc varchar(512),
+	picture integer references files on delete restrict,
+	spider_sitemap boolean default true,
+	spider_index boolean default true,
+	spider_follow boolean default true,
+	body text
+) ENGINE=INNODB;
 
 CREATE TABLE pages_files (
 	id integer PRIMARY KEY NOT NULL auto_increment,

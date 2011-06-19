@@ -50,29 +50,6 @@ CREATE TABLE privileges (
 	privilege character varying(32)
 );
 
-CREATE TABLE pages (
-	id serial PRIMARY KEY NOT NULL,
-	lft integer NOT NULL,
-	rgt integer NOT NULL,
-	createdby integer references users on delete restrict,
-	modifiedby integer references users on delete restrict,
-	created timestamp with time zone,
-	modified timestamp with time zone,
-	publish_from timestamp with time zone,
-	publish_to timestamp with time zone,
-	published boolean default false,
-	nodetype character varying(32),
-	template character varying(64) NOT NULL,
-	slug character varying(128) NOT NULL,
-	title character varying(128) NOT NULL,
-	metadesc character varying(512),
-	picture integer references pictures on delete restrict,
-	spider_sitemap boolean default true,
-	spider_index boolean default true,
-	spider_follow boolean default true,
-	body text
-);
-
 CREATE TABLE folders (
 	id serial PRIMARY KEY NOT NULL,
 	lft integer NOT NULL,
@@ -106,6 +83,29 @@ CREATE TABLE thumbnails (
 	modifiedby integer references users on delete restrict,
 	created timestamp,
 	modified timestamp
+);
+
+CREATE TABLE pages (
+	id serial PRIMARY KEY NOT NULL,
+	lft integer NOT NULL,
+	rgt integer NOT NULL,
+	createdby integer references users on delete restrict,
+	modifiedby integer references users on delete restrict,
+	created timestamp with time zone,
+	modified timestamp with time zone,
+	publish_from timestamp with time zone,
+	publish_to timestamp with time zone,
+	published boolean default false,
+	nodetype character varying(32),
+	template character varying(64) NOT NULL,
+	slug character varying(128) NOT NULL,
+	title character varying(128) NOT NULL,
+	metadesc character varying(512),
+	picture integer references files on delete restrict,
+	spider_sitemap boolean default true,
+	spider_index boolean default true,
+	spider_follow boolean default true,
+	body text
 );
 
 CREATE TABLE pages_files (
