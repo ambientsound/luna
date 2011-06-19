@@ -135,7 +135,7 @@ class Luna_Object_Menu extends Luna_Object
 			if ($page['lft'] + 1 == $page['rgt'])
 				continue;
 
-			$children = $this->buildDynamicMenu($url, $level, $page['rgt'], $mode, $descendants);
+			$children = $this->buildDynamicMenu($url . '/', $level, $page['rgt'], $mode, $descendants);
 			if (empty($children))
 				continue;
 
