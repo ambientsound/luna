@@ -34,12 +34,18 @@ class Luna_Object_Preorder extends Luna_Object
 {
 	protected $_parentId = null;
 
+	protected $_ancestors = null;
+
+	protected $_descendants = null;
+
 	protected $_preorderFields = array('id', 'lft', 'rgt');
 
 	public function clear()
 	{
 		parent::clear();
 		$this->_parentId = null;
+		$this->_ancestors = null;
+		$this->_descendants = null;
 	}
 
 	public function isLeaf()
@@ -55,14 +61,19 @@ class Luna_Object_Preorder extends Luna_Object
 		if (!$this->load())
 			return false;
 
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from($this->_tblname, $this->_preorderFields)
-			->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
-			->order('lft ASC');
+		if (empty($this->_ancestors))
+		{
+			$select = $this->_model->select()
+				->setIntegrityCheck(false)
+				->from($this->_tblname, $this->_preorderFields)
+				->where($this->_model->db->quoteInto('lft <= ?', $this->lft))
+				->where($this->_model->db->quoteInto('rgt >= ?', $this->rgt))
+				->order('lft ASC');
 
-		return $this->_model->db->fetchAll($select);
+			$this->_ancestors = $this->_model->db->fetchAll($select);
+		}
+
+		return $this->_ancestors;
 	}
 
 	public function getDescendants()
@@ -70,14 +81,19 @@ class Luna_Object_Preorder extends Luna_Object
 		if (!$this->load())
 			return false;
 
-		$select = $this->_model->select()
-			->setIntegrityCheck(false)
-			->from($this->_tblname, $this->_preorderFields)
-			->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
-			->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
-			->order('lft ASC');
+		if (empty($this->_descendants))
+		{
+			$select = $this->_model->select()
+				->setIntegrityCheck(false)
+				->from($this->_tblname, $this->_preorderFields)
+				->where($this->_model->db->quoteInto('lft >= ?', $this->lft))
+				->where($this->_model->db->quoteInto('rgt <= ?', $this->rgt))
+				->order('lft ASC');
 
-		return $this->_model->db->fetchAll($select);
+			$this->_descendants = $this->_model->db->fetchAll($select);
+		}
+
+		return $this->_descendants;
 	}
 
 	public function getParentId()

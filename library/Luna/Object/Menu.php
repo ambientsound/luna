@@ -32,6 +32,8 @@
 
 class Luna_Object_Menu extends Luna_Object
 {
+	private $_options = null;
+
 	public function set($row)
 	{
 		if (!parent::set($row))
@@ -50,6 +52,8 @@ class Luna_Object_Menu extends Luna_Object
 	{
 		if (!$this->load())
 			return false;
+
+		$this->_options = new Model_Options;
 
 		/* Dynamic mode fetches all children of the referenced page. */
 		if ($this->_data['mode'] == 'dynamic')
@@ -98,7 +102,11 @@ class Luna_Object_Menu extends Luna_Object
 						unset($this->_data['children'][$key]);
 						continue;
 					}
-					$item['url'] = $page->getCanonicalUrl();
+
+					if ($item['page_id'] != $this->_options->main->frontpage)
+						$item['url'] = $page->getCanonicalUrl();
+					else
+						$item['url'] = '/';
 				}
 			}
 			reset($this->_data['children']);
@@ -114,7 +122,12 @@ class Luna_Object_Menu extends Luna_Object
 
 		while (!empty($descendants) && ($descendants[0]['lft'] < $rgt || $rgt == null) && ($page = array_shift($descendants)) != null)
 		{
-			$page['url'] = $base . $page['slug'];
+			$url = $base . $page['slug'];
+			if ($page['id'] != $this->_options->main->frontpage)
+				$page['url'] = $url;
+			else
+				$page['url'] = '/';
+
 			$page['level'] = $level;
 			$ret[] = $page;
 
@@ -122,7 +135,7 @@ class Luna_Object_Menu extends Luna_Object
 			if ($page['lft'] + 1 == $page['rgt'])
 				continue;
 
-			$children = $this->buildDynamicMenu($page['url'] . '/', $level, $page['rgt'], $mode, $descendants);
+			$children = $this->buildDynamicMenu($url, $level, $page['rgt'], $mode, $descendants);
 			if (empty($children))
 				continue;
 

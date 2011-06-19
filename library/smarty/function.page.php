@@ -32,7 +32,7 @@
 
 function smarty_function_page($params, &$smarty)
 {
-	$page = new Luna_Object_Page(new Model_Pages, $params['id']);
-	$page->load();
+	$model = new Model_Pages;
+	$page = $model->getFromId($params['id']);
 	$smarty->assign($params['assign'], $page);
 }

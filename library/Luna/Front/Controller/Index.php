@@ -34,5 +34,6 @@ class Luna_Front_Controller_Index extends Luna_Front_Controller_Action
 {
 	public function indexAction()
 	{
+		$this->gotoPage($this->options->main->frontpage);
 	}
 }

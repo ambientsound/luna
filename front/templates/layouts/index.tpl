@@ -17,7 +17,7 @@
 				<li><a href="/admin">{t}luna_admin_login{/t}</a></li>
 			</ul>
 		</nav>
-		{if $path->count() > 1}
+		{if $path->count() > 1 && !$frontpage}
 			<div id="breadcrumbs">
 				{foreach $path as $key => $crumb}
 					<a href="{$crumb.url}">{$crumb.title}</a>

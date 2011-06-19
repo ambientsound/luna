@@ -48,6 +48,9 @@ class Luna_Admin_Form_Options extends Luna_Form
 				case 'textarea':
 					$type = 'Textarea';
 					break;
+				case 'page':
+					$type = 'Select';
+					break;
 				case 'bool':
 				case 'checkbox':
 					$type = 'Checkbox';
@@ -59,6 +62,13 @@ class Luna_Admin_Form_Options extends Luna_Form
 			{
 				$this->$key->setAttrib('required', true);
 				$this->$key->setRequired(true);
+			}
+			if ($opt['type'] == 'page')
+			{
+				$pagemodel = new Model_Pages;
+				$pages = $pagemodel->getFormTreeList();
+				unset($pages[0]);
+				$this->$key->setMultiOptions($pages);
 			}
 			if (isset($opt['value']))
 			{

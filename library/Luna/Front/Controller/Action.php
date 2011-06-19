@@ -106,12 +106,23 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 	protected function gotoPage($page)
 	{
-		/* expect $page to be an URI for now. */
 		$model = new Model_Pages;
-		$this->page = $model->getFromUrl($page);
+		if (is_numeric($page))
+		{
+			$this->page = $model->getFromId($page);
+			if (empty($this->page))
+				throw new Zend_Exception('Page number #' . $page . ' is invalid, it does not exist in the database.', 404);
+		}
+		else
+		{
+			$this->page = $model->getFromUrl($page);
+			if (empty($this->page))
+				throw new Zend_Exception('Path /' . $page . ' does not exist in the database.', 404);
 
-		if (empty($this->page))
-			throw new Zend_Exception('Path /' . $page. ' does not exist in the database.', 404);
+			/* Don't allow viewing this page at it's original path, avoiding duplicate content. */
+			if ($this->options->main->frontpage == $this->page->id && !empty($page))
+				return $this->_redirect('/');
+		}
 
 		if (empty($this->page->nodetype))
 			$this->page->nodetype = 'pages';
@@ -122,13 +133,20 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 		$this->view->setTemplate($this->page->nodetype . '/' . $this->page->template);
 
-		$baseurl = null;
-
-		if (!empty($this->page->path))
-		foreach ($this->page->path as $sub)
+		/* Build a breadcrumb path, unless this is the frontpage article. */
+		if ($this->options->main->frontpage != $this->page->id)
 		{
-			$baseurl .= '/' . $sub['slug'];
-			$this->path->add($baseurl, $sub['title']);
+			$baseurl = null;
+			foreach ($this->page->path as $sub)
+			{
+				$baseurl .= '/' . $sub['slug'];
+				$this->path->add($baseurl, $sub['title']);
+			}
+		}
+		elseif ($this->options->main->frontpagetitle)
+		{
+			$this->path->add(null, $this->page->title);
+			$this->view->frontpage = true;
 		}
 
 		if (!empty($this->page->metadesc))

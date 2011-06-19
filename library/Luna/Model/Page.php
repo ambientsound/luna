@@ -103,6 +103,21 @@ class Luna_Model_Page extends Luna_Model_Preorder
 		return $node;
 	}
 
+	public function getFromId($id)
+	{
+		$node = $this->_get($id);
+
+		$modelname = 'Model_' . strtoupper($node['nodetype'][0]) . strtolower(substr($node['nodetype'], 1));
+		if (@class_exists($modelname))
+			$node = Luna_Object::factory(new $modelname, $node);
+		else
+			$node = new Luna_Object_Page($this, $node);
+
+		$node->loadRelation();
+
+		return $node;
+	}
+
 	public function getXmlList($fields = null)
 	{
 		$f = array('id', 'lft', 'rgt', 'slug', 'title');

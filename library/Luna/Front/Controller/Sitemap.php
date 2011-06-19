@@ -56,6 +56,9 @@ class Luna_Front_Controller_Sitemap extends Luna_Front_Controller_Action
 			if (!$page['published'] || !$page['spider_sitemap'])
 				continue;
 
+			if ($page['id'] == $this->options->main->frontpage)
+				continue;
+
 			$xml->startElement('url');
 			$xml->writeElement('loc', $domain . $page['url']);
 			$xml->writeElement('lastmod', $page['modified']);

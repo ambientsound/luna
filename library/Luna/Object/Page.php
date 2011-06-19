@@ -38,11 +38,20 @@ class Luna_Object_Page extends Luna_Object_Preorder
 
 	public function __get($key)
 	{
-		if ($key != 'url' || isset($this->_data['url']))
-			return parent::__get($key);
+		if ($key == 'url')
+		{
+			if (!isset($this->_data['url']))
+				$this->_data['url'] = $this->getCanonicalUrl();
+			return $this->_data['url'];
+		}
+		elseif ($key == 'path')
+		{
+			if (!isset($this->_data['path']))
+				$this->_data['path'] = $this->getPath();
+			return $this->_data['path'];
+		}
 
-		$this->_data['url'] = $this->getCanonicalUrl();
-		return $this->_data['url'];
+		return parent::__get($key);
 	}
 
 	public function loadRelation()
@@ -81,14 +90,22 @@ class Luna_Object_Page extends Luna_Object_Preorder
 
 	public function getCanonicalUrl()
 	{
-		if (($ancestors = $this->getAncestors()) == false)
+		if (!$this->getAncestors())
 			return false;
 
 		$base = '';
-		foreach ($ancestors as $a)
+		foreach ($this->_ancestors as $a)
 			$base .= '/' . $a['slug'];
 
 		return $base;
+	}
+
+	public function getPath()
+	{
+		if (!$this->getAncestors())
+			return false;
+
+		return $this->_ancestors;
 	}
 
 	public function loadChildren()
