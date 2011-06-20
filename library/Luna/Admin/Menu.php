@@ -45,6 +45,8 @@ class Luna_Admin_Menu extends Luna_Menu
 		);
 
 		$modules = array();
+		$hide = explode(',', $config['hide']);
+		$sort = explode(',', $config['sort']);
 
 		foreach ($paths as $dir)
 		{
@@ -58,7 +60,7 @@ class Luna_Admin_Menu extends Luna_Menu
 				if (is_readable($dir . $file) && preg_match('/^([\w]+)Controller.php$/', $file, $matches))
 				{
 					$controller = strtolower($matches[1]);
-					if (!isset($config[$controller]) || !empty($config[$controller]))
+					if (array_search($controller, $hide) === false)
 						$modules[] = $controller;
 				}
 			}
@@ -67,6 +69,19 @@ class Luna_Admin_Menu extends Luna_Menu
 
 		if (empty($modules))
 			return;
+
+		if (!empty($sort))
+		{
+			foreach ($sort as $module)
+			{
+				if (($index = array_search($module, $modules)) !== false)
+				{
+					$mods[] = $module;
+					unset($modules[$index]);
+				}
+			}
+			$modules = array_merge($sort, $modules);
+		}
 
 		foreach ($modules as $module)
 		{
