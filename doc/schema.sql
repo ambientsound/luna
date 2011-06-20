@@ -169,7 +169,7 @@ CREATE TABLE menus (
 
 CREATE TABLE menuitems (
 	id serial PRIMARY KEY NOT NULL,
-	menu_id integer NOT NULL references pages on delete cascade,
+	menu_id integer NOT NULL references menus on delete cascade,
 	page_id integer references pages on delete cascade,
 	lft integer NOT NULL,
 	rgt integer NOT NULL,
