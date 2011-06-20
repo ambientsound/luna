@@ -47,6 +47,7 @@ CREATE TABLE privileges (
 	modified timestamp with time zone,
 	createdby integer references users on delete restrict,
 	modifiedby integer references users on delete restrict,
+	allow boolean NOT NULL default true,
 	privilege character varying(32)
 );
 
@@ -181,4 +182,4 @@ CREATE TABLE menuitems (
 	url character varying(1024)
 );
 
-INSERT INTO roles VALUES ('guest'), ('user'), ('writer'), ('editor'), ('admin'), ('superuser');
+INSERT INTO roles VALUES ('guest', null), ('user', null), ('writer', 'user'), ('editor', 'writer'), ('admin', 'editor'), ('superuser', null);

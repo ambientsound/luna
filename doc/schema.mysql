@@ -41,6 +41,7 @@ CREATE TABLE privileges (
 	modified timestamp,
 	createdby integer references users on delete restrict,
 	modifiedby integer references users on delete restrict,
+	"allow" boolean NOT NULL default true,
 	privilege varchar(32)
 ) ENGINE=INNODB;
 
@@ -175,4 +176,4 @@ CREATE TABLE menuitems (
 	url varchar(1024)
 ) ENGINE=INNODB;
 
-INSERT INTO roles VALUES ('guest'), ('user'), ('writer'), ('editor'), ('admin'), ('superuser');
+INSERT INTO roles VALUES ('guest', null), ('user', null), ('writer', 'user'), ('editor', 'writer'), ('admin', 'editor'), ('superuser', null);

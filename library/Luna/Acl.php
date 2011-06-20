@@ -130,12 +130,18 @@ class Luna_Acl extends Zend_Acl
 
 		foreach ($acl as $a)
 		{
+			$allow = ($a['allow'] == true || $a['allow'] === null);
+
 			if (!empty($a['user_id']))
 			{
 				$role = new Zend_Acl_Role('user-' . $a['user_id']);
 				if (!$this->hasRole($role))
 					$this->addRole($role);
-				$this->allow($role, $object, $a['privilege']);
+
+				if ($allow)
+					$this->allow($role, $object, $a['privilege']);
+				else
+					$this->deny($role, $object, $a['privilege']);
 			}
 
 			if (!empty($a['role']))
@@ -143,7 +149,11 @@ class Luna_Acl extends Zend_Acl
 				$role = new Zend_Acl_Role('group-' . $a['role']);
 				if (!$this->hasRole($role))
 					$this->addRole($role);
-				$this->allow($role, $object, $a['privilege']);
+
+				if ($allow)
+					$this->allow($role, $object, $a['privilege']);
+				else
+					$this->deny($role, $object, $a['privilege']);
 			}
 		}
 	}
