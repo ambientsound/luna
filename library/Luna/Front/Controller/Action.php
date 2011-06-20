@@ -132,7 +132,7 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 		$template = Luna_Template::getFrontTemplatePath($this->page->nodetype, $this->page->template);
 		if (!file_exists($template))
-			throw new Zend_Exception("Page {$this->page['id']} points to template '{$template}' which does not exist on file system.", 503);
+			throw new Zend_Exception("Page {$this->page->id} points to template '{$template}' which does not exist on file system.", 503);
 
 		$this->view->setTemplate($this->page->nodetype . '/' . $this->page->template);
 
@@ -153,7 +153,7 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		}
 
 		if (!empty($this->page->metadesc))
-			$this->setMeta('description', $this->page['metadesc']);
+			$this->setMeta('description', $this->page->metadesc);
 
 		$robots = $this->page->spider_index ? 'index' : 'noindex';
 		$robots .= ', ' . ($this->page->spider_follow ? 'follow' : 'nofollow');
