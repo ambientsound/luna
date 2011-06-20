@@ -40,6 +40,8 @@ function update_picture_chooser(params)
 	pic_chooser.children('input').attr('value', params.id);
 
 	pic_chooser = null;
+
+	mark_modified();
 }
 
 $(document).ready(function()

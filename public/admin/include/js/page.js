@@ -22,6 +22,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	mark_modified();
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
@@ -31,6 +32,7 @@
 
 var page_slug_manually_changed = false;
 var sortable_inside = 0;
+var unsaved_changes = false;
 var picture_source_params =
 {
 	connectToSortable : '.picture-drop ul',
@@ -39,6 +41,15 @@ var picture_source_params =
 	helper : 'clone',
 	revert : 'invalid'
 };
+
+function mark_modified()
+{
+	if (!unsaved_changes)
+	{
+		$('#form_page #modified-div .hint').show();
+		unsaved_changes = true;
+	}
+}
 
 function page_update_url()
 {
@@ -52,10 +63,9 @@ function page_update_url()
 
 $(document).ready(function()
 {
-	$('#parent').change(function()
-	{
-		page_update_url();
-	});
+	$('#form_page *').change(mark_modified);
+
+	$('#parent').change(page_update_url);
 
 	$('#slug').keypress(function()
 	{

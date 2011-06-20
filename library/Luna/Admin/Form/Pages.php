@@ -62,6 +62,7 @@ class Luna_Admin_Form_Pages extends Luna_Form
 		$this->spider_sitemap->setValue(true);
 		$this->spider_index->setValue(true);
 		$this->spider_follow->setValue(true);
+		$this->modified->setDescription('form_pages_submit_modified');
 
 		$this->resetDecorators();
 	}
