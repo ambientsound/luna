@@ -59,6 +59,8 @@ class Luna_Front_Controller_Sitemap extends Luna_Front_Controller_Action
 			if ($page['id'] == $this->options->main->frontpage)
 				$page['url'] = '/';
 
+			$page['modified'] = date('c', strtotime($page['modified']));
+
 			$xml->startElement('url');
 			$xml->writeElement('loc', $domain . $page['url']);
 			$xml->writeElement('lastmod', $page['modified']);
