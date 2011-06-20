@@ -53,8 +53,8 @@ class Luna_Model_Menu extends Luna_Db_Table
 		
 		if (($id = parent::inject($values)) != false)
 		{
-			if ($this->connectMenuItems($id, $menuitems))
-				return $this->db->commit();
+			if ($this->connectMenuItems($id, $menuitems) && $this->db->commit())
+				return $id;
 		}
 
 		$this->db->rollBack();
