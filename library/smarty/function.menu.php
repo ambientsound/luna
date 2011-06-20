@@ -45,7 +45,7 @@ function smarty_function_menu($params, &$smarty)
 	if (empty($params['template']))
 		$params['template'] = 'default';
 
-	$tpl = $smarty->createTemplate('menu/' . $params['template'] . '.tpl');
+	$tpl = $smarty->createTemplate('menu/' . $params['template'] . '.tpl', $smarty);
 	$tpl->assign('menu', $params['object']);
 	echo $tpl->fetch();
 }
