@@ -151,7 +151,7 @@ class Luna_Model_Page extends Luna_Model_Preorder
 	public function getAll()
 	{
 		$select = $this->select()
-			->from('pages', array('id', 'lft', 'rgt', 'slug', 'title'))
+			->from('pages', array('id', 'lft', 'rgt', 'published', 'slug', 'title'))
 			->order('lft ASC');
 
 		return $this->db->fetchAll($select);

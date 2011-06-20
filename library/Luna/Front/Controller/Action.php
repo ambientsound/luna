@@ -124,6 +124,9 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 				return $this->_redirect('/');
 		}
 
+		if (!$this->page->published)
+			throw new Zend_Exception('Page #' . $page->id . ' is not published.', 404);
+
 		if (empty($this->page->nodetype))
 			$this->page->nodetype = 'pages';
 

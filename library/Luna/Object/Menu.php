@@ -128,6 +128,9 @@ class Luna_Object_Menu extends Luna_Object
 			else
 				$page['url'] = '/';
 
+			if (!$page['published'])
+				continue;
+
 			$page['level'] = $level;
 			$ret[] = $page;
 
