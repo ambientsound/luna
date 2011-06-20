@@ -90,13 +90,17 @@ class Luna_Model_Page extends Luna_Model_Preorder
 		
 		$node = $this->_get($a['id']);
 		$node['path'] = $build;
-		$node['url'] = '/' . join('/', $url);
+		$url = '/' . join('/', $url);
 
 		$modelname = 'Model_' . strtoupper($node['nodetype'][0]) . strtolower(substr($node['nodetype'], 1));
 		if (@class_exists($modelname))
 			$node = Luna_Object::factory(new $modelname, $node);
 		else
 			$node = new Luna_Object_Page($this, $node);
+
+		/* Part of the path, but not all of it, was corrent. We check with the canonical url here. */
+		if ($node->url != $url)
+			return null;
 
 		$node->loadRelation();
 
