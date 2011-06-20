@@ -14,10 +14,10 @@
 					<td>
 					{if $cell->actions}
 						{foreach $cell->actions as $action}
-							<a href="/admin/{$params.controller}/{$action}/{$config.primary}/{$row->{$config.primary}}">{t}{$config.prefix}action_{$action}{/t}</a> &nbsp;
+							<a href="/admin/{$config.controller}/{$action}/{$config.primary}/{$row->{$config.primary}}">{t}{$config.prefix}action_{$action}{/t}</a> &nbsp;
 						{/foreach}
 					{/if}
-					{if $cell->link}<a href="/admin/{$params.controller}/{$cell->link}/{$config.primary}/{$row->{$config.primary}}">{/if}
+					{if $cell->link}<a href="/admin/{$config.controller}/{$cell->link}/{$config.primary}/{$row->{$config.primary}}">{/if}
 					{$cell}
 					{if $cell->link}</a>{/if}
 					</td>
