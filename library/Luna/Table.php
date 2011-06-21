@@ -86,10 +86,10 @@ class Luna_Table implements Iterator
 			$this->_config['prefix'] = $this->_info['name'] . '_t_';
 
 		/* Sanitize user input into reasonable pagination defaults */
-		$sort = strtolower($request->getParam('sort', $this->_config['primary']));
+		$sort = strtolower($request->getParam('sort', $this->_config['sort']));
 		if (array_search($sort, $this->_info['cols']) === false)
 			$sort = $this->_config['primary'];
-		$order = strtoupper($request->getParam('order', 'ASC'));
+		$order = strtoupper($request->getParam('order', $this->_config['order']));
 		if ($order != 'ASC' && $order != 'DESC')
 			$order = 'ASC';
 		$limit = intval($request->getParam('limit', $this->_config['limit']));
