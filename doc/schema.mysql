@@ -41,7 +41,7 @@ CREATE TABLE privileges (
 	modified timestamp,
 	createdby integer references users on delete restrict,
 	modifiedby integer references users on delete restrict,
-	"allow" boolean NOT NULL default true,
+	allow boolean NOT NULL default true,
 	privilege varchar(32)
 ) ENGINE=INNODB;
 
