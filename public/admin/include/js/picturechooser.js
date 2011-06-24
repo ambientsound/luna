@@ -70,6 +70,8 @@ $(document).ready(function()
 		par.find('input').attr('value', '');
 		par.find('.picture-placeholder').html('');
 		$(this).hide();
+
+		mark_modified();
 	});
 
 	$('.picture-element').each(function()
