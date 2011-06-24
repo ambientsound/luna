@@ -59,6 +59,7 @@ class Luna_View_Helper_FormPicture extends Zend_View_Helper_FormElement
 		}
 		$html .= '</div>';
 		$html .= $this->formButton($attribs);
+		$html .= '<a href="javascript:;" class="remove">' . $t->_('picture_chooser_remove') . '</a>';
 
 		return $html;
 	}

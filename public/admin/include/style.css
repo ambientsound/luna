@@ -468,6 +468,11 @@ legend
 	width: 100%;
 }
 
+.picture-element a.remove
+{
+	margin-left: 1em;
+}
+
 .picture-chooser div
 {
 	padding: 0;

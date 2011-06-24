@@ -38,6 +38,7 @@ function update_picture_chooser(params)
 	
 	pic_chooser.children('.picture-placeholder').html('<img src="' + params.thumbnail + '" />');
 	pic_chooser.children('input').attr('value', params.id);
+	pic_chooser.children('a.remove').show();
 
 	pic_chooser = null;
 
@@ -63,4 +64,17 @@ $(document).ready(function()
 		);
 	});
 
+	$('.picture-element a.remove').click(function()
+	{
+		par = $(this).parents('.picture-element');
+		par.find('input').attr('value', '');
+		par.find('.picture-placeholder').html('');
+		$(this).hide();
+	});
+
+	$('.picture-element').each(function()
+	{
+		if ($(this).children('.picture-placeholder').children().size() == 0)
+			$(this).children('a.remove').hide();
+	});
 });
