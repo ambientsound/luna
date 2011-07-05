@@ -59,6 +59,7 @@ class Luna_Admin_Form_Pages extends Luna_Form
 		$this->slug->addFilter(new Luna_Filter_Slug);
 		$this->modified->addFilter(new Luna_Filter_Humantime);
 		$this->nodetype->setValue('pages');
+		$this->published->setValue(true);
 		$this->spider_sitemap->setValue(true);
 		$this->spider_index->setValue(true);
 		$this->spider_follow->setValue(true);
