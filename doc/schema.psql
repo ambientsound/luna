@@ -1,6 +1,12 @@
 --
 -- PostgreSQL database schema
 --
+-- LUNA content management system
+-- Copyright (c) 2011, Kim Tore Jensen
+-- All rights reserved.
+--
+-- Licenced under the three-clause BSD license - see licence.txt.
+--
 
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = off;

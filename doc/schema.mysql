@@ -1,6 +1,12 @@
 --
 -- MySQL database schema
 --
+-- LUNA content management system
+-- Copyright (c) 2011, Kim Tore Jensen
+-- All rights reserved.
+--
+-- Licenced under the three-clause BSD license - see licence.txt.
+--
 
 SET CHARACTER SET 'UTF8';
 SET NAMES 'UTF8';
