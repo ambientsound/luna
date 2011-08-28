@@ -50,6 +50,12 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		/* Translation setup */
 		$this->_t = Zend_Registry::get('Zend_Translate');
 
+		/* Current user setup */
+		$this->user = new Luna_User(Zend_Auth::getInstance()->getStorage()->read());
+		$this->user->registerActivity();
+		Zend_Registry::set('user', $this->user);
+		$this->view->user = $this->user;
+
 		/* Option manager */
 		$this->options = new Model_Options;
 
@@ -102,6 +108,18 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 	public function translate($key, $params = null)
 	{
 		return $this->_t->_($key, $params);
+	}
+
+	public function addMessage($message, $params = null)
+	{
+		$session = new Zend_Session_Namespace('template');
+		$session->messages[] = $this->_t->_($message, $params);
+	}
+
+	public function addError($error, $params = null)
+	{
+		$session = new Zend_Session_Namespace('template');
+		$session->errors[] = $this->_t->_($error, $params);
 	}
 
 	protected function gotoPage($page)
