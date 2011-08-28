@@ -41,7 +41,9 @@ params.dbname           =
 ln -sv ../../front/configs/database.ini $basedir/admin/configs/database.ini
 ln -sv $lunadir/public/admin/include $basedir/public/admin/include
 ln -sv $lunadir/public/admin/index.php $basedir/public/admin/index.php
+ln -sv $lunadir/public/admin/.htaccess $basedir/public/admin/.htaccess
 ln -sv $lunadir/public/index.php $basedir/public/index.php
+ln -sv $lunadir/public/.htaccess $basedir/public/.htaccess
 
 echo "Done. Make sure the following directories are writable by the web server:"
 
