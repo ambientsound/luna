@@ -30,6 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Model_Users extends Luna_Front_Model_Users
+class Form_Login extends Luna_Front_Form_Login
 {
 }

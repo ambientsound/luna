@@ -40,6 +40,10 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 
 	protected $path = null;
 
+	protected $user = null;
+
+	protected $acl = null;
+
 	protected $options = null;
 
 	public function init()
@@ -55,6 +59,11 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 		$this->user->registerActivity();
 		Zend_Registry::set('user', $this->user);
 		$this->view->user = $this->user;
+
+		/* ACL setup */
+		$this->acl = new Luna_Acl_Module('acl');
+		$this->acl->setUser($this->user);
+		Zend_Registry::set('acl', $this->acl);
 
 		/* Option manager */
 		$this->options = new Model_Options;

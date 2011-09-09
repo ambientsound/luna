@@ -30,6 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Model_Users extends Luna_Front_Model_Users
+
+class AuthController extends Luna_Front_Controller_Auth
 {
 }
