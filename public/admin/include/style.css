@@ -136,7 +136,7 @@ form ul.errors
 	list-style: none;
 	padding: 0 0 0 1em;
 	margin: 0.3em 0;
-	color: red;
+	color: #A90600;
 }
 
 /*
@@ -236,7 +236,8 @@ form ul.errors
 	font-weight: bold;
 }
 
-#leftmenu .menu-admin-auth-logout a
+#leftmenu .menu-admin-auth-logout a,
+.delete
 {
 	color: #A90600;
 	font-weight: bold;

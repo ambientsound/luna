@@ -14,7 +14,7 @@
 					<td>
 					{if $cell->actions}
 						{foreach $cell->actions as $action}
-							<a href="/admin/{$config.controller}/{$action}/{$config.primary}/{$row->{$config.primary}}">{t}{$config.prefix}action_{$action}{/t}</a> &nbsp;
+							<a class="{$action}" href="/admin/{$config.controller}/{$action}/{$config.primary}/{$row->{$config.primary}}">{t}{$config.prefix}action_{$action}{/t}</a> &nbsp;
 						{/foreach}
 					{/if}
 					{if $cell->link}<a href="/admin/{$config.controller}/{$cell->link}/{$config.primary}/{$row->{$config.primary}}">{/if}

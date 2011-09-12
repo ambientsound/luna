@@ -12,6 +12,7 @@
 	{/if}
 	<div><strong>{t}file_mimetype{/t}:</strong> {$object->mimetype}</div>
 	<div><strong>{t}file_upload_url{/t}:</strong> <a href="{$object->pub}">http://{$smarty.server.SERVER_NAME}{$object->pub}</a></div>
+	<div><strong>{t}file_delete_cap{/t}:</strong> <a class="delete" href="/admin/media/delete/id/{$object->id}">{t}file_delete{/t}</a></div>
 </div>
 <div class="left">
 	{$form}
