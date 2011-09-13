@@ -34,6 +34,14 @@ class Luna_Model_File extends Luna_Db_Table
 {
 	protected $_name = 'files';
 
+	protected $config = null;
+
+	public function init()
+	{
+		parent::init();
+		$this->config = Luna_Config::get('site')->media;
+	}
+
 	/*
 	 * Get full info about an image, including www path
 	 */
@@ -48,23 +56,23 @@ class Luna_Model_File extends Luna_Db_Table
 
 	public function appendMeta(array $images)
 	{
-		$config = Luna_Config::get('site')->media;
 		$tsizes = $this->getThumbSizes();
 
 		foreach ($images as &$image)
 		{
-			$image['pub'] = $config->path . '/' . $image['filename'];
-			$image['path'] = realpath(PUBLIC_PATH . $config->path) . '/' . $image['filename'];
+			$image['pub'] = $this->config->path . '/' . $image['filename'];
+			$image['path'] = realpath(PUBLIC_PATH . $this->config->path) . '/' . $image['filename'];
+			$image['filesize'] = @filesize($image['path']);
 
 			foreach ($tsizes as $tdest => $size)
 			{
-				$filename = realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'];
+				$filename = realpath(PUBLIC_PATH . $this->config->path) . '/' . $tdest . '/' . $image['filename'];
 				if (!file_exists($filename))
 					continue;
 
 				$image['thumbnail'][$tdest] = array(
-					'pub'	=> $config->path . '/' . $tdest . '/' . $image['filename'],
-					'path'	=> realpath(PUBLIC_PATH . $config->path) . '/' . $tdest . '/' . $image['filename'],
+					'pub'	=> $this->config->path . '/' . $tdest . '/' . $image['filename'],
+					'path'	=> realpath(PUBLIC_PATH . $this->config->path) . '/' . $tdest . '/' . $image['filename'],
 					'dir'	=> $tdest,
 					'size'	=> $size,
 				);
@@ -80,8 +88,7 @@ class Luna_Model_File extends Luna_Db_Table
 	 */
 	public function getThumbSizes()
 	{
-		$config = Luna_Config::get('site')->media;
-		$dirs = glob(PUBLIC_PATH . $config->path. '/*', GLOB_ONLYDIR);
+		$dirs = glob(PUBLIC_PATH . $this->config->path. '/*', GLOB_ONLYDIR);
 		$ret = $this->getGlobalThumbSizes();
 
 		foreach ($dirs as $dir)
@@ -101,10 +108,9 @@ class Luna_Model_File extends Luna_Db_Table
 	 */
 	public function getGlobalThumbSizes()
 	{
-		$config = Luna_Config::get('site')->media;
 		$ret = array();
 
-		foreach ($config->thumbnail as $dir => $size)
+		foreach ($this->config->thumbnail as $dir => $size)
 			$ret[$dir] = $size;
 
 		$dbdirs = $this->db->fetchPairs($this->select()
@@ -128,12 +134,11 @@ class Luna_Model_File extends Luna_Db_Table
 	 */
 	public function allocate(&$element, $old)
 	{
-		$config = Luna_Config::get('site')->media;
 		$info = current($element->getFileInfo());
 		$orig = $element->getFileName();
 		$name = preg_replace('/[^\w\d-_\/\. ]/', '', $info['name']);
 		$name = preg_replace('/\s+/', '-', $name);
-		$dest = realpath(PUBLIC_PATH . $config->path) . '/';
+		$dest = realpath(PUBLIC_PATH . $this->config->path) . '/';
 
 		if (empty($dest))
 			throw new Zend_Exception('Upload target path "' . $dest . '" does not exist.');
@@ -244,8 +249,7 @@ class Luna_Model_File extends Luna_Db_Table
 	 */
 	public function createThumbs($filename, array $sizes = array())
 	{
-		$config = Luna_Config::get('site')->media;
-		$basedir = realpath(PUBLIC_PATH . $config->path) . '/';
+		$basedir = realpath(PUBLIC_PATH . $this->config->path) . '/';
 		$orig = $basedir . $filename;
 
 		if (!file_exists($orig))
@@ -361,9 +365,8 @@ class Luna_Model_File extends Luna_Db_Table
 	 */
 	public function unlink($filename)
 	{
-		$config = Luna_Config::get('site')->media;
-		$basedir = realpath(PUBLIC_PATH . $config->path) . '/';
-		$tdirs = $config->thumbnail->toArray();
+		$basedir = realpath(PUBLIC_PATH . $this->config->path) . '/';
+		$tdirs = $this->config->thumbnail->toArray();
 
 		file_exists($basedir . $filename) && unlink($basedir . $filename);
 
