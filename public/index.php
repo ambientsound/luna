@@ -70,7 +70,7 @@ date_default_timezone_set('Europe/Oslo');
 /* Ensure our libraries are being included */
 set_include_path(join(PATH_SEPARATOR, array(
     realpath(LUNA_PATH. '/library'),
-    realpath(LOCAL_PATH. '/library'),
+    realpath(LOCAL_BASE_PATH. '/library'),
     get_include_path()
 )));
 
