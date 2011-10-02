@@ -35,23 +35,24 @@ $(document).ready(function()
 
 		script_url : "/admin/include/lib/tinymce/tiny_mce.js",
 
-		// General options
+		/* General options */
 		theme : "advanced",
 		plugins : "paste,mediabrowser",
 		convert_urls : false,
 		relative_urls : false,
 		theme_advanced_resizing : true,
 		theme_advanced_statusbar_location : 'bottom',
+		content_css : "/style.css",
 
-		// Theme options
+		/* Theme options */
 		theme_advanced_buttons1 : "bold,italic,underline,strikethrough,sub,sup,|,undo,redo,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontselect,fontsizeselect",
 		theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,bullist,numlist,|,image,link,unlink,forecolor,|,code,cleanup,removeformat",
 		theme_advanced_buttons3 : "",
 		theme_advanced_buttons4 : "",
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
-
-		// Example content CSS (should be your site CSS)
-		content_css : "/style.css"
+		
+		/* We need IFRAME support */
+		extended_valid_elements : "iframe[src|width|height|name|align]"
 	});
 });
