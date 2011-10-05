@@ -173,10 +173,14 @@ class Luna_Front_Controller_Action extends Zend_Controller_Action
 				$this->path->add($baseurl, $sub['title']);
 			}
 		}
-		elseif ($this->options->main->frontpagetitle)
+		else
 		{
-			$this->path->add(null, $this->page->title);
-			$this->view->frontpage = true;
+			$this->page->url = '/';
+			if ($this->options->main->frontpagetitle)
+			{
+				$this->path->add(null, $this->page->title);
+				$this->view->frontpage = true;
+			}
 		}
 
 		if (!empty($this->page->metadesc))
